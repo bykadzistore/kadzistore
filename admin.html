@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="ru">
 <head>
@@ -19,17 +18,25 @@ button:disabled{opacity:.5;cursor:wait}.order{margin:9px 0}.top{display:flex;jus
 .meta{color:var(--muted);font-size:12px;line-height:1.6;margin:9px 0}.price{font-weight:800;font-size:17px}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
 .empty,.notice{padding:24px;text-align:center;color:var(--muted);background:var(--panel);border-radius:12px}
 .error{color:#ff8585}.refresh{font-size:12px;color:var(--muted)}.hide{display:none}
+.tabs{display:flex;gap:8px;margin:0 0 14px}.tabs button{flex:1}.panel{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:14px;margin:10px 0}
+.field{display:grid;gap:6px;margin:10px 0}.field label{font-size:12px;color:var(--muted)}
+input,textarea,select{width:100%;background:#090909;border:1px solid var(--line);border-radius:9px;padding:11px;color:white;font:inherit}
+textarea{min-height:80px;resize:vertical}.product{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:13px;margin:9px 0}
+.product-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.muted{color:var(--muted);font-size:12px;line-height:1.5}
+.planline{padding:7px 0;border-top:1px solid var(--line);font-size:12px}
 @media(max-width:480px){.stats{grid-template-columns:repeat(3,1fr)}.stat{padding:10px}.stat strong{font-size:17px}.order{padding:11px}}
 </style></head>
 <body>
 <header><div><div class="logo"><b>KD</b>S ADMIN</div><div class="tag">Панель управления магазином</div></div><button id="reload">↻ Обновить</button></header>
 <main>
+<div class="tabs"><button id="ordersTab" class="primary">Заказы</button><button id="productsTab">Товары</button></div>
+<section id="ordersSection">
 <div class="stats"><div class="stat"><small>Новые</small><strong id="sNew">—</strong></div><div class="stat"><small>В работе</small><strong id="sWork">—</strong></div><div class="stat"><small>Выполнено</small><strong id="sDone">—</strong></div></div>
 <section class="order" style="margin:0 0 16px">
   <div class="number">Баланс пользователей</div>
   <div class="meta">Найди покупателя по Telegram ID или username, чтобы начислить или списать рубли.</div>
   <div style="display:flex;gap:8px;flex-wrap:wrap">
-    <input id="userSearch" placeholder="Telegram ID или @username" style="flex:1;min-width:190px;background:#090909;border:1px solid var(--line);border-radius:9px;padding:11px;color:white">
+    <input id="userSearch" placeholder="Telegram ID или @username" style="flex:1;min-width:190px">
     <button class="primary" id="userFind">Найти</button>
   </div>
   <div id="userResult" style="margin-top:12px"></div>
@@ -38,15 +45,38 @@ button:disabled{opacity:.5;cursor:wait}.order{margin:9px 0}.top{display:flex;jus
 <button data-filter="all" class="primary">Все</button><button data-filter="awaiting_fulfillment">Ожидают</button><button data-filter="processing">В процессе</button><button data-filter="fulfilled">Выполнены</button><button data-filter="refunded">Возвраты</button>
 </div>
 <div class="refresh" id="updated">Загрузка заказов…</div><div id="orders"></div>
+</section>
+<section id="productsSection" class="hide">
+ <div class="panel">
+  <div class="number">Управление товарами</div>
+  <div class="muted">Добавляй и редактируй товары, тарифы, цены и видимость в магазине.</div>
+  <div class="actions"><button class="primary" id="newProduct">＋ Добавить товар</button><button id="reloadProducts">↻ Обновить список</button></div>
+ </div>
+ <div id="productEditor" class="panel hide">
+  <div class="number" id="editorTitle">Новый товар</div>
+  <input type="hidden" id="pId">
+  <div class="field"><label>Название</label><input id="pName" placeholder="Например, MAGIC VIP"></div>
+  <div class="field"><label>Краткое описание</label><textarea id="pDescription" placeholder="Описание товара"></textarea></div>
+  <div class="field"><label>Особенности (каждая с новой строки)</label><textarea id="pFeatures" placeholder="Функция 1&#10;Функция 2"></textarea></div>
+  <div class="field"><label>Платформа</label><input id="pPlatform" placeholder="Android / iOS / PC"></div>
+  <div class="field"><label>Порядок сортировки</label><input id="pSort" type="number" value="0"></div>
+  <div class="field"><label>Тарифы (по одному на строку: Название | дни | цена ₽ | on/off)</label><textarea id="pPlans" placeholder="1 месяц | 30 | 299 | on&#10;3 месяца | 90 | 799 | on"></textarea></div>
+  <label style="display:flex;gap:8px;align-items:center"><input id="pActive" type="checkbox" checked style="width:auto"> Товар активен</label>
+  <div class="actions"><button class="primary" id="saveProduct">Сохранить товар</button><button id="cancelProduct">Отмена</button></div>
+  <div id="productMsg" class="muted"></div>
+ </div>
+ <div id="productsList"><div class="notice">Загрузка товаров…</div></div>
+</section>
 </main>
 <script>
 const tg=window.Telegram?.WebApp; tg?.ready(); tg?.expand();
 const initData=tg?.initData||"";
-let allOrders=[], filter="all";
+let allOrders=[], filter="all", allProducts=[];
 const labels={awaiting_fulfillment:"Ожидает выдачи",processing:"В процессе",fulfilled:"Выполнен",refunded:"Возврат",cancelled:"Отменён"};
 const money=v=>new Intl.NumberFormat("ru-RU").format(v)+" ₽";
-async function api(method="GET",body){
- const r=await fetch("https://vpuaihznkswrpsqxgcvm.supabase.co/functions/v1/kds-admin?api=1",{method,headers:{"Content-Type":"application/json","X-Telegram-Init-Data":initData},body:body?JSON.stringify(body):undefined});
+async function api(method="GET",body,section){
+ const url="https://vpuaihznkswrpsqxgcvm.supabase.co/functions/v1/kds-admin?api=1"+(section?"&section="+encodeURIComponent(section):"");
+ const r=await fetch(url,{method,headers:{"Content-Type":"application/json","X-Telegram-Init-Data":initData},body:body?JSON.stringify(body):undefined});
  const d=await r.json(); if(!r.ok)throw new Error(d.error||"Ошибка запроса"); return d;
 }
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
@@ -68,49 +98,90 @@ async function load(){
  try{const d=await api();allOrders=d.orders||[];render();document.getElementById("updated").textContent="Обновлено: "+new Date().toLocaleTimeString("ru-RU");}
  catch(e){el.innerHTML='<div class="notice error">'+esc(e.message)+'</div>';document.getElementById("updated").textContent="Не удалось загрузить данные";}
 }
+async function loadProducts(){
+ const el=document.getElementById("productsList");el.innerHTML='<div class="notice">Загружаю товары…</div>';
+ try{
+  const d=await api("GET",null,"products");allProducts=d.products||[];
+  if(!allProducts.length){el.innerHTML='<div class="empty">Товаров пока нет</div>';return;}
+  el.innerHTML=allProducts.map(p=>{
+   const plans=p.kds_product_plans||p.plans||[];
+   return '<article class="product"><div class="product-head"><div><b>'+esc(p.name)+'</b><div class="muted">'+esc(p.description||"")+'</div><div class="muted">Платформа: '+esc(p.platform||"—")+' · Сортировка: '+esc(p.sort_order??0)+'</div></div><span class="status">'+(p.is_active?'Активен':'Скрыт')+'</span></div>'+
+   plans.map(x=>'<div class="planline">'+esc(x.name||x.title||"Тариф")+' · '+esc(x.duration_days)+' дн. · <b>'+money(x.price_rub??x.price??0)+'</b> · '+(x.is_active?'Активен':'Выключен')+'</div>').join("")+
+   '<div class="actions"><button class="primary" data-edit="'+esc(p.id)+'">Изменить</button><button class="warn" data-toggle="'+esc(p.id)+'" data-active="'+(p.is_active?'true':'false')+'">'+(p.is_active?'Скрыть':'Активировать')+'</button></div></article>';
+  }).join("");
+ }catch(e){el.innerHTML='<div class="notice error">'+esc(e.message)+'</div>';}
+}
+function openEditor(p){
+ p=p||{};document.getElementById("productEditor").classList.remove("hide");
+ document.getElementById("editorTitle").textContent=p.id?"Редактирование товара":"Новый товар";
+ document.getElementById("pId").value=p.id||"";document.getElementById("pName").value=p.name||"";
+ document.getElementById("pDescription").value=p.description||"";
+ document.getElementById("pFeatures").value=Array.isArray(p.features)?p.features.join("\n"):(p.features||"");
+ document.getElementById("pPlatform").value=p.platform||"";document.getElementById("pSort").value=p.sort_order??0;
+ document.getElementById("pActive").checked=p.is_active!==false;
+ const plans=p.kds_product_plans||p.plans||[];
+ document.getElementById("pPlans").value=plans.map(x=>(x.name||x.title||"Тариф")+" | "+(x.duration_days||30)+" | "+(x.price_rub??x.price??0)+" | "+(x.is_active===false?"off":"on")).join("\n");
+ document.getElementById("productMsg").textContent="";
+ document.getElementById("productEditor").scrollIntoView({behavior:"smooth",block:"start"});
+}
+document.getElementById("saveProduct").onclick=async()=>{
+ const msg=document.getElementById("productMsg"),btn=document.getElementById("saveProduct");
+ const plans=document.getElementById("pPlans").value.split("\n").map(x=>x.trim()).filter(Boolean).map(line=>{
+  const a=line.split("|").map(x=>x.trim());return {name:a[0],duration_days:Number(a[1]),price_rub:Number(a[2]),is_active:(a[3]||"on").toLowerCase()!=="off"};
+ });
+ if(!document.getElementById("pName").value.trim()){msg.textContent="Укажи название товара";return;}
+ if(!plans.length||plans.some(p=>!p.name||!Number.isInteger(p.duration_days)||p.duration_days<=0||!Number.isFinite(p.price_rub)||p.price_rub<0)){msg.textContent="Проверь тарифы: Название | дни | цена ₽ | on/off";return;}
+ btn.disabled=true;msg.textContent="Сохраняю…";
+ try{
+  const body={action:"save_product",id:document.getElementById("pId").value||undefined,name:document.getElementById("pName").value.trim(),description:document.getElementById("pDescription").value.trim(),features:document.getElementById("pFeatures").value.split("\n").map(x=>x.trim()).filter(Boolean),platform:document.getElementById("pPlatform").value.trim(),sort_order:Number(document.getElementById("pSort").value)||0,is_active:document.getElementById("pActive").checked,plans};
+  await api("POST",body);msg.textContent="Сохранено";document.getElementById("productEditor").classList.add("hide");await loadProducts();
+ }catch(e){msg.textContent="Ошибка: "+e.message;}finally{btn.disabled=false;}
+};
+document.getElementById("productsList").onclick=async e=>{
+ const edit=e.target.closest("[data-edit]"),toggle=e.target.closest("[data-toggle]");
+ if(edit){const p=allProducts.find(x=>String(x.id)===edit.dataset.edit);openEditor(p);return;}
+ if(toggle){toggle.disabled=true;try{await api("POST",{action:"toggle_product",product_id:toggle.dataset.toggle,is_active:toggle.dataset.active!=="true"});await loadProducts();}catch(err){alert(err.message);toggle.disabled=false;}}
+};
+document.getElementById("newProduct").onclick=()=>openEditor();
+document.getElementById("cancelProduct").onclick=()=>document.getElementById("productEditor").classList.add("hide");
+document.getElementById("reloadProducts").onclick=loadProducts;
+document.getElementById("ordersTab").onclick=()=>{document.getElementById("ordersSection").classList.remove("hide");document.getElementById("productsSection").classList.add("hide");document.getElementById("ordersTab").classList.add("primary");document.getElementById("productsTab").classList.remove("primary");};
+document.getElementById("productsTab").onclick=()=>{document.getElementById("productsSection").classList.remove("hide");document.getElementById("ordersSection").classList.add("hide");document.getElementById("productsTab").classList.add("primary");document.getElementById("ordersTab").classList.remove("primary");loadProducts();};
 let selectedUser=null;
 document.getElementById("userFind").onclick=async()=>{
- const query=document.getElementById("userSearch").value.trim();
- const out=document.getElementById("userResult");
+ const query=document.getElementById("userSearch").value.trim(),out=document.getElementById("userResult");
  if(!query){out.innerHTML='<div class="meta error">Введи Telegram ID или username</div>';return;}
  out.innerHTML='<div class="meta">Поиск…</div>';
  try{
-  const d=await api("POST",{action:"search_user",query});
-  selectedUser=d.user;
+  const d=await api("POST",{action:"search_user",query});selectedUser=d.user;
   out.innerHTML='<div class="stat" style="margin-top:8px"><small>Покупатель</small><strong style="font-size:16px">'+esc(d.user.first_name||"Пользователь")+(d.user.username?' · @'+esc(d.user.username):'')+'</strong><div class="meta">Telegram ID: '+esc(d.user.telegram_user_id)+'</div><div class="price">Баланс: '+money(d.user.balance_rub)+'</div></div>'+
-  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><input id="balanceAmount" type="number" min="1" step="1" placeholder="Сумма, ₽" style="background:#090909;border:1px solid var(--line);border-radius:9px;padding:11px;color:white"><input id="balanceReason" placeholder="Причина операции" style="background:#090909;border:1px solid var(--line);border-radius:9px;padding:11px;color:white"></div>'+
+  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><input id="balanceAmount" type="number" min="1" step="1" placeholder="Сумма, ₽"><input id="balanceReason" placeholder="Причина операции"></div>'+
   '<div class="actions"><button class="good" data-balance="credit">＋ Начислить</button><button class="warn" data-balance="debit">− Списать</button></div>';
  }catch(e){selectedUser=null;out.innerHTML='<div class="meta error">'+esc(e.message)+'</div>';}
 };
 document.getElementById("userResult").onclick=async e=>{
  const b=e.target.closest("button[data-balance]");if(!b||!selectedUser)return;
- const amount=Number(document.getElementById("balanceAmount").value);
- const reason=document.getElementById("balanceReason").value.trim();
+ const amount=Number(document.getElementById("balanceAmount").value),reason=document.getElementById("balanceReason").value.trim();
  if(!Number.isSafeInteger(amount)||amount<=0){alert("Введи целую сумму в рублях больше нуля");return;}
  if(!reason){alert("Укажи причину операции");return;}
- const action=b.dataset.balance;
- const verb=action==="credit"?"начислить":"списать";
+ const action=b.dataset.balance,verb=action==="credit"?"начислить":"списать";
  if(!confirm("Подтвердить: "+verb+" "+money(amount)+" пользователю "+selectedUser.telegram_user_id+"?"))return;
  b.disabled=true;
- try{
-  const d=await api("POST",{action:"adjust_balance",telegram_user_id:selectedUser.telegram_user_id,amount_rub:amount,operation:action,reason});
-  alert("Готово. Новый баланс: "+money(d.result.balance_rub));
-  document.getElementById("userFind").click();
- }catch(err){alert(err.message);b.disabled=false;}
+ try{const d=await api("POST",{action:"adjust_balance",telegram_user_id:selectedUser.telegram_user_id,amount_rub:amount,operation:action,reason});alert("Готово. Новый баланс: "+money(d.result.balance_rub));document.getElementById("userFind").click();}
+ catch(err){alert(err.message);b.disabled=false;}
 };
-document.getElementById("reload").onclick=load;
+document.getElementById("reload").onclick=()=>{load();if(!document.getElementById("productsSection").classList.contains("hide"))loadProducts();};
 document.getElementById("filters").onclick=e=>{const b=e.target.closest("button[data-filter]");if(!b)return;filter=b.dataset.filter;document.querySelectorAll("[data-filter]").forEach(x=>x.classList.toggle("primary",x===b));render();};
 document.getElementById("orders").onclick=async e=>{
  const b=e.target.closest("button[data-act]");if(!b)return;const id=b.dataset.id,act=b.dataset.act;
  try{
   b.disabled=true;
-  if(act==="start"){await api("POST",{action:"start",order_id:id});}
+  if(act==="start")await api("POST",{action:"start",order_id:id});
   if(act==="refund"){const reason=prompt("Причина отмены и возврата:");if(!reason){b.disabled=false;return;}await api("POST",{action:"refund",order_id:id,reason});}
   if(act==="fulfill"){
    const type=prompt("Тип выдачи: text / activation_key / download_link","activation_key");if(!type){b.disabled=false;return;}
    const value=prompt(type==="download_link"?"Вставь ссылку":"Вставь текст или ключ");if(!value){b.disabled=false;return;}
-   const payload={action:"fulfill",order_id:id,delivery_type:type};
-   if(type==="download_link")payload.download_url=value;else payload.message=value;
+   const payload={action:"fulfill",order_id:id,delivery_type:type};if(type==="download_link")payload.download_url=value;else payload.message=value;
    await api("POST",payload);
   }
   await load();
