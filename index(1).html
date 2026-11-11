@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#090a0d">
+<title>KADZI STORE</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{color-scheme:dark;--bg:#090a0d;--panel:#151820;--line:#2b303b;--txt:#f5f6fa;--muted:#9ba3b1;--red:#f33d52;--green:#49e8aa}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font:14px/1.5 system-ui,Arial,sans-serif;padding:0 0 85px}
+.wrap{max-width:900px;margin:auto;padding:0 15px}header{height:68px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff16;position:sticky;top:0;background:#090a0df2;z-index:5}
+.brand{font-weight:950;letter-spacing:1px}.brand span{color:var(--red)}.balance{background:#12251d;border:1px solid #28533f;color:var(--green);padding:9px 12px;border-radius:11px;font-weight:900}
+.hero{margin:20px 0;padding:25px 20px;border:1px solid #46303a;border-radius:20px;background:radial-gradient(ellipse at 95% 5%,#f33d5230,transparent 45%),linear-gradient(135deg,#191a22,#101116)}
+.hero small{color:var(--green);font-weight:900;letter-spacing:2px}.hero h1{font-size:36px;line-height:1.05;margin:12px 0}.hero p,.muted{color:var(--muted)}
+h2{font-size:21px;margin:24px 0 12px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.card,.order,.profile{background:linear-gradient(145deg,#191c23,#111318);border:1px solid var(--line);border-radius:16px;padding:13px;min-width:0}
+.card h3{margin:5px 0}.tag{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+select, input{width:100%;background:#0d1015;color:white;border:1px solid var(--line);border-radius:10px;padding:10px;margin:8px 0}
+button,.btn{border:0;border-radius:11px;padding:11px 14px;font-weight:900;cursor:pointer;text-decoration:none;display:inline-block}
+.primary{background:linear-gradient(135deg,#ff4057,#df263e);color:white}.buy{width:100%;background:var(--green);color:#07150f}
+.page{display:none}.page.active{display:block}.wallet{padding:18px;border:1px solid #28533f;background:#14231d;border-radius:17px;margin:15px 0}.wallet strong{display:block;color:var(--green);font-size:30px}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#101216f5;border-top:1px solid var(--line);padding:8px 4px calc(8px + env(safe-area-inset-bottom));z-index:10}
+.navin{max-width:600px;margin:auto;display:grid;grid-template-columns:repeat(5,1fr)}.nav button{background:none;color:var(--muted);font-size:10px;padding:5px 1px}.nav button.active{color:var(--green)}
+.order{margin:10px 0}.status{color:#f2bd59}.status.fulfilled{color:var(--green)}.delivery{margin-top:10px;padding:10px;background:#0e2118;border:1px solid #24543d;border-radius:10px;overflow-wrap:anywhere}
+.empty{padding:24px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:14px;grid-column:1/-1}
+.notice{padding:12px;background:#201b16;border:1px solid #3b3430;border-radius:12px;color:#d8c8a9;font-size:12px;margin:12px 0}
+.gate{display:none;min-height:100dvh;align-items:center;justify-content:center;padding:24px;text-align:center}.gatebox{max-width:380px;padding:25px;border:1px solid var(--line);border-radius:20px;background:var(--panel)}
+.toast{position:fixed;bottom:95px;left:50%;transform:translateX(-50%);background:#fff;color:#111;padding:10px 14px;border-radius:10px;display:none;z-index:20;font-weight:800}
+@media(min-width:650px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.nav{display:none}body{padding-bottom:25px}.hero{padding:35px}}
+</style>
+</head>
+<body>
+<div class="gate" id="gate"><div class="gatebox"><h1>KADZI STORE</h1><p class="muted">Магазин открывается внутри Telegram. Вернись в бот и нажми «Магазин».</p><a class="btn primary" href="https://t.me/kadzistore_bot">Открыть бота</a></div></div>
+<div class="wrap" id="app">
+<header><div class="brand">KD<span>S</span> · KADZI STORE</div><button class="balance" id="miniBalance">0 ₽</button></header>
+<section class="page active" id="home"><div class="hero"><small>KADZI DIGITAL STORE</small><h1>Твой выбор.<br><span style="color:var(--red)">Твой игровой мир.</span></h1><p>Цифровые продукты для Android NROOT и iOS. Выбирай тариф и оплачивай с внутреннего баланса.</p><button class="primary" data-go="catalog">Открыть каталог</button></div><h2>Каталог</h2><div class="grid" id="homeProducts"></div></section>
+<section class="page" id="catalog"><h2>Каталог</h2><input id="search" placeholder="Поиск товара..."><div class="grid" id="catalogProducts"></div></section>
+<section class="page" id="balance"><h2>Мой баланс</h2><div class="wallet">Доступно для покупок<strong id="walletBalance">0 ₽</strong><p class="muted">Покупки оплачиваются с внутреннего RUB-баланса.</p><button class="primary" id="topup">Пополнить баланс</button></div><div class="notice">Автоматическое пополнение через 1Fin пока подключается. Для пополнения напиши в поддержку.</div></section>
+<section class="page" id="purchases"><h2>Мои покупки</h2><div id="orders"></div></section>
+<section class="page" id="profile"><h2>Профиль</h2><div class="profile"><b id="profileName">Покупатель</b><div class="muted" id="profileId"></div></div><div class="order"><b>Поддержка</b><p><a href="https://t.me/ByKadzi" style="color:var(--green)">@ByKadzi</a></p></div><div class="order" id="adminLink" hidden><a style="color:var(--green)" href="https://vpuaihznkswrpsqxgcvm.supabase.co/functions/v1/kds-admin">Открыть админ-панель</a></div></section>
+</div>
+<nav class="nav"><div class="navin"><button class="active" data-go="home">⌂<br>Главная</button><button data-go="catalog">▦<br>Каталог</button><button data-go="balance">₽<br>Баланс</button><button data-go="purchases">▤<br>Покупки</button><button data-go="profile">◉<br>Профиль</button></div></nav><div class="toast" id="toast"></div>
+<script>
+(()=>{
+const tg=window.Telegram?.WebApp;
+const API="https://vpuaihznkswrpsqxgcvm.supabase.co/functions/v1/kds-api?api=1";
+const $=id=>document.getElementById(id);
+let state={user:null,products:[],orders:[]};
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const money=n=>new Intl.NumberFormat("ru-RU").format(Number(n||0))+" ₽";
+function toast(s){$("toast").textContent=s;$("toast").style.display="block";setTimeout(()=>$("toast").style.display="none",2500)}
+function headers(){return {"Content-Type":"application/json","X-Telegram-Init-Data":tg?.initData||""}}
+async function api(method,body){const r=await fetch(API,{method,headers:headers(),body:body?JSON.stringify(body):undefined});let d={};try{d=await r.json()}catch{}if(!r.ok)throw Error(d.error||"Ошибка запроса");return d}
+function go(id){document.querySelectorAll(".page").forEach(x=>x.classList.toggle("active",x.id===id));document.querySelectorAll("[data-go]").forEach(x=>x.classList.toggle("active",x.dataset.go===id));window.scrollTo(0,0)}
+function card(p){const plans=p.plans||[];return `<article class="card"><div class="tag">${esc(p.platform||"Digital")}</div><h3>${esc(p.name)}</h3><div class="muted">${esc(p.description||"Цифровой продукт")}</div><select id="plan-${esc(p.id)}">${plans.map(x=>`<option value="${esc(x.id)}">${esc(x.duration_label)} · ${money(x.price_rub)}</option>`).join("")}</select><button class="buy" data-buy="${esc(p.id)}">Купить</button></article>`}
+function renderProducts(){const q=($("search").value||"").toLowerCase();const list=state.products.filter(p=>(p.name+" "+p.platform+" "+p.description).toLowerCase().includes(q));$("catalogProducts").innerHTML=list.length?list.map(card).join(""):'<div class="empty">Ничего не найдено</div>';$("homeProducts").innerHTML=state.products.slice(0,4).map(card).join("")}
+const labels={awaiting_fulfillment:"Ожидает выдачи",processing:"В обработке",fulfilled:"Выполнен",cancelled:"Отменён",refunded:"Возврат"};
+function renderOrders(){if(!state.orders.length){$("orders").innerHTML='<div class="empty">Покупок пока нет.</div>';return}$("orders").innerHTML=state.orders.map(o=>{const d=(o.kds_order_deliveries||[])[0];return `<article class="order"><b>Заказ #${esc(o.order_number)}</b> <span class="status ${esc(o.status)}">${esc(labels[o.status]||o.status)}</span><p>${esc(o.product_name)} · ${esc(o.duration_label)}</p><div class="muted">${new Date(o.created_at).toLocaleString("ru-RU")} · ${money(o.amount_rub)}</div>${d?`<div class="delivery"><b>Выдача товара</b><p>${esc(d.message||"")}</p>${d.download_url?`<a style="color:var(--green)" href="${esc(d.download_url)}" target="_blank" rel="noopener">Открыть ссылку ↗</a>`:""}</div>`:""}</article>`}).join("")}
+function renderUser(){const u=state.user||{};$("miniBalance").textContent=money(u.balance_rub);$("walletBalance").textContent=money(u.balance_rub);$("profileName").textContent=u.first_name||"Покупатель";$("profileId").textContent="Telegram ID: "+u.telegram_user_id;$("adminLink").hidden=String(u.telegram_user_id)!=="8960651311"}
+async function refresh(){try{const d=await api("GET");state.user=d.user;state.products=d.products||[];state.orders=d.orders||[];renderUser();renderProducts();renderOrders()}catch(e){toast(e.message)}}
+async function buy(id){const sel=$("plan-"+id);if(!sel?.value)return toast("Выбери тариф");const p=state.products.find(x=>x.id===id);const plan=p?.plans?.find(x=>x.id===sel.value);if(!plan)return toast("Тариф не найден");if(!confirm(`Купить ${p.name} на ${plan.duration_label} за ${money(plan.price_rub)}?`))return;try{const d=await api("POST",{action:"create_order",plan_id:plan.id});toast("Заказ #"+d.order.order_number+" создан");await refresh();go("purchases")}catch(e){toast(e.message)}}
+document.addEventListener("click",e=>{const g=e.target.closest("[data-go]");if(g)go(g.dataset.go);const b=e.target.closest("[data-buy]");if(b)buy(b.dataset.buy)});
+$("search").addEventListener("input",renderProducts);$("miniBalance").onclick=()=>go("balance");$("topup").onclick=()=>tg?.openTelegramLink?tg.openTelegramLink("https://t.me/ByKadzi"):location.href="https://t.me/ByKadzi";
+if(!tg?.initData){$("app").style.display="none";document.querySelector(".nav").style.display="none";$("gate").style.display="flex";return}
+tg.ready();tg.expand();refresh();
+})();
+</script>
+</body></html>
