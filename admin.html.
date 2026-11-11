@@ -1,0 +1,121 @@
+
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KDS Admin</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{color-scheme:dark;--bg:#090909;--panel:#151515;--line:#292929;--red:#ef3434;--muted:#999;--green:#37c978;--yellow:#f3b544}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f5f5f5;font:14px Inter,system-ui,Arial,sans-serif}
+header{padding:18px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#090909;z-index:3}
+.logo{font-weight:900;letter-spacing:1px;font-size:20px}.logo b{color:var(--red)}.tag{font-size:11px;color:var(--muted)}
+main{max-width:900px;margin:auto;padding:16px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:16px}
+.stat,.order{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:13px}.stat small{color:var(--muted)}.stat strong{display:block;font-size:21px;margin-top:5px}
+.filters{display:flex;gap:7px;overflow:auto;padding:3px 0 12px}.filters button{white-space:nowrap}
+button{border:1px solid var(--line);background:#202020;color:white;border-radius:9px;padding:9px 12px;font-weight:650;cursor:pointer}
+button.primary{background:var(--red);border-color:var(--red)}button.good{background:#145d37;border-color:#145d37}button.warn{background:#684715;border-color:#684715}
+button:disabled{opacity:.5;cursor:wait}.order{margin:9px 0}.top{display:flex;justify-content:space-between;gap:10px}.number{font-weight:800;font-size:16px}.status{font-size:11px;border-radius:20px;padding:5px 8px;background:#333;white-space:nowrap}.status.awaiting_fulfillment{color:var(--yellow)}.status.processing{color:#80baff}.status.fulfilled{color:var(--green)}.status.refunded,.status.cancelled{color:#ff8585}
+.meta{color:var(--muted);font-size:12px;line-height:1.6;margin:9px 0}.price{font-weight:800;font-size:17px}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.empty,.notice{padding:24px;text-align:center;color:var(--muted);background:var(--panel);border-radius:12px}
+.error{color:#ff8585}.refresh{font-size:12px;color:var(--muted)}.hide{display:none}
+@media(max-width:480px){.stats{grid-template-columns:repeat(3,1fr)}.stat{padding:10px}.stat strong{font-size:17px}.order{padding:11px}}
+</style></head>
+<body>
+<header><div><div class="logo"><b>KD</b>S ADMIN</div><div class="tag">Панель управления магазином</div></div><button id="reload">↻ Обновить</button></header>
+<main>
+<div class="stats"><div class="stat"><small>Новые</small><strong id="sNew">—</strong></div><div class="stat"><small>В работе</small><strong id="sWork">—</strong></div><div class="stat"><small>Выполнено</small><strong id="sDone">—</strong></div></div>
+<section class="order" style="margin:0 0 16px">
+  <div class="number">Баланс пользователей</div>
+  <div class="meta">Найди покупателя по Telegram ID или username, чтобы начислить или списать рубли.</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <input id="userSearch" placeholder="Telegram ID или @username" style="flex:1;min-width:190px;background:#090909;border:1px solid var(--line);border-radius:9px;padding:11px;color:white">
+    <button class="primary" id="userFind">Найти</button>
+  </div>
+  <div id="userResult" style="margin-top:12px"></div>
+</section>
+<div class="filters" id="filters">
+<button data-filter="all" class="primary">Все</button><button data-filter="awaiting_fulfillment">Ожидают</button><button data-filter="processing">В процессе</button><button data-filter="fulfilled">Выполнены</button><button data-filter="refunded">Возвраты</button>
+</div>
+<div class="refresh" id="updated">Загрузка заказов…</div><div id="orders"></div>
+</main>
+<script>
+const tg=window.Telegram?.WebApp; tg?.ready(); tg?.expand();
+const initData=tg?.initData||"";
+let allOrders=[], filter="all";
+const labels={awaiting_fulfillment:"Ожидает выдачи",processing:"В процессе",fulfilled:"Выполнен",refunded:"Возврат",cancelled:"Отменён"};
+const money=v=>new Intl.NumberFormat("ru-RU").format(v)+" ₽";
+async function api(method="GET",body){
+ const r=await fetch("https://vpuaihznkswrpsqxgcvm.supabase.co/functions/v1/kds-admin?api=1",{method,headers:{"Content-Type":"application/json","X-Telegram-Init-Data":initData},body:body?JSON.stringify(body):undefined});
+ const d=await r.json(); if(!r.ok)throw new Error(d.error||"Ошибка запроса"); return d;
+}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function render(){
+ const rows=allOrders.filter(o=>filter==="all"||o.status===filter);
+ document.getElementById("orders").innerHTML=rows.length?rows.map(o=>{
+ const u=o.kds_users||{}, who=[u.first_name,u.username?"@"+u.username:null].filter(Boolean).join(" · ")||"Покупатель";
+ let acts="";
+ if(o.status==="awaiting_fulfillment")acts='<button class="primary" data-act="start" data-id="'+o.id+'">Взять в работу</button><button class="warn" data-act="refund" data-id="'+o.id+'">Отменить и вернуть</button>';
+ if(o.status==="processing")acts='<button class="good" data-act="fulfill" data-id="'+o.id+'">Выдать товар</button><button class="warn" data-act="refund" data-id="'+o.id+'">Отменить и вернуть</button>';
+ return '<section class="order"><div class="top"><div><div class="number">Заказ #'+esc(o.order_number)+'</div><div class="meta">'+esc(who)+'<br>Telegram ID: '+esc(u.telegram_user_id||"—")+'</div></div><span class="status '+esc(o.status)+'">'+esc(labels[o.status]||o.status)+'</span></div><div><b>'+esc(o.product_name)+'</b> · '+esc(o.duration_label)+'</div><div class="top" style="margin-top:9px"><span class="meta">'+new Date(o.created_at).toLocaleString("ru-RU")+'</span><span class="price">'+money(o.amount_rub)+'</span></div>'+(o.cancellation_reason?'<div class="meta">Причина: '+esc(o.cancellation_reason)+'</div>':"")+'<div class="actions">'+acts+'</div></section>';
+ }).join(""):'<div class="empty">Заказов в этом разделе пока нет</div>';
+ document.getElementById("sNew").textContent=allOrders.filter(o=>o.status==="awaiting_fulfillment").length;
+ document.getElementById("sWork").textContent=allOrders.filter(o=>o.status==="processing").length;
+ document.getElementById("sDone").textContent=allOrders.filter(o=>o.status==="fulfilled").length;
+}
+async function load(){
+ const el=document.getElementById("orders");el.innerHTML='<div class="notice">Загружаю…</div>';
+ try{const d=await api();allOrders=d.orders||[];render();document.getElementById("updated").textContent="Обновлено: "+new Date().toLocaleTimeString("ru-RU");}
+ catch(e){el.innerHTML='<div class="notice error">'+esc(e.message)+'</div>';document.getElementById("updated").textContent="Не удалось загрузить данные";}
+}
+let selectedUser=null;
+document.getElementById("userFind").onclick=async()=>{
+ const query=document.getElementById("userSearch").value.trim();
+ const out=document.getElementById("userResult");
+ if(!query){out.innerHTML='<div class="meta error">Введи Telegram ID или username</div>';return;}
+ out.innerHTML='<div class="meta">Поиск…</div>';
+ try{
+  const d=await api("POST",{action:"search_user",query});
+  selectedUser=d.user;
+  out.innerHTML='<div class="stat" style="margin-top:8px"><small>Покупатель</small><strong style="font-size:16px">'+esc(d.user.first_name||"Пользователь")+(d.user.username?' · @'+esc(d.user.username):'')+'</strong><div class="meta">Telegram ID: '+esc(d.user.telegram_user_id)+'</div><div class="price">Баланс: '+money(d.user.balance_rub)+'</div></div>'+
+  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><input id="balanceAmount" type="number" min="1" step="1" placeholder="Сумма, ₽" style="background:#090909;border:1px solid var(--line);border-radius:9px;padding:11px;color:white"><input id="balanceReason" placeholder="Причина операции" style="background:#090909;border:1px solid var(--line);border-radius:9px;padding:11px;color:white"></div>'+
+  '<div class="actions"><button class="good" data-balance="credit">＋ Начислить</button><button class="warn" data-balance="debit">− Списать</button></div>';
+ }catch(e){selectedUser=null;out.innerHTML='<div class="meta error">'+esc(e.message)+'</div>';}
+};
+document.getElementById("userResult").onclick=async e=>{
+ const b=e.target.closest("button[data-balance]");if(!b||!selectedUser)return;
+ const amount=Number(document.getElementById("balanceAmount").value);
+ const reason=document.getElementById("balanceReason").value.trim();
+ if(!Number.isSafeInteger(amount)||amount<=0){alert("Введи целую сумму в рублях больше нуля");return;}
+ if(!reason){alert("Укажи причину операции");return;}
+ const action=b.dataset.balance;
+ const verb=action==="credit"?"начислить":"списать";
+ if(!confirm("Подтвердить: "+verb+" "+money(amount)+" пользователю "+selectedUser.telegram_user_id+"?"))return;
+ b.disabled=true;
+ try{
+  const d=await api("POST",{action:"adjust_balance",telegram_user_id:selectedUser.telegram_user_id,amount_rub:amount,operation:action,reason});
+  alert("Готово. Новый баланс: "+money(d.result.balance_rub));
+  document.getElementById("userFind").click();
+ }catch(err){alert(err.message);b.disabled=false;}
+};
+document.getElementById("reload").onclick=load;
+document.getElementById("filters").onclick=e=>{const b=e.target.closest("button[data-filter]");if(!b)return;filter=b.dataset.filter;document.querySelectorAll("[data-filter]").forEach(x=>x.classList.toggle("primary",x===b));render();};
+document.getElementById("orders").onclick=async e=>{
+ const b=e.target.closest("button[data-act]");if(!b)return;const id=b.dataset.id,act=b.dataset.act;
+ try{
+  b.disabled=true;
+  if(act==="start"){await api("POST",{action:"start",order_id:id});}
+  if(act==="refund"){const reason=prompt("Причина отмены и возврата:");if(!reason){b.disabled=false;return;}await api("POST",{action:"refund",order_id:id,reason});}
+  if(act==="fulfill"){
+   const type=prompt("Тип выдачи: text / activation_key / download_link","activation_key");if(!type){b.disabled=false;return;}
+   const value=prompt(type==="download_link"?"Вставь ссылку":"Вставь текст или ключ");if(!value){b.disabled=false;return;}
+   const payload={action:"fulfill",order_id:id,delivery_type:type};
+   if(type==="download_link")payload.download_url=value;else payload.message=value;
+   await api("POST",payload);
+  }
+  await load();
+ }catch(err){alert(err.message);b.disabled=false;}
+};
+if(!initData){document.getElementById("orders").innerHTML='<div class="notice error">Открой эту страницу через Telegram Mini App, чтобы подтвердить администратора.</div>';}
+else load();
+</script></body></html>
