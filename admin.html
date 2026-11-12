@@ -258,7 +258,7 @@ document.getElementById("deliveryConfirm").onclick=async()=>{
  if(!deliveryOrderId)return;
  msg.disabled=true;msg.textContent="Выдаю…";
  try{
-  const payload={action:"fulfill",order_id:deliveryOrderId,delivery_type:"activation_key",message:"KADZI_DELIVERY_V1\\nKEY:"+key+"\\nINSTRUCTION:"+instruction};
+  const payload={action:"fulfill",order_id:deliveryOrderId,delivery_type:"activation_key",message:"KEY:\n\n"+key+"\n\nИнструкция:\n"+instruction};
   await api("POST",payload);closeDeliveryModal();await load();
  }catch(err){alert(err.message);}
  finally{msg.disabled=false;msg.textContent="Выдать товар";}

@@ -85,11 +85,15 @@ function openProduct(id){const p=state.products.find(x=>String(x.id)===String(id
 const labels={awaiting_fulfillment:"Ожидает выдачи",processing:"В обработке",fulfilled:"Выполнен",cancelled:"Отменён",refunded:"Возврат"};
 function renderDelivery(d){
  const raw=String(d.message||"");
+ const fallbackInstruction="https://t.me/+YGOwB71cb3AzYTNi";
  if(raw.startsWith("KADZI_DELIVERY_V1\\n")){
-  const lines=raw.split("\\n"),key=(lines.find(x=>x.startsWith("KEY:"))||"").slice(4),instruction=(lines.find(x=>x.startsWith("INSTRUCTION:"))||"").slice(12);
-  return `<div class="delivery-key"><code>${esc(key)}</code><button class="copy-key" type="button" data-copy-key="${esc(key)}">Скопировать</button></div>${instruction?`<a class="delivery-instruction" href="${esc(instruction)}" target="_blank" rel="noopener">Открыть инструкцию ↗</a>`:""}`;
+  const lines=raw.split("\\n"),key=(lines.find(x=>x.startsWith("KEY:"))||"").slice(4),instruction=(lines.find(x=>x.startsWith("INSTRUCTION:"))||"").slice(12)||fallbackInstruction;
+  return `<div class="delivery-key"><code>${esc(key)}</code><button class="copy-key" type="button" data-copy-key="${esc(key)}">Скопировать</button></div><p style="margin:14px 0 5px"><b>Инструкция:</b></p><a class="delivery-instruction" href="${esc(instruction)}" target="_blank" rel="noopener">Открыть инструкцию ↗</a>`;
  }
- return `<p>${esc(raw)}</p>`;
+ const marker=raw.match(/^KEY:\s*([\s\S]*?)\n\nИнструкция:\n([\s\S]*)$/);
+ if(marker){const key=marker[1].trim(),instruction=marker[2].trim()||fallbackInstruction;return `<div class="delivery-key"><code>${esc(key)}</code><button class="copy-key" type="button" data-copy-key="${esc(key)}">Скопировать</button></div><p style="margin:14px 0 5px"><b>Инструкция:</b></p><a class="delivery-instruction" href="${esc(instruction)}" target="_blank" rel="noopener">Открыть инструкцию ↗</a>`;}
+ // Automatic stock keys are stored as plain text. Keep the key readable and always show the instruction.
+ return `<div class="delivery-key"><code>${esc(raw)}</code><button class="copy-key" type="button" data-copy-key="${esc(raw)}">Скопировать</button></div><p style="margin:14px 0 5px"><b>Инструкция:</b></p><a class="delivery-instruction" href="${fallbackInstruction}" target="_blank" rel="noopener">Открыть инструкцию ↗</a>`;
 }
 function renderOrders(){let filtered=state.orders.filter(o=>state.history==="all"||o.status===state.history);const q=($("historySearch")?.value||"").toLowerCase();filtered=filtered.filter(o=>String(o.order_number||"").includes(q)||(o.product_name||"").toLowerCase().includes(q));if(!filtered.length){$("orders").innerHTML='<div class="empty">Покупок пока нет.</div>';return}$("orders").innerHTML=filtered.map(o=>{const d=(o.kds_order_deliveries||[])[0];return `<article class="order"><b>Заказ #${esc(o.order_number)}</b> <span class="status ${esc(o.status)}">${esc(labels[o.status]||o.status)}</span><p>${esc(o.product_name)} · ${esc(o.duration_label)}</p><div class="muted">Дата и время: ${new Date(o.created_at).toLocaleString("ru-RU")}<br>Сумма: ${money(o.amount_rub)}<br>Статус: ${esc(labels[o.status]||o.status)}<br>ID заказа: ${esc(o.id||"—")}</div>${d?`<div class="delivery"><b>Выдача товара</b>${renderDelivery(d)}${d.download_url?`<a style="color:var(--green)" href="${esc(d.download_url)}" target="_blank" rel="noopener">Открыть ссылку ↗</a>`:""}</div>`:""}</article>`}).join("")}
 function renderUser(){const u=state.user||{};$("miniBalance").textContent=money(u.balance_rub);$("walletBalance").textContent=money(u.balance_rub);$("balanceProfileName").textContent=u.first_name||"Покупатель";$("balanceProfileId").textContent="Telegram ID: "+(u.telegram_user_id||"—");$("adminLink").hidden=String(u.telegram_user_id)!=="8960651311"}
