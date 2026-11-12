@@ -5,23 +5,23 @@
 <title>KDS Admin</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-:root{color-scheme:dark;--bg:#090909;--panel:#151515;--line:#292929;--red:#ef3434;--muted:#999;--green:#37c978;--yellow:#f3b544}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f5f5f5;font:14px Inter,system-ui,Arial,sans-serif}
+:root{color-scheme:dark;--bg:#09090e;--panel:#19131d;--line:#452638;--red:#ef3434;--muted:#999;--green:#37c978;--yellow:#f3b544}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 0% 0%,#45132b66,transparent 40%),radial-gradient(ellipse at 100% 30%,#24113c55,transparent 35%),var(--bg);color:#f5f5f5;font:14px Inter,system-ui,Arial,sans-serif}
 header{padding:18px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#090909;z-index:3}
 .logo{font-weight:900;letter-spacing:1px;font-size:20px}.logo b{color:var(--red)}.tag{font-size:11px;color:var(--muted)}
 main{max-width:900px;margin:auto;padding:16px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:16px}
-.stat,.order{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:13px}.stat small{color:var(--muted)}.stat strong{display:block;font-size:21px;margin-top:5px}
+.stat,.order{background:linear-gradient(145deg,#261622,#12141b);border:1px solid var(--line);border-radius:13px;padding:13px}.stat small{color:var(--muted)}.stat strong{display:block;font-size:21px;margin-top:5px}
 .filters{display:flex;gap:7px;overflow:auto;padding:3px 0 12px}.filters button{white-space:nowrap}
 button{border:1px solid var(--line);background:#202020;color:white;border-radius:9px;padding:9px 12px;font-weight:650;cursor:pointer}
-button.primary{background:var(--red);border-color:var(--red)}button.good{background:#145d37;border-color:#145d37}button.warn{background:#684715;border-color:#684715}
+button.primary{background:linear-gradient(120deg,#ff405d,#9e1c43 60%,#401c47);border-color:#e63a58;box-shadow:0 6px 18px #ef244433}button.good{background:#145d37;border-color:#145d37}button.warn{background:#684715;border-color:#684715}
 button:disabled{opacity:.5;cursor:wait}.order{margin:9px 0}.top{display:flex;justify-content:space-between;gap:10px}.number{font-weight:800;font-size:16px}.status{font-size:11px;border-radius:20px;padding:5px 8px;background:#333;white-space:nowrap}.status.awaiting_fulfillment{color:var(--yellow)}.status.processing{color:#80baff}.status.fulfilled{color:var(--green)}.status.refunded,.status.cancelled{color:#ff8585}
 .meta{color:var(--muted);font-size:12px;line-height:1.6;margin:9px 0}.price{font-weight:800;font-size:17px}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
 .empty,.notice{padding:24px;text-align:center;color:var(--muted);background:var(--panel);border-radius:12px}
 .error{color:#ff8585}.refresh{font-size:12px;color:var(--muted)}.hide{display:none}
-.tabs{display:flex;gap:8px;margin:0 0 14px}.tabs button{flex:1}.panel{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:14px;margin:10px 0}
+.tabs{display:flex;gap:8px;margin:0 0 14px}.tabs button{flex:1}.panel{background:linear-gradient(145deg,#261622,#12141b);border:1px solid var(--line);border-radius:13px;padding:14px;margin:10px 0}
 .field{display:grid;gap:6px;margin:10px 0}.field label{font-size:12px;color:var(--muted)}
 input,textarea,select{width:100%;background:#090909;border:1px solid var(--line);border-radius:9px;padding:11px;color:white;font:inherit}
-textarea{min-height:80px;resize:vertical}.product{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:13px;margin:9px 0}
+textarea{min-height:80px;resize:vertical}.product{background:linear-gradient(145deg,#261622,#12141b);border:1px solid var(--line);border-radius:13px;padding:13px;margin:9px 0}
 .product-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.muted{color:var(--muted);font-size:12px;line-height:1.5}
 .planline{padding:7px 0;border-top:1px solid var(--line);font-size:12px}
 @media(max-width:480px){.stats{grid-template-columns:repeat(3,1fr)}.stat{padding:10px}.stat strong{font-size:17px}.order{padding:11px}}
@@ -58,8 +58,11 @@ textarea{min-height:80px;resize:vertical}.product{background:var(--panel);border
   <div class="field"><label>Название</label><input id="pName" placeholder="Например, MAGIC VIP"></div>
    <div class="field"><label>Slug (латиницей, например magic-vip)</label><input id="pSlug" placeholder="magic-vip"></div>
   <div class="field"><label>Краткое описание</label><textarea id="pDescription" placeholder="Описание товара"></textarea></div>
+  <div class="field"><label>Изображение карточки (прямая HTTPS-ссылка)</label><input id="pImage" type="url" placeholder="https://.../image.jpg"><div id="imagePreview" style="height:120px;border-radius:12px;background:linear-gradient(135deg,#43162d,#161827);background-size:cover;background-position:center;border:1px solid var(--line)"></div><div class="muted">Загрузи изображение в хранилище или используй прямую ссылку. Поле сохраняется вместе с товаром, если API/таблица поддерживает image_url.</div></div>
   <div class="field"><label>Особенности (каждая с новой строки)</label><textarea id="pFeatures" placeholder="Функция 1&#10;Функция 2"></textarea></div>
   <div class="field"><label>Платформа</label><select id="pPlatform"><option value="Android NROOT">Android NROOT</option><option value="iOS">iOS</option></select></div>
+  <div class="field"><label>Игра</label><select id="pGame"><option>Oxide Survival Island</option><option>PUBG Mobile</option><option>Standoff 2</option><option>Mobile Legends</option><option>Genshin Impact</option><option>Free Fire</option></select></div>
+  <div class="field"><label>Подкатегория</label><select id="pSubcategory"><option value="Донат">Донат</option><option value="Софт">Софт</option></select></div>
   <div class="field"><label>Порядок сортировки</label><input id="pSort" type="number" value="0"></div>
   <div class="field"><label>Тарифы (по одному на строку: Название | дни | цена ₽ | on/off)</label><textarea id="pPlans" placeholder="1 месяц | 30 | 299 | on&#10;3 месяца | 90 | 799 | on"></textarea></div>
   <label style="display:flex;gap:8px;align-items:center"><input id="pActive" type="checkbox" checked style="width:auto"> Товар активен</label>
@@ -119,7 +122,7 @@ async function loadProducts(){
   if(!allProducts.length){el.innerHTML='<div class="empty">Товаров пока нет</div>';return;}
   el.innerHTML=allProducts.map(p=>{
    const plans=p.kds_product_plans||p.plans||[];
-   return '<article class="product"><div class="product-head"><div><b>'+esc(p.name)+'</b><div class="muted">'+esc(p.description||"")+'</div><div class="muted">Платформа: '+esc(p.platform||"—")+' · Сортировка: '+esc(p.sort_order??0)+'</div></div><span class="status">'+(p.is_active?'Активен':'Скрыт')+'</span></div>'+
+   return '<article class="product">'+(p.image_url?'<div style="height:100px;border-radius:10px;background:center/cover url('+esc(p.image_url)+')"></div>':'')+'<div class="product-head"><div><b>'+esc(p.name)+'</b><div class="muted">'+esc(p.description||"")+'</div><div class="muted">Платформа: '+esc(p.platform||"—")+' · Сортировка: '+esc(p.sort_order??0)+'</div></div><span class="status">'+(p.is_active?'Активен':'Скрыт')+'</span></div>'+
    plans.map(x=>'<div class="planline">'+esc(x.duration_label||x.name||x.title||"Тариф")+' · '+esc(x.duration_days)+' дн. · <b>'+money(x.price_rub??x.price??0)+'</b> · '+(x.is_active?'Активен':'Выключен')+'</div>').join("")+
    '<div class="meta">Остатки: '+plans.reduce((n,x)=>n+(x.kds_key_inventory||[]).filter(k=>k.status==='available').length,0)+' шт.</div><div class="actions"><button class="primary" data-edit="'+esc(p.id)+'">Изменить</button><button data-stock="'+esc(p.id)+'">Добавить содержимое</button><button class="warn" data-toggle="'+esc(p.id)+'" data-active="'+(p.is_active?'true':'false')+'">'+(p.is_active?'Скрыть':'Активировать')+'</button></div></article>';
   }).join("");
@@ -129,9 +132,9 @@ function openEditor(p){
  p=p||{};document.getElementById("productEditor").classList.remove("hide");
  document.getElementById("editorTitle").textContent=p.id?"Редактирование товара":"Новый товар";
  document.getElementById("pId").value=p.id||"";document.getElementById("pName").value=p.name||"";document.getElementById("pSlug").value=p.slug||"";
- document.getElementById("pDescription").value=p.description||"";
+ document.getElementById("pDescription").value=p.description||"";document.getElementById("pImage").value=p.image_url||p.image||"";document.getElementById("imagePreview").style.backgroundImage=p.image_url||p.image?`url("${p.image_url||p.image}")`:"linear-gradient(135deg,#43162d,#161827)";
  document.getElementById("pFeatures").value=Array.isArray(p.features)?p.features.join("\n"):(p.features||"");
- document.getElementById("pPlatform").value=p.platform||"";document.getElementById("pSort").value=p.sort_order??0;
+ document.getElementById("pPlatform").value=p.platform||"Android NROOT";document.getElementById("pGame").value=p.game_category||"Oxide Survival Island";document.getElementById("pSubcategory").value=p.subcategory||"Донат";updateSubcategoryOptions();document.getElementById("pSort").value=p.sort_order??0;
  document.getElementById("pActive").checked=p.is_active!==false;
  const plans=p.kds_product_plans||p.plans||[];
  document.getElementById("pPlans").value=plans.map(x=>(x.duration_label||x.name||x.title||"Тариф")+" | "+(x.duration_days||30)+" | "+(x.price_rub??x.price??0)+" | "+(x.is_active===false?"off":"on")).join("\n");
@@ -149,7 +152,7 @@ document.getElementById("saveProduct").onclick=async()=>{
  if(!plans.length||plans.some(p=>!p.duration_label||!Number.isInteger(p.duration_days)||p.duration_days<=0||!Number.isSafeInteger(p.price_rub)||p.price_rub<1)){msg.textContent="Проверь тарифы: Название | дни | цена ₽ | on/off";return;}
  btn.disabled=true;msg.textContent="Сохраняю…";
  try{
-  const body={action:"save_product",id:document.getElementById("pId").value||undefined,slug:document.getElementById("pSlug").value.trim().toLowerCase(),name:document.getElementById("pName").value.trim(),description:document.getElementById("pDescription").value.trim(),features:document.getElementById("pFeatures").value.split("\n").map(x=>x.trim()).filter(Boolean),platform:document.getElementById("pPlatform").value.trim(),sort_order:Number(document.getElementById("pSort").value)||0,is_active:document.getElementById("pActive").checked,plans};
+  const body={action:"save_product",id:document.getElementById("pId").value||undefined,slug:document.getElementById("pSlug").value.trim().toLowerCase(),name:document.getElementById("pName").value.trim(),description:document.getElementById("pDescription").value.trim(),image_url:document.getElementById("pImage").value.trim(),features:document.getElementById("pFeatures").value.split("\n").map(x=>x.trim()).filter(Boolean),platform:document.getElementById("pPlatform").value.trim(),game_category:document.getElementById("pGame").value,subcategory:document.getElementById("pSubcategory").value,sort_order:Number(document.getElementById("pSort").value)||0,is_active:document.getElementById("pActive").checked,plans};
   await api("POST",body);msg.textContent="Сохранено";document.getElementById("productEditor").classList.add("hide");await loadProducts();
  }catch(e){msg.textContent="Ошибка: "+e.message;}finally{btn.disabled=false;}
 };
@@ -160,6 +163,8 @@ document.getElementById("productsList").onclick=async e=>{
  if(toggle){toggle.disabled=true;try{await api("POST",{action:"toggle_product",product_id:toggle.dataset.toggle,is_active:toggle.dataset.active!=="true"});await loadProducts();}catch(err){alert(err.message);toggle.disabled=false;}}
 };
 document.getElementById("newProduct").onclick=()=>openEditor();
+document.getElementById("pImage").addEventListener("input",e=>{document.getElementById("imagePreview").style.backgroundImage=e.target.value?`url("${e.target.value.replace(/"/g,"%22")}")`:"linear-gradient(135deg,#43162d,#161827)";});
+function updateSubcategoryOptions(){const g=document.getElementById("pGame").value,sel=document.getElementById("pSubcategory"),allowSoft=!(["Mobile Legends","Genshin Impact","Free Fire"].includes(g));const current=sel.value;sel.innerHTML="<option value=\"Донат\">Донат</option>"+(allowSoft?"<option value=\"Софт\">Софт</option>":"");sel.value=allowSoft?current:"Донат";}document.getElementById("pGame").addEventListener("change",updateSubcategoryOptions);
 document.getElementById("cancelProduct").onclick=()=>document.getElementById("productEditor").classList.add("hide");
 document.getElementById("reloadProducts").onclick=loadProducts;
 let inventoryProducts=[];

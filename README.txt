@@ -1,13 +1,24 @@
-KADZI STORE - RELEASE PACKAGE
+KADZI STORE — обновление интерфейса v3
 
-Files:
-- index.html: updated Mini App storefront, category/product cards, top-up method selection (SBP/Crypto), neutral top-up notice without a cashier brand.
-- admin.html: admin panel with product-card editor and new inventory section. Inventory accepts one item per line and submits to the existing add_keys endpoint.
-- design-reference.png: visual reference image used for the storefront direction.
+Содержимое:
+- index.html — магазин для Telegram Mini App
+- admin.html — админ-панель
 
-Important:
-1. Replace the existing index.html and admin.html in the GitHub Pages repository with these files.
-2. Do not upload the reference PNG as a website asset unless you want it visible in the repository.
-3. The top-up request uses the existing kds-api request_topup action. It sends the chosen method and amount to the configured admin Telegram account, then opens the supplied support group invite link.
-4. The inventory editor uses the existing kds-admin add_keys action and stores each non-empty line as one stock item for the selected plan.
-5. The package has not been published to GitHub Pages or deployed to Supabase. Test inside Telegram after replacing the files.
+Что обновлено:
+- В категориях оставлены 6 игр: Oxide Survival Island, PUBG Mobile, Standoff 2, Mobile Legends, Genshin Impact, Free Fire.
+- Для каждой игры есть фильтр подкатегорий: Донат и Софт; для Mobile Legends, Genshin Impact и Free Fire доступен только Донат.
+- Карточки товаров открывают подробную страницу с описанием, игрой, подкатегорией, платформой и тарифами.
+- Поиск работает вместе с фильтрами игры и подкатегории.
+- Разделы объединены: профиль + баланс; «Покупки» переименованы в «История».
+- История содержит фильтры по статусу, поиск, дату/время, номер заказа, сумму, статус и данные выдачи.
+- В админ-панели можно выбрать игру, подкатегорию и указать HTTPS-ссылку на изображение карточки с предпросмотром.
+- Градиентный стиль применён к магазину и админ-панели.
+
+Важно:
+1. Заменить index.html и admin.html в корне GitHub Pages репозитория bykadzistore/kadzistore.
+2. Edge Functions kds-admin и kds-api уже обновлены в Supabase: чтение и сохранение game_category, subcategory и image_url.
+3. Для изображения указывай прямую HTTPS-ссылку на файл картинки (например, .jpg/.png/.webp), доступную без авторизации.
+4. Если товары были созданы до обновления, проверь в админке игру и подкатегорию каждого товара.
+5. После загрузки файлов открой Mini App заново или обнови его, чтобы сбросить кэш.
+
+Файлы интерфейса проверены на синтаксис JavaScript и структуру ZIP. Полный сценарий покупки в Telegram не запускался.
