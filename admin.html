@@ -25,6 +25,11 @@ textarea{min-height:80px;resize:vertical}.product{background:linear-gradient(145
 .product-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.muted{color:var(--muted);font-size:12px;line-height:1.5}
 .planline{padding:7px 0;border-top:1px solid var(--line);font-size:12px}
 @media(max-width:480px){.stats{grid-template-columns:repeat(3,1fr)}.stat{padding:10px}.stat strong{font-size:17px}.order{padding:11px}}
+
+.delivery-modal{position:fixed;inset:0;background:#050509df;z-index:20;display:none;align-items:center;justify-content:center;padding:14px;backdrop-filter:blur(7px)}
+.delivery-modal.open{display:flex}.delivery-box{width:min(480px,100%);background:linear-gradient(145deg,#351522,#11131b 72%);border:1px solid #8b344e;border-radius:18px;padding:17px;box-shadow:0 20px 70px #000b}
+.delivery-box h3{margin:0 0 6px}.delivery-box label{display:block;margin:13px 0 6px;font-weight:750}.delivery-box input{margin:0}.delivery-actions{display:flex;gap:8px;margin-top:16px}.delivery-actions button{flex:1}
+.key-preview{font-family:ui-monospace,monospace;word-break:break-all;background:#090b10;border:1px dashed #8b344e;padding:11px;border-radius:10px;color:#fff}
 </style></head>
 <body>
 <header><div><div class="logo"><b>KD</b>S ADMIN</div><div class="tag">Панель управления магазином</div></div><button id="reload">↻ Обновить</button></header>
@@ -85,6 +90,18 @@ textarea{min-height:80px;resize:vertical}.product{background:linear-gradient(145
  <div id="inventoryProductsList"></div>
 </section>
 </main>
+<div class="delivery-modal" id="deliveryModal">
+ <div class="delivery-box">
+  <h3>Выдача товара</h3>
+  <div class="muted" id="deliveryOrderLabel">Заказ</div>
+  <label for="deliveryKey">1. Ключ / товар *</label>
+  <input id="deliveryKey" type="text" autocomplete="off" placeholder="Вставь ключ или данные товара">
+  <div class="muted" style="font-size:11px;margin-top:5px">Покупатель увидит ключ в отдельном блоке с кнопкой «Скопировать».</div>
+  <label for="deliveryInstruction">2. Инструкция</label>
+  <input id="deliveryInstruction" type="url" value="https://t.me/+YGOwB71cb3AzYTNi" placeholder="https://...">
+  <div class="delivery-actions"><button type="button" id="deliveryCancel">Отмена</button><button type="button" class="primary" id="deliveryConfirm">Выдать товар</button></div>
+ </div>
+</div>
 <script>
 const tg=window.Telegram?.WebApp; tg?.ready(); tg?.expand();
 const initData=tg?.initData||"";
@@ -218,13 +235,33 @@ document.getElementById("orders").onclick=async e=>{
   if(act==="start")await api("POST",{action:"start",order_id:id});
   if(act==="refund"){const reason=prompt("Причина отмены и возврата:");if(!reason){b.disabled=false;return;}await api("POST",{action:"refund",order_id:id,reason});}
   if(act==="fulfill"){
-   const type=prompt("Тип выдачи: text / activation_key / download_link","activation_key");if(!type){b.disabled=false;return;}
-   const value=prompt(type==="download_link"?"Вставь ссылку":"Вставь текст или ключ");if(!value){b.disabled=false;return;}
-   const payload={action:"fulfill",order_id:id,delivery_type:type};if(type==="download_link")payload.download_url=value;else payload.message=value;
-   await api("POST",payload);
+   b.disabled=false;
+   openDeliveryModal(id,oOrderLabel(id));
+   return;
   }
   await load();
  }catch(err){alert(err.message);b.disabled=false;}
+};
+let deliveryOrderId=null;
+function oOrderLabel(id){const o=allOrders.find(x=>String(x.id)===String(id));return o?"Заказ #"+o.order_number+" · "+(o.product_name||""):"Заказ";}
+function openDeliveryModal(id,label){deliveryOrderId=id;document.getElementById("deliveryOrderLabel").textContent=label;document.getElementById("deliveryKey").value="";document.getElementById("deliveryInstruction").value="https://t.me/+YGOwB71cb3AzYTNi";document.getElementById("deliveryModal").classList.add("open");}
+function closeDeliveryModal(){document.getElementById("deliveryModal").classList.remove("open");deliveryOrderId=null;}
+document.getElementById("deliveryCancel").onclick=closeDeliveryModal;
+document.getElementById("deliveryModal").addEventListener("click",e=>{if(e.target.id==="deliveryModal")closeDeliveryModal();});
+document.getElementById("deliveryConfirm").onclick=async()=>{
+ const key=document.getElementById("deliveryKey").value.trim();
+ const instruction=document.getElementById("deliveryInstruction").value.trim();
+ const msg=document.getElementById("deliveryConfirm");
+ if(!key){alert("Введи ключ или содержимое товара");return;}
+ if(/[\\r\\n]/.test(key)){alert("Ключ должен быть в одной строке");return;}
+ if(instruction){try{const u=new URL(instruction);if(u.protocol!=="https:"){alert("Инструкция должна быть HTTPS-ссылкой");return;}}catch(e){alert("Проверь ссылку инструкции");return;}}
+ if(!deliveryOrderId)return;
+ msg.disabled=true;msg.textContent="Выдаю…";
+ try{
+  const payload={action:"fulfill",order_id:deliveryOrderId,delivery_type:"activation_key",message:"KADZI_DELIVERY_V1\\nKEY:"+key+"\\nINSTRUCTION:"+instruction};
+  await api("POST",payload);closeDeliveryModal();await load();
+ }catch(err){alert(err.message);}
+ finally{msg.disabled=false;msg.textContent="Выдать товар";}
 };
 if(!initData){document.getElementById("orders").innerHTML='<div class="notice error">Открой эту страницу через Telegram Mini App, чтобы подтвердить администратора.</div>';}
 else load();
