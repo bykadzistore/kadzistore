@@ -12,8 +12,8 @@ header{padding:18px 16px;border-bottom:1px solid var(--line);display:flex;justif
 main{max-width:900px;margin:auto;padding:16px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:16px}
 .stat,.order{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:13px}.stat small{color:var(--muted)}.stat strong{display:block;font-size:21px;margin-top:5px}
 .filters{display:flex;gap:7px;overflow:auto;padding:3px 0 12px}.filters button{white-space:nowrap}
-button{appearance:none;-webkit-appearance:none;border:1px solid rgba(255,255,255,.16);background:rgba(31,34,43,.78);color:#f5f5f5;border-radius:12px;padding:10px 13px;font-weight:700;cursor:pointer;transition:background .18s,border-color .18s,transform .18s;backdrop-filter:blur(10px)}
-button:active{transform:scale(.98)}button.primary,button.good{background:linear-gradient(115deg,#f04468,#a92c69);border-color:#e95b86;color:#fff}button.warn{background:rgba(100,35,53,.48);border-color:rgba(255,130,160,.3);color:#ffb0c2}button:disabled{opacity:.5;cursor:wait}
+button{border:1px solid var(--line);background:#202020;color:white;border-radius:9px;padding:9px 12px;font-weight:650;cursor:pointer}
+button.primary{background:var(--red);border-color:var(--red)}button.good{background:#145d37;border-color:#145d37}button.warn{background:#684715;border-color:#684715}
 button:disabled{opacity:.5;cursor:wait}.order{margin:9px 0}.top{display:flex;justify-content:space-between;gap:10px}.number{font-weight:800;font-size:16px}.status{font-size:11px;border-radius:20px;padding:5px 8px;background:#333;white-space:nowrap}.status.awaiting_fulfillment{color:var(--yellow)}.status.processing{color:#80baff}.status.fulfilled{color:var(--green)}.status.refunded,.status.cancelled{color:#ff8585}
 .meta{color:var(--muted);font-size:12px;line-height:1.6;margin:9px 0}.price{font-weight:800;font-size:17px}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
 .empty,.notice{padding:24px;text-align:center;color:var(--muted);background:var(--panel);border-radius:12px}
@@ -21,16 +21,11 @@ button:disabled{opacity:.5;cursor:wait}.order{margin:9px 0}.top{display:flex;jus
 .tabs{display:flex;gap:8px;margin:0 0 14px}.tabs button{flex:1}.panel{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:14px;margin:10px 0}
 .field{display:grid;gap:6px;margin:10px 0}.field label{font-size:12px;color:var(--muted)}
 input:not([type="checkbox"]):not([type="hidden"]){width:100%;min-width:0;min-height:46px;background:#141418;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:11px 13px;color:#f5f5f5;font:inherit;outline:none;transition:border-color .2s,box-shadow .2s}
-input::placeholder,textarea::placeholder{color:#777b86}input:focus,textarea:focus,select:focus{border-color:#e04b79;box-shadow:0 0 0 3px #d9366825,0 0 18px #d9366818;outline:none}
-textarea,select{width:100%;min-width:0;background:rgba(20,22,30,.9);border:1px solid rgba(255,255,255,.13);border-radius:12px;padding:12px;color:#f5f5f5;font:inherit;resize:vertical;appearance:none;-webkit-appearance:none}
-select{background-image:linear-gradient(45deg,transparent 50%,#aeb4c0 50%),linear-gradient(135deg,#aeb4c0 50%,transparent 50%);background-position:calc(100% - 17px) 20px,calc(100% - 12px) 20px;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:30px}
-input[type="checkbox"]{appearance:none;-webkit-appearance:none;width:42px!important;height:24px;min-height:24px;border-radius:20px;background:#292d38;border:1px solid #596071;position:relative;cursor:pointer;vertical-align:middle;transition:.2s}
-input[type="checkbox"]:after{content:"";position:absolute;width:16px;height:16px;left:3px;top:3px;border-radius:50%;background:#aeb4c0;transition:.2s}
-input[type="checkbox"]:checked{background:linear-gradient(110deg,#f04468,#a92c69);border-color:#e95b86}input[type="checkbox"]:checked:after{left:21px;background:white}
+input::placeholder{color:#777b86}input:focus{border-color:#d93668;box-shadow:0 0 0 3px #d9366825,0 0 18px #d9366818}
+input[type="checkbox"]{accent-color:#d93668}
 .dropdown{position:relative}.dropdown-menu{display:none;position:absolute;z-index:8;top:calc(100% + 6px);left:0;right:0;padding:5px;background:#17171c;border:1px solid rgba(255,255,255,.12);border-radius:12px;box-shadow:0 14px 35px #000b;max-height:220px;overflow:auto}.dropdown.open .dropdown-menu{display:block}.dropdown-option{display:block;width:100%;text-align:left;background:transparent;border:0;border-radius:8px;padding:10px;color:#eee}.dropdown-option:hover,.dropdown-option.active{background:#d9366822;color:#ff8aa9}.product{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:13px;margin:9px 0}
 .product-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.muted{color:var(--muted);font-size:12px;line-height:1.5}
 .planline{padding:7px 0;border-top:1px solid var(--line);font-size:12px}
-.modal-backdrop{position:fixed;inset:0;z-index:20;background:#000c;display:flex;align-items:center;justify-content:center;padding:14px}.modal-backdrop[hidden]{display:none}.delivery-dialog{width:min(100%,520px);max-height:92dvh;overflow:auto;background:linear-gradient(145deg,#1a1c25,#101218);border:1px solid rgba(255,255,255,.17);border-radius:18px;padding:17px;box-shadow:0 24px 80px #000b}.delivery-dialog .top{align-items:center}.delivery-dialog .field{margin-top:16px}.delivery-dialog textarea{min-height:120px}
 @media(max-width:480px){.stats{grid-template-columns:repeat(3,1fr)}.stat{padding:10px}.stat strong{font-size:17px}.order{padding:11px}}
 </style></head>
 <body>
@@ -93,15 +88,6 @@ input[type="checkbox"]:checked{background:linear-gradient(110deg,#f04468,#a92c69
  <div id="inventoryProductsList"></div>
 </section>
 </main>
-<div id="deliveryModal" class="modal-backdrop" hidden>
- <section class="delivery-dialog" role="dialog" aria-modal="true" aria-labelledby="deliveryTitle">
-  <div class="top"><div><div class="number" id="deliveryTitle">Выдача товара</div><div class="muted" id="deliveryOrderLabel">Заполните данные для покупателя</div></div><button type="button" id="closeDelivery" aria-label="Закрыть">✕</button></div>
-  <div class="field"><label for="deliveryProduct">1. Сам товар</label><textarea id="deliveryProduct" rows="5" placeholder="Вставьте ключ, данные или текст товара"></textarea></div>
-  <div class="field"><label for="deliveryInstruction">2. Ссылка на инструкцию</label><input id="deliveryInstruction" type="url" value="https://t.me/+YGOwB71cb3AzYTNi" placeholder="https://..."></div>
-  <div class="actions"><button type="button" class="primary" id="confirmDelivery">Выдать покупателю</button><button type="button" id="cancelDelivery">Отмена</button></div>
-  <div class="meta" id="deliveryError"></div>
- </section>
-</div>
 <script>
 const tg=window.Telegram?.WebApp; tg?.ready(); tg?.expand();
 const initData=tg?.initData||"";
@@ -236,25 +222,13 @@ document.getElementById("orders").onclick=async e=>{
   if(act==="start")await api("POST",{action:"start",order_id:id});
   if(act==="refund"){const reason=prompt("Причина отмены и возврата:");if(!reason){b.disabled=false;return;}await api("POST",{action:"refund",order_id:id,reason});}
   if(act==="fulfill"){
-   b.disabled=false;
-   openDelivery(id,b.closest(".order")?.querySelector(".number")?.textContent||"");
-   return;
+   const type=prompt("Тип выдачи: text / activation_key / download_link","activation_key");if(!type){b.disabled=false;return;}
+   const value=prompt(type==="download_link"?"Вставь ссылку":"Вставь текст или ключ");if(!value){b.disabled=false;return;}
+   const payload={action:"fulfill",order_id:id,delivery_type:type};if(type==="download_link")payload.download_url=value;else payload.message=value;
+   await api("POST",payload);
   }
   await load();
  }catch(err){alert(err.message);b.disabled=false;}
-};
-let deliveryOrderId=null;
-function openDelivery(id,label){deliveryOrderId=id;document.getElementById("deliveryOrderLabel").textContent=label||"Заполните данные для покупателя";document.getElementById("deliveryProduct").value="";document.getElementById("deliveryInstruction").value="https://t.me/+YGOwB71cb3AzYTNi";document.getElementById("deliveryError").textContent="";document.getElementById("deliveryModal").hidden=false;document.getElementById("deliveryProduct").focus();}
-function closeDelivery(){document.getElementById("deliveryModal").hidden=true;deliveryOrderId=null;}
-document.getElementById("closeDelivery").onclick=closeDelivery;document.getElementById("cancelDelivery").onclick=closeDelivery;
-document.getElementById("deliveryModal").addEventListener("click",e=>{if(e.target.id==="deliveryModal")closeDelivery();});
-document.getElementById("confirmDelivery").onclick=async()=>{
- const product=document.getElementById("deliveryProduct").value.trim(),instruction=document.getElementById("deliveryInstruction").value.trim(),msg=document.getElementById("deliveryError"),btn=document.getElementById("confirmDelivery");
- if(!deliveryOrderId)return;if(!product){msg.textContent="Введи содержимое товара";return;}
- let parsed;try{parsed=new URL(instruction);if(!["https:","http:"].includes(parsed.protocol))throw new Error();}catch{msg.textContent="Укажи корректную ссылку на инструкцию";return;}
- btn.disabled=true;msg.textContent="Отправляем покупателю…";
- try{await api("POST",{action:"fulfill",order_id:deliveryOrderId,delivery_type:"text",message:product,download_url:instruction});closeDelivery();await load();}
- catch(e){msg.textContent="Ошибка выдачи: "+e.message;btn.disabled=false;}
 };
 document.getElementById("pPlatform").value="Android";
 if(!initData){document.getElementById("orders").innerHTML='<div class="notice error">Открой эту страницу через Telegram Mini App, чтобы подтвердить администратора.</div>';}
