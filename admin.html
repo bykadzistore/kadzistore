@@ -63,7 +63,7 @@ input[type="checkbox"]{accent-color:#d93668}
   <div class="field"><label>Полное описание</label><textarea id="pDescription" rows="4" placeholder="Подробное описание товара"></textarea></div>
   <div class="field"><label>Особенности (разделяй точкой с запятой)</label><input id="pFeatures" type="text" placeholder="Функция 1; Функция 2"></div>
   <div class="field"><label>Игра</label><select id="pGame"><option>Oxide Survival Island</option><option>PUBG Mobile</option><option>Standoff 2</option><option>Mobile Legends</option><option>Genshin Impact</option><option>Free Fire</option><option>Counter Flame</option></select></div>
-  <div class="field"><label>Раздел каталога</label><select id="pSubcategory"><option value="Софт">Софт</option><option value="Донат">Донат</option></select></div>
+  <div class="field"><label>Раздел каталога</label><select id="pSubcategory"><option value="Софт">Key</option><option value="Донат">Донат</option></select></div>
   <div class="field"><label>Платформа</label><select id="pPlatform"><option value="Android">Android</option><option value="iOS">iOS</option><option value="PC">PC</option></select></div>
   <div class="field"><label>Ссылка на изображение (HTTPS)</label><input id="pImage" type="url" placeholder="https://..."></div>
   <div class="field"><label>Порядок сортировки</label><input id="pSort" type="text" inputmode="numeric" value="0"></div>
@@ -127,7 +127,7 @@ async function loadProducts(){
   if(!allProducts.length){el.innerHTML='<div class="empty">Товаров пока нет</div>';return;}
   el.innerHTML=allProducts.map(p=>{
    const plans=p.kds_product_plans||p.plans||[];
-   return '<article class="product"><div class="product-head"><div><b>'+esc(p.name)+'</b><div class="muted">'+esc(p.description||"")+'</div><div class="muted">Игра: '+esc(p.game_category||"—")+' · Раздел: '+esc(p.subcategory||"—")+' · Платформа: '+esc(p.platform||"—")+' · Сортировка: '+esc(p.sort_order??0)+'</div></div><span class="status">'+(p.is_active?'Активен':'Скрыт')+'</span></div>'+
+   return '<article class="product"><div class="product-head"><div><b>'+esc(p.name)+'</b><div class="muted">'+esc(p.description||"")+'</div><div class="muted">Игра: '+esc(p.game_category||"—")+' · Раздел: '+esc(p.subcategory==="Софт"?"Key":(p.subcategory||"—"))+' · Платформа: '+esc(p.platform||"—")+' · Сортировка: '+esc(p.sort_order??0)+'</div></div><span class="status">'+(p.is_active?'Активен':'Скрыт')+'</span></div>'+
    plans.map(x=>'<div class="planline">'+esc(x.duration_label||x.name||x.title||"Тариф")+' · '+esc(x.duration_days)+' дн. · <b>'+money(x.price_rub??x.price??0)+'</b> · '+(x.is_active?'Активен':'Выключен')+'</div>').join("")+
    '<div class="meta">Остатки: '+plans.reduce((n,x)=>n+(x.kds_key_inventory||[]).filter(k=>k.status==='available').length,0)+' шт.</div><div class="actions"><button class="primary" data-edit="'+esc(p.id)+'">Изменить</button><button data-stock="'+esc(p.id)+'">Добавить содержимое</button><button class="warn" data-toggle="'+esc(p.id)+'" data-active="'+(p.is_active?'true':'false')+'">'+(p.is_active?'Скрыть':'Активировать')+'</button></div></article>';
   }).join("");
