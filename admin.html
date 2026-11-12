@@ -62,7 +62,7 @@ input[type="checkbox"]{accent-color:#d93668}
   <div class="field"><label>Краткое описание</label><input id="pSubtitle" type="text" placeholder="Короткий текст на карточке"></div>
   <div class="field"><label>Полное описание</label><textarea id="pDescription" rows="4" placeholder="Подробное описание товара"></textarea></div>
   <div class="field"><label>Особенности (разделяй точкой с запятой)</label><input id="pFeatures" type="text" placeholder="Функция 1; Функция 2"></div>
-  <div class="field"><label>Игра</label><select id="pGame"><option>Oxide Survival Island</option><option>PUBG Mobile</option><option>Standoff 2</option><option>Mobile Legends</option><option>Genshin Impact</option><option>Free Fire</option></select></div>
+  <div class="field"><label>Игра</label><select id="pGame"><option>Oxide Survival Island</option><option>PUBG Mobile</option><option>Standoff 2</option><option>Mobile Legends</option><option>Genshin Impact</option><option>Free Fire</option><option>Counter Flame</option></select></div>
   <div class="field"><label>Раздел каталога</label><select id="pSubcategory"><option value="Софт">Софт</option><option value="Донат">Донат</option></select></div>
   <div class="field"><label>Платформа</label><select id="pPlatform"><option value="Android">Android</option><option value="iOS">iOS</option><option value="PC">PC</option></select></div>
   <div class="field"><label>Ссылка на изображение (HTTPS)</label><input id="pImage" type="url" placeholder="https://..."></div>
@@ -147,7 +147,7 @@ function openEditor(p){
  document.getElementById("productEditor").scrollIntoView({behavior:"smooth",block:"start"});
 }
 
-function syncProductSubcategories(){const game=document.getElementById("pGame").value;const sub=document.getElementById("pSubcategory");const soft=sub.querySelector('option[value="Софт"]');if(soft){soft.disabled=["Mobile Legends","Genshin Impact","Free Fire"].includes(game);if(soft.disabled&&sub.value==="Софт")sub.value="Донат";}}
+function syncProductSubcategories(){const game=document.getElementById("pGame").value;const sub=document.getElementById("pSubcategory");const soft=sub.querySelector('option[value="Софт"]');const donate=sub.querySelector('option[value="Донат"]');const softOnly=game==="Counter Flame";if(soft){soft.disabled=["Mobile Legends","Genshin Impact","Free Fire"].includes(game);if(softOnly)soft.disabled=false;}if(donate){donate.disabled=softOnly;}if(softOnly)sub.value="Софт";else if(soft.disabled&&sub.value==="Софт")sub.value="Донат";}
 document.getElementById("pGame").addEventListener("change",syncProductSubcategories);
 document.getElementById("saveProduct").onclick=async()=>{
  const msg=document.getElementById("productMsg"),btn=document.getElementById("saveProduct");
