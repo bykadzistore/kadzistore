@@ -5,31 +5,28 @@
 <title>KDS Admin</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-:root{color-scheme:dark;--bg:#09090e;--panel:#19131d;--line:#452638;--red:#ef3434;--muted:#999;--green:#37c978;--yellow:#f3b544}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 0% 0%,#45132b66,transparent 40%),radial-gradient(ellipse at 100% 30%,#24113c55,transparent 35%),var(--bg);color:#f5f5f5;font:14px Inter,system-ui,Arial,sans-serif}
+:root{color-scheme:dark;--bg:#090909;--panel:#151515;--line:#292929;--red:#ef3434;--muted:#999;--green:#37c978;--yellow:#f3b544}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f5f5f5;font:14px Inter,system-ui,Arial,sans-serif}
 header{padding:18px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#090909;z-index:3}
 .logo{font-weight:900;letter-spacing:1px;font-size:20px}.logo b{color:var(--red)}.tag{font-size:11px;color:var(--muted)}
 main{max-width:900px;margin:auto;padding:16px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:16px}
-.stat,.order{background:linear-gradient(145deg,#261622,#12141b);border:1px solid var(--line);border-radius:13px;padding:13px}.stat small{color:var(--muted)}.stat strong{display:block;font-size:21px;margin-top:5px}
+.stat,.order{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:13px}.stat small{color:var(--muted)}.stat strong{display:block;font-size:21px;margin-top:5px}
 .filters{display:flex;gap:7px;overflow:auto;padding:3px 0 12px}.filters button{white-space:nowrap}
 button{border:1px solid var(--line);background:#202020;color:white;border-radius:9px;padding:9px 12px;font-weight:650;cursor:pointer}
-button.primary{background:linear-gradient(120deg,#ff405d,#9e1c43 60%,#401c47);border-color:#e63a58;box-shadow:0 6px 18px #ef244433}button.good{background:#145d37;border-color:#145d37}button.warn{background:#684715;border-color:#684715}
+button.primary{background:var(--red);border-color:var(--red)}button.good{background:#145d37;border-color:#145d37}button.warn{background:#684715;border-color:#684715}
 button:disabled{opacity:.5;cursor:wait}.order{margin:9px 0}.top{display:flex;justify-content:space-between;gap:10px}.number{font-weight:800;font-size:16px}.status{font-size:11px;border-radius:20px;padding:5px 8px;background:#333;white-space:nowrap}.status.awaiting_fulfillment{color:var(--yellow)}.status.processing{color:#80baff}.status.fulfilled{color:var(--green)}.status.refunded,.status.cancelled{color:#ff8585}
 .meta{color:var(--muted);font-size:12px;line-height:1.6;margin:9px 0}.price{font-weight:800;font-size:17px}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
 .empty,.notice{padding:24px;text-align:center;color:var(--muted);background:var(--panel);border-radius:12px}
 .error{color:#ff8585}.refresh{font-size:12px;color:var(--muted)}.hide{display:none}
-.tabs{display:flex;gap:8px;margin:0 0 14px}.tabs button{flex:1}.panel{background:linear-gradient(145deg,#261622,#12141b);border:1px solid var(--line);border-radius:13px;padding:14px;margin:10px 0}
+.tabs{display:flex;gap:8px;margin:0 0 14px}.tabs button{flex:1}.panel{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:14px;margin:10px 0}
 .field{display:grid;gap:6px;margin:10px 0}.field label{font-size:12px;color:var(--muted)}
-input,textarea,select{width:100%;background:#090909;border:1px solid var(--line);border-radius:9px;padding:11px;color:white;font:inherit}
-textarea{min-height:80px;resize:vertical}.product{background:linear-gradient(145deg,#261622,#12141b);border:1px solid var(--line);border-radius:13px;padding:13px;margin:9px 0}
+input:not([type="checkbox"]):not([type="hidden"]){width:100%;min-width:0;min-height:46px;background:#141418;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:11px 13px;color:#f5f5f5;font:inherit;outline:none;transition:border-color .2s,box-shadow .2s}
+input::placeholder{color:#777b86}input:focus{border-color:#d93668;box-shadow:0 0 0 3px #d9366825,0 0 18px #d9366818}
+input[type="checkbox"]{accent-color:#d93668}
+.dropdown{position:relative}.dropdown-menu{display:none;position:absolute;z-index:8;top:calc(100% + 6px);left:0;right:0;padding:5px;background:#17171c;border:1px solid rgba(255,255,255,.12);border-radius:12px;box-shadow:0 14px 35px #000b;max-height:220px;overflow:auto}.dropdown.open .dropdown-menu{display:block}.dropdown-option{display:block;width:100%;text-align:left;background:transparent;border:0;border-radius:8px;padding:10px;color:#eee}.dropdown-option:hover,.dropdown-option.active{background:#d9366822;color:#ff8aa9}.product{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:13px;margin:9px 0}
 .product-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.muted{color:var(--muted);font-size:12px;line-height:1.5}
 .planline{padding:7px 0;border-top:1px solid var(--line);font-size:12px}
 @media(max-width:480px){.stats{grid-template-columns:repeat(3,1fr)}.stat{padding:10px}.stat strong{font-size:17px}.order{padding:11px}}
-
-.delivery-modal{position:fixed;inset:0;background:#050509df;z-index:20;display:none;align-items:center;justify-content:center;padding:14px;backdrop-filter:blur(7px)}
-.delivery-modal.open{display:flex}.delivery-box{width:min(480px,100%);background:linear-gradient(145deg,#351522,#11131b 72%);border:1px solid #8b344e;border-radius:18px;padding:17px;box-shadow:0 20px 70px #000b}
-.delivery-box h3{margin:0 0 6px}.delivery-box label{display:block;margin:13px 0 6px;font-weight:750}.delivery-box input{margin:0}.delivery-actions{display:flex;gap:8px;margin-top:16px}.delivery-actions button{flex:1}
-.key-preview{font-family:ui-monospace,monospace;word-break:break-all;background:#090b10;border:1px dashed #8b344e;padding:11px;border-radius:10px;color:#fff}
 </style></head>
 <body>
 <header><div><div class="logo"><b>KD</b>S ADMIN</div><div class="tag">Панель управления магазином</div></div><button id="reload">↻ Обновить</button></header>
@@ -62,14 +59,11 @@ textarea{min-height:80px;resize:vertical}.product{background:linear-gradient(145
   <input type="hidden" id="pId">
   <div class="field"><label>Название</label><input id="pName" placeholder="Например, MAGIC VIP"></div>
    <div class="field"><label>Slug (латиницей, например magic-vip)</label><input id="pSlug" placeholder="magic-vip"></div>
-  <div class="field"><label>Краткое описание</label><textarea id="pDescription" placeholder="Описание товара"></textarea></div>
-  <div class="field"><label>Изображение карточки (прямая HTTPS-ссылка)</label><input id="pImage" type="url" placeholder="https://.../image.jpg"><div id="imagePreview" style="height:120px;border-radius:12px;background:linear-gradient(135deg,#43162d,#161827);background-size:cover;background-position:center;border:1px solid var(--line)"></div><div class="muted">Загрузи изображение в хранилище или используй прямую ссылку. Поле сохраняется вместе с товаром, если API/таблица поддерживает image_url.</div></div>
-  <div class="field"><label>Особенности (каждая с новой строки)</label><textarea id="pFeatures" placeholder="Функция 1&#10;Функция 2"></textarea></div>
-  <div class="field"><label>Платформа</label><select id="pPlatform"><option value="Android NROOT">Android NROOT</option><option value="iOS">iOS</option></select></div>
-  <div class="field"><label>Игра</label><select id="pGame"><option>Oxide Survival Island</option><option>PUBG Mobile</option><option>Standoff 2</option><option>Mobile Legends</option><option>Genshin Impact</option><option>Free Fire</option></select></div>
-  <div class="field"><label>Подкатегория</label><select id="pSubcategory"><option value="Донат">Донат</option><option value="Софт">Софт</option></select></div>
-  <div class="field"><label>Порядок сортировки</label><input id="pSort" type="number" value="0"></div>
-  <div class="field"><label>Тарифы (по одному на строку: Название | дни | цена ₽ | on/off)</label><textarea id="pPlans" placeholder="1 месяц | 30 | 299 | on&#10;3 месяца | 90 | 799 | on"></textarea></div>
+  <div class="field"><label>Краткое описание</label><input id="pDescription" type="text" placeholder="Описание товара"></div>
+  <div class="field"><label>Особенности (разделяй точкой с запятой)</label><input id="pFeatures" type="text" placeholder="Функция 1; Функция 2"></div>
+  <div class="field"><label>Платформа</label><div class="dropdown" data-dropdown="pPlatform"><input id="pPlatform" type="text" value="Android NROOT" readonly placeholder="Выбери платформу"><div class="dropdown-menu"></div></div></div>
+  <div class="field"><label>Порядок сортировки</label><input id="pSort" type="text" inputmode="numeric" value="0"></div>
+  <div class="field"><label>Тарифы (разделяй точкой с запятой: Название | дни | цена ₽ | on/off)</label><input id="pPlans" type="text" placeholder="1 месяц | 30 | 299 | on; 3 месяца | 90 | 799 | on"></div>
   <label style="display:flex;gap:8px;align-items:center"><input id="pActive" type="checkbox" checked style="width:auto"> Товар активен</label>
   <div class="actions"><button class="primary" id="saveProduct">Сохранить товар</button><button id="cancelProduct">Отмена</button></div>
   <div id="productMsg" class="muted"></div>
@@ -80,28 +74,16 @@ textarea{min-height:80px;resize:vertical}.product{background:linear-gradient(145
  <div class="panel">
   <h2>Содержимое товаров</h2>
   <p class="muted">Выбери товар и тариф, затем вставь содержимое. Каждая непустая строка будет сохранена как отдельная единица товара.</p>
-  <div class="field"><label>Товар</label><select id="inventoryProduct"><option value="">Загрузка товаров…</option></select></div>
-  <div class="field"><label>Тариф</label><select id="inventoryPlan"><option value="">Сначала выбери товар</option></select></div>
-  <div class="field"><label>Содержимое (1 строка = 1 товар)</label><textarea id="inventoryLines" rows="9" placeholder="KEY-001-ABCDE&#10;KEY-002-FGHIJ&#10;KEY-003-KLMNO"></textarea></div>
-  <div class="meta">Пустые строки игнорируются. Повторяющиеся значения не добавляются повторно.</div>
+  <div class="field"><label>Товар</label><div class="dropdown" data-dropdown="inventoryProduct"><input id="inventoryProduct" type="text" readonly placeholder="Загрузка товаров…"><div class="dropdown-menu"></div></div></div>
+  <div class="field"><label>Тариф</label><div class="dropdown" data-dropdown="inventoryPlan"><input id="inventoryPlan" type="text" readonly placeholder="Сначала выбери товар"><div class="dropdown-menu"></div></div></div>
+  <div class="field"><label>Ключи (разделяй точкой с запятой)</label><input id="inventoryLines" type="text" placeholder="KEY-001-ABCDE; KEY-002-FGHIJ; KEY-003-KLMNO"></div>
+  <div class="meta">Пустые значения игнорируются. Повторяющиеся ключи не добавляются повторно.</div>
   <div class="actions"><button class="primary" id="saveInventory">Добавить в остатки</button><button id="clearInventory">Очистить поле</button></div>
   <div id="inventoryMsg" class="meta"></div>
  </div>
  <div id="inventoryProductsList"></div>
 </section>
 </main>
-<div class="delivery-modal" id="deliveryModal">
- <div class="delivery-box">
-  <h3>Выдача товара</h3>
-  <div class="muted" id="deliveryOrderLabel">Заказ</div>
-  <label for="deliveryKey">1. Ключ / товар *</label>
-  <input id="deliveryKey" type="text" autocomplete="off" placeholder="Вставь ключ или данные товара">
-  <div class="muted" style="font-size:11px;margin-top:5px">Покупатель увидит ключ в отдельном блоке с кнопкой «Скопировать».</div>
-  <label for="deliveryInstruction">2. Инструкция</label>
-  <input id="deliveryInstruction" type="url" value="https://t.me/+YGOwB71cb3AzYTNi" placeholder="https://...">
-  <div class="delivery-actions"><button type="button" id="deliveryCancel">Отмена</button><button type="button" class="primary" id="deliveryConfirm">Выдать товар</button></div>
- </div>
-</div>
 <script>
 const tg=window.Telegram?.WebApp; tg?.ready(); tg?.expand();
 const initData=tg?.initData||"";
@@ -114,6 +96,8 @@ async function api(method="GET",body,section){
  const d=await r.json(); if(!r.ok)throw new Error(d.error||"Ошибка запроса"); return d;
 }
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function setDropdown(id,options,value){const input=document.getElementById(id),wrap=input.closest(".dropdown"),menu=wrap.querySelector(".dropdown-menu");const selected=options.find(x=>String(x.value)===String(value));input.value=selected?selected.label:"";input.dataset.value=selected?selected.value:"";menu.innerHTML=options.map(x=>'<button type="button" class="dropdown-option '+(selected&&String(selected.value)===String(x.value)?'active':'')+'" data-option-value="'+esc(x.value)+'">'+esc(x.label)+'</button>').join("")||'<div class="muted" style="padding:10px">Нет вариантов</div>';}
+document.addEventListener("click",e=>{const option=e.target.closest("[data-option-value]");if(option){const wrap=option.closest(".dropdown"),input=wrap.querySelector("input"),id=input.id;input.dataset.value=option.dataset.optionValue;input.value=option.textContent.trim();wrap.classList.remove("open");wrap.dispatchEvent(new CustomEvent("dropdown-change",{bubbles:true}));if(id==="inventoryProduct")renderInventoryPlans();return;}const wrap=e.target.closest(".dropdown");document.querySelectorAll(".dropdown.open").forEach(x=>{if(x!==wrap)x.classList.remove("open")});if(wrap){wrap.classList.toggle("open");}});
 function render(){
  const rows=allOrders.filter(o=>filter==="all"||o.status===filter);
  document.getElementById("orders").innerHTML=rows.length?rows.map(o=>{
@@ -139,7 +123,7 @@ async function loadProducts(){
   if(!allProducts.length){el.innerHTML='<div class="empty">Товаров пока нет</div>';return;}
   el.innerHTML=allProducts.map(p=>{
    const plans=p.kds_product_plans||p.plans||[];
-   return '<article class="product">'+(p.image_url?'<div style="height:100px;border-radius:10px;background:center/cover url('+esc(p.image_url)+')"></div>':'')+'<div class="product-head"><div><b>'+esc(p.name)+'</b><div class="muted">'+esc(p.description||"")+'</div><div class="muted">Платформа: '+esc(p.platform||"—")+' · Сортировка: '+esc(p.sort_order??0)+'</div></div><span class="status">'+(p.is_active?'Активен':'Скрыт')+'</span></div>'+
+   return '<article class="product"><div class="product-head"><div><b>'+esc(p.name)+'</b><div class="muted">'+esc(p.description||"")+'</div><div class="muted">Платформа: '+esc(p.platform||"—")+' · Сортировка: '+esc(p.sort_order??0)+'</div></div><span class="status">'+(p.is_active?'Активен':'Скрыт')+'</span></div>'+
    plans.map(x=>'<div class="planline">'+esc(x.duration_label||x.name||x.title||"Тариф")+' · '+esc(x.duration_days)+' дн. · <b>'+money(x.price_rub??x.price??0)+'</b> · '+(x.is_active?'Активен':'Выключен')+'</div>').join("")+
    '<div class="meta">Остатки: '+plans.reduce((n,x)=>n+(x.kds_key_inventory||[]).filter(k=>k.status==='available').length,0)+' шт.</div><div class="actions"><button class="primary" data-edit="'+esc(p.id)+'">Изменить</button><button data-stock="'+esc(p.id)+'">Добавить содержимое</button><button class="warn" data-toggle="'+esc(p.id)+'" data-active="'+(p.is_active?'true':'false')+'">'+(p.is_active?'Скрыть':'Активировать')+'</button></div></article>';
   }).join("");
@@ -149,18 +133,18 @@ function openEditor(p){
  p=p||{};document.getElementById("productEditor").classList.remove("hide");
  document.getElementById("editorTitle").textContent=p.id?"Редактирование товара":"Новый товар";
  document.getElementById("pId").value=p.id||"";document.getElementById("pName").value=p.name||"";document.getElementById("pSlug").value=p.slug||"";
- document.getElementById("pDescription").value=p.description||"";document.getElementById("pImage").value=p.image_url||p.image||"";document.getElementById("imagePreview").style.backgroundImage=p.image_url||p.image?`url("${p.image_url||p.image}")`:"linear-gradient(135deg,#43162d,#161827)";
- document.getElementById("pFeatures").value=Array.isArray(p.features)?p.features.join("\n"):(p.features||"");
- document.getElementById("pPlatform").value=p.platform||"Android NROOT";document.getElementById("pGame").value=p.game_category||"Oxide Survival Island";document.getElementById("pSubcategory").value=p.subcategory||"Донат";updateSubcategoryOptions();document.getElementById("pSort").value=p.sort_order??0;
+ document.getElementById("pDescription").value=p.description||"";
+ document.getElementById("pFeatures").value=Array.isArray(p.features)?p.features.join("; "):(p.features||"");
+ setDropdown("pPlatform",[{value:"Android NROOT",label:"Android NROOT"},{value:"iOS",label:"iOS"}],p.platform||"Android NROOT");document.getElementById("pSort").value=p.sort_order??0;
  document.getElementById("pActive").checked=p.is_active!==false;
  const plans=p.kds_product_plans||p.plans||[];
- document.getElementById("pPlans").value=plans.map(x=>(x.duration_label||x.name||x.title||"Тариф")+" | "+(x.duration_days||30)+" | "+(x.price_rub??x.price??0)+" | "+(x.is_active===false?"off":"on")).join("\n");
+ document.getElementById("pPlans").value=plans.map(x=>(x.duration_label||x.name||x.title||"Тариф")+" | "+(x.duration_days||30)+" | "+(x.price_rub??x.price??0)+" | "+(x.is_active===false?"off":"on")).join("; ");
  document.getElementById("productMsg").textContent="";
  document.getElementById("productEditor").scrollIntoView({behavior:"smooth",block:"start"});
 }
 document.getElementById("saveProduct").onclick=async()=>{
  const msg=document.getElementById("productMsg"),btn=document.getElementById("saveProduct");
- const plans=document.getElementById("pPlans").value.split("\n").map(x=>x.trim()).filter(Boolean).map(line=>{
+ const plans=document.getElementById("pPlans").value.split(";").map(x=>x.trim()).filter(Boolean).map(line=>{
   const a=line.split("|").map(x=>x.trim());return {duration_label:a[0],duration_days:Number(a[1]),price_rub:Number(a[2]),is_active:(a[3]||"on").toLowerCase()!=="off"};
  });
  if(!document.getElementById("pName").value.trim()){msg.textContent="Укажи название товара";return;}
@@ -169,7 +153,7 @@ document.getElementById("saveProduct").onclick=async()=>{
  if(!plans.length||plans.some(p=>!p.duration_label||!Number.isInteger(p.duration_days)||p.duration_days<=0||!Number.isSafeInteger(p.price_rub)||p.price_rub<1)){msg.textContent="Проверь тарифы: Название | дни | цена ₽ | on/off";return;}
  btn.disabled=true;msg.textContent="Сохраняю…";
  try{
-  const body={action:"save_product",id:document.getElementById("pId").value||undefined,slug:document.getElementById("pSlug").value.trim().toLowerCase(),name:document.getElementById("pName").value.trim(),description:document.getElementById("pDescription").value.trim(),image_url:document.getElementById("pImage").value.trim(),features:document.getElementById("pFeatures").value.split("\n").map(x=>x.trim()).filter(Boolean),platform:document.getElementById("pPlatform").value.trim(),game_category:document.getElementById("pGame").value,subcategory:document.getElementById("pSubcategory").value,sort_order:Number(document.getElementById("pSort").value)||0,is_active:document.getElementById("pActive").checked,plans};
+  const body={action:"save_product",id:document.getElementById("pId").value||undefined,slug:document.getElementById("pSlug").value.trim().toLowerCase(),name:document.getElementById("pName").value.trim(),description:document.getElementById("pDescription").value.trim(),features:document.getElementById("pFeatures").value.split(";").map(x=>x.trim()).filter(Boolean),platform:document.getElementById("pPlatform").value.trim(),sort_order:Number(document.getElementById("pSort").value)||0,is_active:document.getElementById("pActive").checked,plans};
   await api("POST",body);msg.textContent="Сохранено";document.getElementById("productEditor").classList.add("hide");await loadProducts();
  }catch(e){msg.textContent="Ошибка: "+e.message;}finally{btn.disabled=false;}
 };
@@ -180,24 +164,20 @@ document.getElementById("productsList").onclick=async e=>{
  if(toggle){toggle.disabled=true;try{await api("POST",{action:"toggle_product",product_id:toggle.dataset.toggle,is_active:toggle.dataset.active!=="true"});await loadProducts();}catch(err){alert(err.message);toggle.disabled=false;}}
 };
 document.getElementById("newProduct").onclick=()=>openEditor();
-document.getElementById("pImage").addEventListener("input",e=>{document.getElementById("imagePreview").style.backgroundImage=e.target.value?`url("${e.target.value.replace(/"/g,"%22")}")`:"linear-gradient(135deg,#43162d,#161827)";});
-function updateSubcategoryOptions(){const g=document.getElementById("pGame").value,sel=document.getElementById("pSubcategory"),allowSoft=!(["Mobile Legends","Genshin Impact","Free Fire"].includes(g));const current=sel.value;sel.innerHTML="<option value=\"Донат\">Донат</option>"+(allowSoft?"<option value=\"Софт\">Софт</option>":"");sel.value=allowSoft?current:"Донат";}document.getElementById("pGame").addEventListener("change",updateSubcategoryOptions);
 document.getElementById("cancelProduct").onclick=()=>document.getElementById("productEditor").classList.add("hide");
 document.getElementById("reloadProducts").onclick=loadProducts;
 let inventoryProducts=[];
 async function loadInventory(){
  const d=await api("GET",null,"products");inventoryProducts=d.products||[];
- const sel=document.getElementById("inventoryProduct");
- sel.innerHTML='<option value="">Выбери товар</option>'+inventoryProducts.map(p=>'<option value="'+esc(p.id)+'">'+esc(p.name)+'</option>').join("");
+ setDropdown("inventoryProduct",inventoryProducts.map(p=>({value:p.id,label:p.name})),"");
  renderInventoryPlans();
  document.getElementById("inventoryProductsList").innerHTML=inventoryProducts.map(p=>{const plans=p.kds_product_plans||p.plans||[];return '<article class="product"><b>'+esc(p.name)+'</b>'+plans.map(x=>{const inv=x.kds_key_inventory||[];const available=inv.filter(k=>k.status==="available").length;const used=inv.filter(k=>k.status!=="available").length;return '<div class="planline">'+esc(x.duration_label)+' · В наличии: <b>'+available+'</b> · Использовано: '+used+'</div>';}).join("")+'</article>';}).join("");
 }
-function renderInventoryPlans(){const pid=document.getElementById("inventoryProduct").value;const p=inventoryProducts.find(x=>x.id===pid);const plans=p?.kds_product_plans||p?.plans||[];document.getElementById("inventoryPlan").innerHTML=plans.length?plans.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.duration_label)+' · '+esc(x.duration_days)+' дн.</option>').join(""):'<option value="">У товара нет тарифов</option>';}
-document.getElementById("inventoryProduct").onchange=renderInventoryPlans;
-document.getElementById("saveInventory").onclick=async()=>{const msg=document.getElementById("inventoryMsg"),plan_id=document.getElementById("inventoryPlan").value,keys=document.getElementById("inventoryLines").value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);if(!plan_id){msg.textContent="Выбери тариф";return;}if(!keys.length){msg.textContent="Добавь хотя бы одну строку";return;}if(keys.length>500){msg.textContent="За один раз можно добавить максимум 500 строк";return;}const btn=document.getElementById("saveInventory");btn.disabled=true;msg.textContent="Сохраняю…";try{const d=await api("POST",{action:"add_keys",plan_id,keys});msg.textContent="Добавлено: "+d.added+" из "+d.submitted;document.getElementById("inventoryLines").value="";await loadInventory();}catch(e){msg.textContent="Ошибка: "+e.message;}finally{btn.disabled=false;}};
+function renderInventoryPlans(){const pid=document.getElementById("inventoryProduct").dataset.value||"";const p=inventoryProducts.find(x=>String(x.id)===String(pid));const plans=p?.kds_product_plans||p?.plans||[];setDropdown("inventoryPlan",plans.map(x=>({value:x.id,label:x.duration_label+" · "+x.duration_days+" дн."})),"");}
+document.getElementById("saveInventory").onclick=async()=>{const msg=document.getElementById("inventoryMsg"),plan_id=document.getElementById("inventoryPlan").dataset.value||"",keys=document.getElementById("inventoryLines").value.split(";").map(x=>x.trim()).filter(Boolean);if(!plan_id){msg.textContent="Выбери тариф";return;}if(!keys.length){msg.textContent="Добавь хотя бы одну строку";return;}if(keys.length>500){msg.textContent="За один раз можно добавить максимум 500 строк";return;}const btn=document.getElementById("saveInventory");btn.disabled=true;msg.textContent="Сохраняю…";try{const d=await api("POST",{action:"add_keys",plan_id,keys});msg.textContent="Добавлено: "+d.added+" из "+d.submitted;document.getElementById("inventoryLines").value="";await loadInventory();}catch(e){msg.textContent="Ошибка: "+e.message;}finally{btn.disabled=false;}};
 document.getElementById("clearInventory").onclick=()=>{document.getElementById("inventoryLines").value="";document.getElementById("inventoryMsg").textContent="";};
-document.getElementById("inventoryProductsList").onclick=e=>{const b=e.target.closest("[data-stock]");if(!b)return;document.getElementById("inventoryProduct").value=b.dataset.stock;renderInventoryPlans();document.getElementById("inventoryLines").focus();};
-async function showInventoryForProduct(productId){showAdminSection("inventorySection");try{await loadInventory();document.getElementById("inventoryProduct").value=productId;renderInventoryPlans();document.getElementById("inventoryLines").focus();}catch(e){document.getElementById("inventoryMsg").textContent="Ошибка загрузки: "+e.message;}}
+document.getElementById("inventoryProductsList").onclick=e=>{const b=e.target.closest("[data-stock]");if(!b)return;setDropdown("inventoryProduct",inventoryProducts.map(p=>({value:p.id,label:p.name})),b.dataset.stock);renderInventoryPlans();document.getElementById("inventoryLines").focus();};
+async function showInventoryForProduct(productId){showAdminSection("inventorySection");try{await loadInventory();setDropdown("inventoryProduct",inventoryProducts.map(p=>({value:p.id,label:p.name})),productId);renderInventoryPlans();document.getElementById("inventoryLines").focus();}catch(e){document.getElementById("inventoryMsg").textContent="Ошибка загрузки: "+e.message;}}
 function showAdminSection(which){for(const id of ["ordersSection","productsSection","inventorySection"])document.getElementById(id).classList.toggle("hide",id!==which);for(const id of ["ordersTab","productsTab","inventoryTab"])document.getElementById(id).classList.toggle("primary",id===(which==="ordersSection"?"ordersTab":which==="productsSection"?"productsTab":"inventoryTab"));if(which==="productsSection")loadProducts();if(which==="inventorySection")loadInventory();}
 
 document.getElementById("ordersTab").onclick=()=>showAdminSection("ordersSection");
@@ -211,7 +191,7 @@ document.getElementById("userFind").onclick=async()=>{
  try{
   const d=await api("POST",{action:"search_user",query});selectedUser=d.user;
   out.innerHTML='<div class="stat" style="margin-top:8px"><small>Покупатель</small><strong style="font-size:16px">'+esc(d.user.first_name||"Пользователь")+(d.user.username?' · @'+esc(d.user.username):'')+'</strong><div class="meta">Telegram ID: '+esc(d.user.telegram_user_id)+'</div><div class="price">Баланс: '+money(d.user.balance_rub)+'</div></div>'+
-  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><input id="balanceAmount" type="number" min="1" step="1" placeholder="Сумма, ₽"><input id="balanceReason" placeholder="Причина операции"></div>'+
+  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><input id="balanceAmount" type="text" inputmode="numeric" placeholder="Сумма, ₽"><input id="balanceReason" placeholder="Причина операции"></div>'+
   '<div class="actions"><button class="good" data-balance="credit">＋ Начислить</button><button class="warn" data-balance="debit">− Списать</button></div>';
  }catch(e){selectedUser=null;out.innerHTML='<div class="meta error">'+esc(e.message)+'</div>';}
 };
@@ -235,34 +215,15 @@ document.getElementById("orders").onclick=async e=>{
   if(act==="start")await api("POST",{action:"start",order_id:id});
   if(act==="refund"){const reason=prompt("Причина отмены и возврата:");if(!reason){b.disabled=false;return;}await api("POST",{action:"refund",order_id:id,reason});}
   if(act==="fulfill"){
-   b.disabled=false;
-   openDeliveryModal(id,oOrderLabel(id));
-   return;
+   const type=prompt("Тип выдачи: text / activation_key / download_link","activation_key");if(!type){b.disabled=false;return;}
+   const value=prompt(type==="download_link"?"Вставь ссылку":"Вставь текст или ключ");if(!value){b.disabled=false;return;}
+   const payload={action:"fulfill",order_id:id,delivery_type:type};if(type==="download_link")payload.download_url=value;else payload.message=value;
+   await api("POST",payload);
   }
   await load();
  }catch(err){alert(err.message);b.disabled=false;}
 };
-let deliveryOrderId=null;
-function oOrderLabel(id){const o=allOrders.find(x=>String(x.id)===String(id));return o?"Заказ #"+o.order_number+" · "+(o.product_name||""):"Заказ";}
-function openDeliveryModal(id,label){deliveryOrderId=id;document.getElementById("deliveryOrderLabel").textContent=label;document.getElementById("deliveryKey").value="";document.getElementById("deliveryInstruction").value="https://t.me/+YGOwB71cb3AzYTNi";document.getElementById("deliveryModal").classList.add("open");}
-function closeDeliveryModal(){document.getElementById("deliveryModal").classList.remove("open");deliveryOrderId=null;}
-document.getElementById("deliveryCancel").onclick=closeDeliveryModal;
-document.getElementById("deliveryModal").addEventListener("click",e=>{if(e.target.id==="deliveryModal")closeDeliveryModal();});
-document.getElementById("deliveryConfirm").onclick=async()=>{
- const key=document.getElementById("deliveryKey").value.trim();
- const instruction=document.getElementById("deliveryInstruction").value.trim();
- const msg=document.getElementById("deliveryConfirm");
- if(!key){alert("Введи ключ или содержимое товара");return;}
- if(/[\\r\\n]/.test(key)){alert("Ключ должен быть в одной строке");return;}
- if(instruction){try{const u=new URL(instruction);if(u.protocol!=="https:"){alert("Инструкция должна быть HTTPS-ссылкой");return;}}catch(e){alert("Проверь ссылку инструкции");return;}}
- if(!deliveryOrderId)return;
- msg.disabled=true;msg.textContent="Выдаю…";
- try{
-  const payload={action:"fulfill",order_id:deliveryOrderId,delivery_type:"activation_key",message:"KEY:\n\n"+key+"\n\nИнструкция:\n"+instruction};
-  await api("POST",payload);closeDeliveryModal();await load();
- }catch(err){alert(err.message);}
- finally{msg.disabled=false;msg.textContent="Выдать товар";}
-};
+setDropdown("pPlatform",[{value:"Android NROOT",label:"Android NROOT"},{value:"iOS",label:"iOS"}],"Android NROOT");
 if(!initData){document.getElementById("orders").innerHTML='<div class="notice error">Открой эту страницу через Telegram Mini App, чтобы подтвердить администратора.</div>';}
 else load();
 </script></body></html>
