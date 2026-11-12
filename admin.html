@@ -59,9 +59,13 @@ input[type="checkbox"]{accent-color:#d93668}
   <input type="hidden" id="pId">
   <div class="field"><label>Название</label><input id="pName" placeholder="Например, MAGIC VIP"></div>
    <div class="field"><label>Slug (латиницей, например magic-vip)</label><input id="pSlug" placeholder="magic-vip"></div>
-  <div class="field"><label>Краткое описание</label><input id="pDescription" type="text" placeholder="Описание товара"></div>
+  <div class="field"><label>Краткое описание</label><input id="pSubtitle" type="text" placeholder="Короткий текст на карточке"></div>
+  <div class="field"><label>Полное описание</label><textarea id="pDescription" rows="4" placeholder="Подробное описание товара"></textarea></div>
   <div class="field"><label>Особенности (разделяй точкой с запятой)</label><input id="pFeatures" type="text" placeholder="Функция 1; Функция 2"></div>
-  <div class="field"><label>Платформа</label><div class="dropdown" data-dropdown="pPlatform"><input id="pPlatform" type="text" value="Android NROOT" readonly placeholder="Выбери платформу"><div class="dropdown-menu"></div></div></div>
+  <div class="field"><label>Игра</label><select id="pGame"><option>Oxide Survival Island</option><option>PUBG Mobile</option><option>Standoff 2</option><option>Mobile Legends</option><option>Genshin Impact</option><option>Free Fire</option></select></div>
+  <div class="field"><label>Раздел каталога</label><select id="pSubcategory"><option value="Софт">Софт</option><option value="Донат">Донат</option></select></div>
+  <div class="field"><label>Платформа</label><select id="pPlatform"><option value="Android">Android</option><option value="iOS">iOS</option><option value="PC">PC</option></select></div>
+  <div class="field"><label>Ссылка на изображение (HTTPS)</label><input id="pImage" type="url" placeholder="https://..."></div>
   <div class="field"><label>Порядок сортировки</label><input id="pSort" type="text" inputmode="numeric" value="0"></div>
   <div class="field"><label>Тарифы (разделяй точкой с запятой: Название | дни | цена ₽ | on/off)</label><input id="pPlans" type="text" placeholder="1 месяц | 30 | 299 | on; 3 месяца | 90 | 799 | on"></div>
   <label style="display:flex;gap:8px;align-items:center"><input id="pActive" type="checkbox" checked style="width:auto"> Товар активен</label>
@@ -123,7 +127,7 @@ async function loadProducts(){
   if(!allProducts.length){el.innerHTML='<div class="empty">Товаров пока нет</div>';return;}
   el.innerHTML=allProducts.map(p=>{
    const plans=p.kds_product_plans||p.plans||[];
-   return '<article class="product"><div class="product-head"><div><b>'+esc(p.name)+'</b><div class="muted">'+esc(p.description||"")+'</div><div class="muted">Платформа: '+esc(p.platform||"—")+' · Сортировка: '+esc(p.sort_order??0)+'</div></div><span class="status">'+(p.is_active?'Активен':'Скрыт')+'</span></div>'+
+   return '<article class="product"><div class="product-head"><div><b>'+esc(p.name)+'</b><div class="muted">'+esc(p.description||"")+'</div><div class="muted">Игра: '+esc(p.game_category||"—")+' · Раздел: '+esc(p.subcategory||"—")+' · Платформа: '+esc(p.platform||"—")+' · Сортировка: '+esc(p.sort_order??0)+'</div></div><span class="status">'+(p.is_active?'Активен':'Скрыт')+'</span></div>'+
    plans.map(x=>'<div class="planline">'+esc(x.duration_label||x.name||x.title||"Тариф")+' · '+esc(x.duration_days)+' дн. · <b>'+money(x.price_rub??x.price??0)+'</b> · '+(x.is_active?'Активен':'Выключен')+'</div>').join("")+
    '<div class="meta">Остатки: '+plans.reduce((n,x)=>n+(x.kds_key_inventory||[]).filter(k=>k.status==='available').length,0)+' шт.</div><div class="actions"><button class="primary" data-edit="'+esc(p.id)+'">Изменить</button><button data-stock="'+esc(p.id)+'">Добавить содержимое</button><button class="warn" data-toggle="'+esc(p.id)+'" data-active="'+(p.is_active?'true':'false')+'">'+(p.is_active?'Скрыть':'Активировать')+'</button></div></article>';
   }).join("");
@@ -133,15 +137,18 @@ function openEditor(p){
  p=p||{};document.getElementById("productEditor").classList.remove("hide");
  document.getElementById("editorTitle").textContent=p.id?"Редактирование товара":"Новый товар";
  document.getElementById("pId").value=p.id||"";document.getElementById("pName").value=p.name||"";document.getElementById("pSlug").value=p.slug||"";
- document.getElementById("pDescription").value=p.description||"";
+ document.getElementById("pSubtitle").value=p.subtitle||"";document.getElementById("pDescription").value=p.description||"";document.getElementById("pGame").value=p.game_category||"Oxide Survival Island";document.getElementById("pSubcategory").value=p.subcategory||"Софт";document.getElementById("pPlatform").value=p.platform==="Android NROOT"?"Android":(p.platform||"Android");document.getElementById("pImage").value=p.image_url||"";syncProductSubcategories();
  document.getElementById("pFeatures").value=Array.isArray(p.features)?p.features.join("; "):(p.features||"");
- setDropdown("pPlatform",[{value:"Android NROOT",label:"Android NROOT"},{value:"iOS",label:"iOS"}],p.platform||"Android NROOT");document.getElementById("pSort").value=p.sort_order??0;
+ document.getElementById("pSort").value=p.sort_order??0;
  document.getElementById("pActive").checked=p.is_active!==false;
  const plans=p.kds_product_plans||p.plans||[];
  document.getElementById("pPlans").value=plans.map(x=>(x.duration_label||x.name||x.title||"Тариф")+" | "+(x.duration_days||30)+" | "+(x.price_rub??x.price??0)+" | "+(x.is_active===false?"off":"on")).join("; ");
  document.getElementById("productMsg").textContent="";
  document.getElementById("productEditor").scrollIntoView({behavior:"smooth",block:"start"});
 }
+
+function syncProductSubcategories(){const game=document.getElementById("pGame").value;const sub=document.getElementById("pSubcategory");const soft=sub.querySelector('option[value="Софт"]');if(soft){soft.disabled=["Mobile Legends","Genshin Impact","Free Fire"].includes(game);if(soft.disabled&&sub.value==="Софт")sub.value="Донат";}}
+document.getElementById("pGame").addEventListener("change",syncProductSubcategories);
 document.getElementById("saveProduct").onclick=async()=>{
  const msg=document.getElementById("productMsg"),btn=document.getElementById("saveProduct");
  const plans=document.getElementById("pPlans").value.split(";").map(x=>x.trim()).filter(Boolean).map(line=>{
@@ -153,7 +160,7 @@ document.getElementById("saveProduct").onclick=async()=>{
  if(!plans.length||plans.some(p=>!p.duration_label||!Number.isInteger(p.duration_days)||p.duration_days<=0||!Number.isSafeInteger(p.price_rub)||p.price_rub<1)){msg.textContent="Проверь тарифы: Название | дни | цена ₽ | on/off";return;}
  btn.disabled=true;msg.textContent="Сохраняю…";
  try{
-  const body={action:"save_product",id:document.getElementById("pId").value||undefined,slug:document.getElementById("pSlug").value.trim().toLowerCase(),name:document.getElementById("pName").value.trim(),description:document.getElementById("pDescription").value.trim(),features:document.getElementById("pFeatures").value.split(";").map(x=>x.trim()).filter(Boolean),platform:document.getElementById("pPlatform").value.trim(),sort_order:Number(document.getElementById("pSort").value)||0,is_active:document.getElementById("pActive").checked,plans};
+  const body={action:"save_product",id:document.getElementById("pId").value||undefined,slug:document.getElementById("pSlug").value.trim().toLowerCase(),name:document.getElementById("pName").value.trim(),description:document.getElementById("pDescription").value.trim(),subtitle:document.getElementById("pSubtitle").value.trim(),game_category:document.getElementById("pGame").value,subcategory:document.getElementById("pSubcategory").value,image_url:document.getElementById("pImage").value.trim(),features:document.getElementById("pFeatures").value.split(";").map(x=>x.trim()).filter(Boolean),platform:document.getElementById("pPlatform").value,sort_order:Number(document.getElementById("pSort").value)||0,is_active:document.getElementById("pActive").checked,plans};
   await api("POST",body);msg.textContent="Сохранено";document.getElementById("productEditor").classList.add("hide");await loadProducts();
  }catch(e){msg.textContent="Ошибка: "+e.message;}finally{btn.disabled=false;}
 };
@@ -223,7 +230,7 @@ document.getElementById("orders").onclick=async e=>{
   await load();
  }catch(err){alert(err.message);b.disabled=false;}
 };
-setDropdown("pPlatform",[{value:"Android NROOT",label:"Android NROOT"},{value:"iOS",label:"iOS"}],"Android NROOT");
+document.getElementById("pPlatform").value="Android";
 if(!initData){document.getElementById("orders").innerHTML='<div class="notice error">Открой эту страницу через Telegram Mini App, чтобы подтвердить администратора.</div>';}
 else load();
 </script></body></html>
