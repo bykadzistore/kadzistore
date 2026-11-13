@@ -1,0 +1,5 @@
+OLD:
+if(tg?.openTelegramLink)tg.openTelegramLink("https://t.me/+YGOwB71cb3AzYTNi");else location.href="https://t.me/+YGOwB71cb3AzYTNi";
+
+NEW:
+if(tg?.openTelegramLink)tg.openTelegramLink("https://t.me/ByKadzi");else location.href="https://t.me/ByKadzi";
