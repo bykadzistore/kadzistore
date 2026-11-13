@@ -29,9 +29,9 @@ input[type="checkbox"]{accent-color:#d93668}
 @media(max-width:480px){.stats{grid-template-columns:repeat(3,1fr)}.stat{padding:10px}.stat strong{font-size:17px}.order{padding:11px}}
 </style></head>
 <body>
-<header><div><div class="logo"><b>KD</b>S ADMIN</div><div class="tag">Панель управления магазином</div></div><button id="reload">↻ Обновить</button></header>
+<header><div><div class="logo"><b>KD</b>S ADMIN</div><div class="tag">Панель управления магазином</div></div><div style="display:flex;gap:7px"><button onclick="location.href='https://bykadzistore.github.io/kadzistore/'">← В магазин</button><button id="reload">↻ Обновить</button></div></header>
 <main>
-<div class="tabs"><button id="ordersTab" class="primary">Заказы</button><button id="productsTab">Карточки товаров</button><button id="inventoryTab">Содержимое товаров</button></div>
+<div class="tabs"><button id="ordersTab" class="primary">Заказы</button><button id="productsTab">Карточки товаров</button><button id="inventoryTab">Содержимое товаров</button><button id="announcementsTab">Объявления</button></div>
 <section id="ordersSection">
 <div class="stats"><div class="stat"><small>Новые</small><strong id="sNew">—</strong></div><div class="stat"><small>В работе</small><strong id="sWork">—</strong></div><div class="stat"><small>Выполнено</small><strong id="sDone">—</strong></div></div>
 <section class="order" style="margin:0 0 16px">
@@ -86,6 +86,13 @@ input[type="checkbox"]{accent-color:#d93668}
   <div id="inventoryMsg" class="meta"></div>
  </div>
  <div id="inventoryProductsList"></div>
+</section>
+<section id="announcementsSection" class="hide">
+ <div class="panel"><div class="number">Объявления магазина</div><div class="muted">Активные объявления показываются покупателям в каталоге.</div>
+ <input type="hidden" id="aId"><div class="field"><label>Заголовок</label><input id="aTitle" maxlength="120" placeholder="Например, Технические работы"></div>
+ <div class="field"><label>Текст объявления</label><textarea id="aBody" rows="4" maxlength="2000" placeholder="Текст для покупателей"></textarea></div>
+ <div class="actions"><button class="primary" id="saveAnnouncement">Сохранить объявление</button><button id="cancelAnnouncement">Очистить</button></div><div id="announcementMsg" class="muted"></div></div>
+ <div id="announcementsList"></div>
 </section>
 </main>
 <script>
@@ -184,12 +191,18 @@ function renderInventoryPlans(){const pid=document.getElementById("inventoryProd
 document.getElementById("saveInventory").onclick=async()=>{const msg=document.getElementById("inventoryMsg"),plan_id=document.getElementById("inventoryPlan").dataset.value||"",keys=document.getElementById("inventoryLines").value.split(";").map(x=>x.trim()).filter(Boolean);if(!plan_id){msg.textContent="Выбери тариф";return;}if(!keys.length){msg.textContent="Добавь хотя бы одну строку";return;}if(keys.length>500){msg.textContent="За один раз можно добавить максимум 500 строк";return;}const btn=document.getElementById("saveInventory");btn.disabled=true;msg.textContent="Сохраняю…";try{const d=await api("POST",{action:"add_keys",plan_id,keys});msg.textContent="Добавлено: "+d.added+" из "+d.submitted;document.getElementById("inventoryLines").value="";await loadInventory();}catch(e){msg.textContent="Ошибка: "+e.message;}finally{btn.disabled=false;}};
 document.getElementById("clearInventory").onclick=()=>{document.getElementById("inventoryLines").value="";document.getElementById("inventoryMsg").textContent="";};
 document.getElementById("inventoryProductsList").onclick=e=>{const b=e.target.closest("[data-stock]");if(!b)return;setDropdown("inventoryProduct",inventoryProducts.map(p=>({value:p.id,label:p.name})),b.dataset.stock);renderInventoryPlans();document.getElementById("inventoryLines").focus();};
+async function loadAnnouncements(){const el=document.getElementById("announcementsList");el.innerHTML='<div class="notice">Загружаю…</div>';try{const d=await api("GET",null,"announcements");const arr=d.announcements||[];el.innerHTML=arr.length?arr.map(a=>`<article class="panel"><div class="top"><b>${esc(a.title)}</b><span class="status">${a.is_active?"Активно":"Выключено"}</span></div><p class="muted" style="white-space:pre-wrap">${esc(a.body)}</p><div class="actions"><button data-a-edit="${a.id}">Изменить</button><button data-a-toggle="${a.id}" data-active="${a.is_active}">${a.is_active?"Выключить":"Включить"}</button><button class="warn" data-a-delete="${a.id}">Удалить</button></div></article>`).join(""):'<div class="empty">Объявлений пока нет</div>';}catch(e){el.innerHTML='<div class="notice error">'+esc(e.message)+'</div>';}}
+function clearAnnouncement(){document.getElementById("aId").value="";document.getElementById("aTitle").value="";document.getElementById("aBody").value="";document.getElementById("announcementMsg").textContent="";}
+document.getElementById("saveAnnouncement").onclick=async()=>{const id=document.getElementById("aId").value,title=document.getElementById("aTitle").value.trim(),body=document.getElementById("aBody").value.trim(),msg=document.getElementById("announcementMsg");if(!title||!body){msg.textContent="Заполни заголовок и текст";return;}try{await api("POST",{action:"save_announcement",id:id||undefined,title,body});clearAnnouncement();msg.textContent="Сохранено";await loadAnnouncements();}catch(e){msg.textContent=e.message;}};
+document.getElementById("cancelAnnouncement").onclick=clearAnnouncement;
+document.getElementById("announcementsList").onclick=async e=>{const edit=e.target.closest("[data-a-edit]"),toggle=e.target.closest("[data-a-toggle]"),del=e.target.closest("[data-a-delete]");try{if(edit){const d=await api("GET",null,"announcements"),a=(d.announcements||[]).find(x=>x.id===edit.dataset.aEdit);if(a){document.getElementById("aId").value=a.id;document.getElementById("aTitle").value=a.title;document.getElementById("aBody").value=a.body;}}else if(toggle){await api("POST",{action:"toggle_announcement",id:toggle.dataset.aToggle,is_active:toggle.dataset.active!=="true"});await loadAnnouncements();}else if(del&&confirm("Удалить объявление?")){await api("POST",{action:"delete_announcement",id:del.dataset.aDelete});await loadAnnouncements();}}catch(e){alert(e.message);}};
 async function showInventoryForProduct(productId){showAdminSection("inventorySection");try{await loadInventory();setDropdown("inventoryProduct",inventoryProducts.map(p=>({value:p.id,label:p.name})),productId);renderInventoryPlans();document.getElementById("inventoryLines").focus();}catch(e){document.getElementById("inventoryMsg").textContent="Ошибка загрузки: "+e.message;}}
-function showAdminSection(which){for(const id of ["ordersSection","productsSection","inventorySection"])document.getElementById(id).classList.toggle("hide",id!==which);for(const id of ["ordersTab","productsTab","inventoryTab"])document.getElementById(id).classList.toggle("primary",id===(which==="ordersSection"?"ordersTab":which==="productsSection"?"productsTab":"inventoryTab"));if(which==="productsSection")loadProducts();if(which==="inventorySection")loadInventory();}
+function showAdminSection(which){for(const id of ["ordersSection","productsSection","inventorySection","announcementsSection"])document.getElementById(id).classList.toggle("hide",id!==which);for(const id of ["ordersTab","productsTab","inventoryTab","announcementsTab"])document.getElementById(id).classList.toggle("primary",id===(which==="ordersSection"?"ordersTab":which==="productsSection"?"productsTab":which==="inventorySection"?"inventoryTab":"announcementsTab"));if(which==="productsSection")loadProducts();if(which==="inventorySection")loadInventory();if(which==="announcementsSection")loadAnnouncements();}
 
 document.getElementById("ordersTab").onclick=()=>showAdminSection("ordersSection");
 document.getElementById("productsTab").onclick=()=>showAdminSection("productsSection");
 document.getElementById("inventoryTab").onclick=()=>showAdminSection("inventorySection");
+document.getElementById("announcementsTab").onclick=()=>showAdminSection("announcementsSection");
 let selectedUser=null;
 document.getElementById("userFind").onclick=async()=>{
  const query=document.getElementById("userSearch").value.trim(),out=document.getElementById("userResult");
@@ -224,7 +237,8 @@ document.getElementById("orders").onclick=async e=>{
   if(act==="fulfill"){
    const type=prompt("Тип выдачи: text / activation_key / download_link","activation_key");if(!type){b.disabled=false;return;}
    const value=prompt(type==="download_link"?"Вставь ссылку":"Вставь текст или ключ");if(!value){b.disabled=false;return;}
-   const payload={action:"fulfill",order_id:id,delivery_type:type};if(type==="download_link")payload.download_url=value;else payload.message=value;
+   const instruction=prompt("Инструкция для покупателя (необязательно):")||"";
+   const payload={action:"fulfill",order_id:id,delivery_type:type,instruction};if(type==="download_link")payload.download_url=value;else payload.message=value;
    await api("POST",payload);
   }
   await load();
