@@ -18,7 +18,7 @@ button:disabled{opacity:.5;cursor:wait}.order{margin:9px 0}.top{display:flex;jus
 .meta{color:var(--muted);font-size:12px;line-height:1.6;margin:9px 0}.price{font-weight:800;font-size:17px}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
 .empty,.notice{padding:24px;text-align:center;color:var(--muted);background:var(--panel);border-radius:12px}
 .error{color:#ff8585}.refresh{font-size:12px;color:var(--muted)}.hide{display:none}
-.tabs{display:flex;gap:8px;margin:0 0 14px}.tabs button{flex:1}.panel{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:14px;margin:10px 0}
+.tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 14px}.tabs button{min-width:0;white-space:normal}.tabs button.primary{background:linear-gradient(135deg,#f33d52,#c9233c)}.panel{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:14px;margin:10px 0}
 .field{display:grid;gap:6px;margin:10px 0}.field label{font-size:12px;color:var(--muted)}
 input:not([type="checkbox"]):not([type="hidden"]){width:100%;min-width:0;min-height:46px;background:#141418;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:11px 13px;color:#f5f5f5;font:inherit;outline:none;transition:border-color .2s,box-shadow .2s}
 input::placeholder{color:#777b86}input:focus{border-color:#d93668;box-shadow:0 0 0 3px #d9366825,0 0 18px #d9366818}
@@ -31,7 +31,7 @@ input[type="checkbox"]{accent-color:#d93668}
 <body>
 <header><div><div class="logo"><b>KD</b>S ADMIN</div><div class="tag">Панель управления магазином</div></div><button id="reload">↻ Обновить</button></header>
 <main>
-<div class="tabs"><button id="ordersTab" class="primary">Заказы</button><button id="productsTab">Карточки товаров</button><button id="inventoryTab">Содержимое товаров</button></div>
+<div class="tabs"><button id="ordersTab" class="primary">Заказы</button><button id="productsTab">Товары</button><button id="inventoryTab">Склад</button><button id="announcementsTab">Объявления</button><button id="gamesTab">Игры</button></div>
 <section id="ordersSection">
 <div class="stats"><div class="stat"><small>Новые</small><strong id="sNew">—</strong></div><div class="stat"><small>В работе</small><strong id="sWork">—</strong></div><div class="stat"><small>Выполнено</small><strong id="sDone">—</strong></div></div>
 <section class="order" style="margin:0 0 16px">
@@ -87,6 +87,16 @@ input[type="checkbox"]{accent-color:#d93668}
  </div>
  <div id="inventoryProductsList"></div>
 </section>
+<section id="announcementsSection" class="hide">
+ <div class="panel"><div class="number">Объявления на главной</div><div class="muted">Создавай новости, редактируй текст и включай или выключай публикацию.</div><div class="actions"><button class="primary" id="newAnnouncement">＋ Новое объявление</button><button id="reloadAnnouncements">↻ Обновить</button></div></div>
+ <div id="announcementEditor" class="panel hide"><input type="hidden" id="aId"><div class="field"><label>Заголовок</label><input id="aTitle" maxlength="120" placeholder="Например, Новое поступление"></div><div class="field"><label>Текст объявления</label><textarea id="aBody" rows="4" maxlength="2000" placeholder="Текст для главной страницы"></textarea></div><div class="actions"><button class="primary" id="saveAnnouncement">Сохранить</button><button id="cancelAnnouncement">Отмена</button></div><div id="announcementMsg" class="muted"></div></div>
+ <div id="announcementsList"><div class="notice">Загрузка объявлений…</div></div>
+</section>
+<section id="gamesSection" class="hide">
+ <div class="panel"><div class="number">Игры каталога</div><div class="muted">Добавляй игры, меняй название и обложку. Игру с товарами удалить нельзя — сначала перенеси товары.</div><div class="actions"><button class="primary" id="newGame">＋ Добавить игру</button><button id="reloadGames">↻ Обновить</button></div></div>
+ <div id="gameEditor" class="panel hide"><input type="hidden" id="gId"><div class="field"><label>Название игры</label><input id="gName" placeholder="Название"></div><div class="field"><label>Slug</label><input id="gSlug" placeholder="game-name"></div><div class="field"><label>URL обложки HTTPS</label><input id="gImage" placeholder="https://..."></div><div class="field"><label>Порядок</label><input id="gSort" type="number" min="0" value="0"></div><label><input id="gActive" type="checkbox" checked style="width:auto"> Активна</label><div class="actions"><button class="primary" id="saveGame">Сохранить</button><button id="cancelGame">Отмена</button></div><div id="gameMsg" class="muted"></div></div>
+ <div id="gamesList"></div>
+</section>
 </main>
 <script>
 const tg=window.Telegram?.WebApp; tg?.ready(); tg?.expand();
@@ -120,10 +130,15 @@ async function load(){
  try{const d=await api();allOrders=d.orders||[];render();document.getElementById("updated").textContent="Обновлено: "+new Date().toLocaleTimeString("ru-RU");}
  catch(e){el.innerHTML='<div class="notice error">'+esc(e.message)+'</div>';document.getElementById("updated").textContent="Не удалось загрузить данные";}
 }
+async function loadAnnouncements(){const el=document.getElementById("announcementsList");el.innerHTML='<div class="notice">Загрузка…</div>';try{const d=await api("GET",null,"announcements");const rows=d.announcements||[];el.innerHTML=rows.length?rows.map(a=>'<article class="product"><div class="product-head"><b>'+esc(a.title)+'</b><span class="status">'+(a.is_active?'Опубликовано':'Скрыто')+'</span></div><div class="muted">'+esc(a.body)+'</div><div class="actions"><button class="primary" data-ann-edit="'+esc(a.id)+'">Изменить</button><button data-ann-toggle="'+esc(a.id)+'" data-active="'+(a.is_active?'true':'false')+'">'+(a.is_active?'Скрыть':'Опубликовать')+'</button><button class="warn" data-ann-delete="'+esc(a.id)+'">Удалить</button></div></article>').join(""):'<div class="empty">Объявлений пока нет</div>';window.kdsAnnouncements=rows;}catch(e){el.innerHTML='<div class="notice error">'+esc(e.message)+'</div>';}}
+function openAnnouncement(a){a=a||{};document.getElementById("aId").value=a.id||"";document.getElementById("aTitle").value=a.title||"";document.getElementById("aBody").value=a.body||"";document.getElementById("announcementMsg").textContent="";document.getElementById("announcementEditor").classList.remove("hide");document.getElementById("announcementEditor").scrollIntoView({behavior:"smooth",block:"start"});}
+document.getElementById("newAnnouncement").onclick=()=>openAnnouncement();document.getElementById("cancelAnnouncement").onclick=()=>document.getElementById("announcementEditor").classList.add("hide");document.getElementById("reloadAnnouncements").onclick=loadAnnouncements;
+document.getElementById("saveAnnouncement").onclick=async()=>{const msg=document.getElementById("announcementMsg"),title=document.getElementById("aTitle").value.trim(),body=document.getElementById("aBody").value.trim();if(!title||!body){msg.textContent="Заполни заголовок и текст";return;}const btn=document.getElementById("saveAnnouncement");btn.disabled=true;try{await api("POST",{action:"save_announcement",id:document.getElementById("aId").value||undefined,title,body});document.getElementById("announcementEditor").classList.add("hide");await loadAnnouncements();}catch(e){msg.textContent=e.message;}finally{btn.disabled=false;}};
+document.getElementById("announcementsList").onclick=async e=>{const edit=e.target.closest("[data-ann-edit]"),toggle=e.target.closest("[data-ann-toggle]"),del=e.target.closest("[data-ann-delete]");const rows=window.kdsAnnouncements||[];if(edit){openAnnouncement(rows.find(x=>x.id===edit.dataset.annEdit));return;}try{if(toggle)await api("POST",{action:"toggle_announcement",id:toggle.dataset.annToggle,is_active:toggle.dataset.active!=="true"});if(del){if(!confirm("Удалить объявление без возможности восстановления?"))return;await api("POST",{action:"delete_announcement",id:del.dataset.annDelete});}if(toggle||del)await loadAnnouncements();}catch(err){alert(err.message);}};
 async function loadProducts(){
  const el=document.getElementById("productsList");el.innerHTML='<div class="notice">Загружаю товары…</div>';
  try{
-  const d=await api("GET",null,"products");allProducts=d.products||[];
+  const d=await api("GET",null,"products");allProducts=d.products||[];const gd=await api("GET",null,"games");const gameSelect=document.getElementById("pGame"),currentGame=gameSelect.value;gameSelect.innerHTML=(gd.games||[]).map(g=>`<option>${esc(g.name)}</option>`).join("");if((gd.games||[]).some(g=>g.name===currentGame))gameSelect.value=currentGame;
   if(!allProducts.length){el.innerHTML='<div class="empty">Товаров пока нет</div>';return;}
   el.innerHTML=allProducts.map(p=>{
    const plans=p.kds_product_plans||p.plans||[];
@@ -185,11 +200,18 @@ document.getElementById("saveInventory").onclick=async()=>{const msg=document.ge
 document.getElementById("clearInventory").onclick=()=>{document.getElementById("inventoryLines").value="";document.getElementById("inventoryMsg").textContent="";};
 document.getElementById("inventoryProductsList").onclick=e=>{const b=e.target.closest("[data-stock]");if(!b)return;setDropdown("inventoryProduct",inventoryProducts.map(p=>({value:p.id,label:p.name})),b.dataset.stock);renderInventoryPlans();document.getElementById("inventoryLines").focus();};
 async function showInventoryForProduct(productId){showAdminSection("inventorySection");try{await loadInventory();setDropdown("inventoryProduct",inventoryProducts.map(p=>({value:p.id,label:p.name})),productId);renderInventoryPlans();document.getElementById("inventoryLines").focus();}catch(e){document.getElementById("inventoryMsg").textContent="Ошибка загрузки: "+e.message;}}
-function showAdminSection(which){for(const id of ["ordersSection","productsSection","inventorySection"])document.getElementById(id).classList.toggle("hide",id!==which);for(const id of ["ordersTab","productsTab","inventoryTab"])document.getElementById(id).classList.toggle("primary",id===(which==="ordersSection"?"ordersTab":which==="productsSection"?"productsTab":"inventoryTab"));if(which==="productsSection")loadProducts();if(which==="inventorySection")loadInventory();}
+function showAdminSection(which){for(const id of ["ordersSection","productsSection","inventorySection","announcementsSection","gamesSection"])document.getElementById(id).classList.toggle("hide",id!==which);for(const id of ["ordersTab","productsTab","inventoryTab","announcementsTab","gamesTab"])document.getElementById(id).classList.toggle("primary",id===(which+"Tab").replace("Section",""));if(which==="productsSection")loadProducts();if(which==="inventorySection")loadInventory();if(which==="announcementsSection")loadAnnouncements();if(which==="gamesSection")loadGames();}
 
 document.getElementById("ordersTab").onclick=()=>showAdminSection("ordersSection");
 document.getElementById("productsTab").onclick=()=>showAdminSection("productsSection");
 document.getElementById("inventoryTab").onclick=()=>showAdminSection("inventorySection");
+document.getElementById("announcementsTab").onclick=()=>showAdminSection("announcementsSection");
+document.getElementById("gamesTab").onclick=()=>showAdminSection("gamesSection");
+let allGames=[];
+async function loadGames(){const el=document.getElementById("gamesList");el.innerHTML='<div class="notice">Загрузка…</div>';try{const d=await api("GET",null,"games");allGames=d.games||[];el.innerHTML=allGames.map(g=>'<article class="product"><div class="product-head"><div><b>'+esc(g.name)+'</b><div class="muted">'+esc(g.slug)+' · Порядок '+esc(g.sort_order)+'</div>'+(g.image_url?'<img src="'+esc(g.image_url)+'" alt="" style="width:100%;max-height:120px;object-fit:cover;border-radius:10px;margin-top:8px">':'')+'</div><span class="status">'+(g.is_active?'Активна':'Скрыта')+'</span></div><div class="actions"><button class="primary" data-game-edit="'+esc(g.id)+'">Изменить</button><button data-game-toggle="'+esc(g.id)+'" data-active="'+(g.is_active?'true':'false')+'">'+(g.is_active?'Скрыть':'Показать')+'</button><button class="warn" data-game-delete="'+esc(g.id)+'">Удалить</button></div></article>').join("")||'<div class="empty">Список игр пуст</div>';}catch(e){el.innerHTML='<div class="notice error">'+esc(e.message)+'</div>';}}
+function openGame(g){g=g||{};document.getElementById("gId").value=g.id||"";document.getElementById("gName").value=g.name||"";document.getElementById("gSlug").value=g.slug||"";document.getElementById("gImage").value=g.image_url||"";document.getElementById("gSort").value=g.sort_order??0;document.getElementById("gActive").checked=g.is_active!==false;document.getElementById("gameMsg").textContent="";document.getElementById("gameEditor").classList.remove("hide");}
+document.getElementById("newGame").onclick=()=>openGame();document.getElementById("reloadGames").onclick=loadGames;document.getElementById("cancelGame").onclick=()=>document.getElementById("gameEditor").classList.add("hide");document.getElementById("saveGame").onclick=async()=>{const name=document.getElementById("gName").value.trim(),slug=document.getElementById("gSlug").value.trim().toLowerCase(),msg=document.getElementById("gameMsg");if(!name||!/^[a-z0-9][a-z0-9-]{1,63}$/.test(slug)){msg.textContent="Проверь название и slug";return;}try{await api("POST",{action:"save_game",id:document.getElementById("gId").value||undefined,name,slug,image_url:document.getElementById("gImage").value.trim(),sort_order:Number(document.getElementById("gSort").value)||0,is_active:document.getElementById("gActive").checked});document.getElementById("gameEditor").classList.add("hide");await loadGames();}catch(e){msg.textContent=e.message;}};
+document.getElementById("gamesList").onclick=async e=>{const edit=e.target.closest("[data-game-edit]"),toggle=e.target.closest("[data-game-toggle]"),del=e.target.closest("[data-game-delete]");if(edit){openGame(allGames.find(g=>g.id===edit.dataset.gameEdit));return;}try{if(toggle)await api("POST",{action:"save_game",id:toggle.dataset.gameToggle,name:allGames.find(g=>g.id===toggle.dataset.gameToggle).name,slug:allGames.find(g=>g.id===toggle.dataset.gameToggle).slug,image_url:allGames.find(g=>g.id===toggle.dataset.gameToggle).image_url||"",sort_order:allGames.find(g=>g.id===toggle.dataset.gameToggle).sort_order,is_active:toggle.dataset.active!=="true"});if(del){if(!confirm("Удалить игру?"))return;await api("POST",{action:"delete_game",id:del.dataset.gameDelete});}if(toggle||del)await loadGames();}catch(err){alert(err.message);}};
 let selectedUser=null;
 document.getElementById("userFind").onclick=async()=>{
  const query=document.getElementById("userSearch").value.trim(),out=document.getElementById("userResult");
@@ -222,9 +244,9 @@ document.getElementById("orders").onclick=async e=>{
   if(act==="start")await api("POST",{action:"start",order_id:id});
   if(act==="refund"){const reason=prompt("Причина отмены и возврата:");if(!reason){b.disabled=false;return;}await api("POST",{action:"refund",order_id:id,reason});}
   if(act==="fulfill"){
-   const type=prompt("Тип выдачи: text / activation_key / download_link","activation_key");if(!type){b.disabled=false;return;}
-   const value=prompt(type==="download_link"?"Вставь ссылку":"Вставь текст или ключ");if(!value){b.disabled=false;return;}
-   const payload={action:"fulfill",order_id:id,delivery_type:type};if(type==="download_link")payload.download_url=value;else payload.message=value;
+   const value=prompt("Выданный товар / ключ / данные для покупателя:");if(!value){b.disabled=false;return;}
+   const instruction=prompt("Ссылка на инструкцию (оставь пустым, если не нужна):","https://t.me/+YGOwB71cb3AzYTNi");
+   const payload={action:"fulfill",order_id:id,delivery_type:"activation_key",message:value,instruction:(instruction||"").trim()};
    await api("POST",payload);
   }
   await load();

@@ -1,0 +1,21 @@
+SUPABASE BACKEND — APPLIED
+Project: vpuaihznkswrpsqxgcvm
+
+Database:
+- public.kds_games created, RLS enabled.
+- Seeded: Oxide Survival Island, PUBG Mobile, Standoff 2, Mobile Legends, Genshin Impact, Free Fire, Counter Flame.
+- kds_admin_fulfill_order now accepts p_instruction and persists it in the same transaction as delivery + order status.
+- kds_auto_fulfill_key now stores the default instruction URL in the delivery row during atomic auto-fulfilment.
+
+Edge Functions:
+- kds-api version 23: includes active games in authenticated Mini App GET response.
+- kds-admin version 22: GET games, save_game, delete_game (rejects deletion while products reference the game), validates product game against active DB rows, passes validated HTTPS instruction URL into atomic fulfilment RPC.
+
+Verification:
+- SQL verified 7 seeded game rows.
+- RLS enabled on kds_games.
+- Manual fulfilment RPC includes p_instruction.
+- Automatic fulfilment function includes instruction persistence.
+- Deployed source re-read: kds-api v23 and kds-admin v22 include expected changes.
+
+No customer orders, product prices, wallet balances, or inventory keys were modified. No GitHub Pages upload was performed.
