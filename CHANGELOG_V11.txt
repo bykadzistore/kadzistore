@@ -1,0 +1,9 @@
+KADZI STORE V11 — Financial analytics and audit
+
+- Added purchase price per tariff in admin; retail prices remain unchanged.
+- New orders snapshot purchase cost atomically with wallet debit.
+- Replaced estimated cost (revenue / 1.2) with actual per-order cost.
+- Net profit includes 1% payment fee; withdrawal fee and server cost are 0.
+- Added checks for fulfilled orders without delivery, purchase journal mismatches, refund journal mismatches, balance/ledger mismatches, ratings without fulfilled purchase, and missing order cost.
+- Historical orders are not assigned invented costs and are marked as unverified.
+- Storefront index.html is unchanged.
