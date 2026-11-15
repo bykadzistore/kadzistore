@@ -1,0 +1,37 @@
+KADZI STORE V9 — BACKEND CHANGES
+Supabase project: vpuaihznkswrpsqxgcvm
+
+Deployed:
+- kds-api-v9: ACTIVE, version 4
+  - verified Telegram Mini App initData
+  - per-user notification preferences and in-app notification feed
+  - product rating endpoint with fulfilled-order eligibility
+  - public rating summary uses stars >= 4 only
+  - Telegram recipient registry is updated when a user opens the Mini App
+  - payment confirmation and automatic fulfilment notifications
+- kds-admin: ACTIVE, version 28
+  - analytics endpoint for all order history
+  - announcement broadcast action with audience selection
+  - in-app notification creation and Telegram delivery
+  - customer status/fulfilment notification handling
+- Existing kds-api left unchanged to preserve the configured Telegram webhook.
+
+Applied migrations:
+- kds_v9_ratings_notifications_analytics
+- kds_v9_notification_rating_indexes
+
+New tables:
+- kds_product_ratings
+- kds_notification_settings
+- kds_notifications
+- kds_bot_subscribers
+- kds_broadcast_logs
+
+Security:
+- RLS enabled on every new table.
+- anon and authenticated have no SELECT privilege on new tables.
+- service_role has access for the Edge Functions.
+
+Data safety:
+- Existing users, products, plans, balances, orders, stock, announcements and games were not modified.
+- Existing app users were copied into the Telegram recipient registry (5 rows at the time of update).
