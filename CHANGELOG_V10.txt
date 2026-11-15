@@ -1,0 +1,10 @@
+KADZI STORE V10 — Maintenance update
+
+- Fixed customer rating labels and Russian plural forms.
+- Kept public ratings restricted to 4–5 stars and rating eligibility restricted to fulfilled purchasers.
+- Prevented repeat purchase taps while a purchase request is pending.
+- Added approximate RUB / USDT price display using a current market quote. RUB remains the settlement/accounting currency.
+- Fixed notification preference handling for Telegram fulfillment messages.
+- Restricted direct public execution of the administrative fulfillment RPC.
+- Made admin notifications fail independently of completed order actions; paginated analytics, rating aggregates and purchase eligibility queries.
+- Preserved existing storefront design and integrations.

@@ -1,0 +1,16 @@
+KADZI STORE V10 — AUDIT FIXES
+
+Frontend
+- Rating UI now uses correct Russian plural forms (1 оценка / 2 оценки / 5 оценок) and does not expose the internal 4–5-star filter wording. Empty ratings show “Пока нет оценок”.
+- Rating controls recover after API errors; only fulfilled purchasers remain eligible, and the public average/count continue to include only 4–5-star ratings.
+- Purchase buttons are locked together while a create-order request is in flight to prevent accidental double taps. Confirmation clarifies that accounting and debits remain in RUB.
+- Added RUB / USDT display switch. USDT values are approximate display equivalents using CoinGecko's public Tether/RUB market quote; cached quotes are accepted only for 15 minutes. Stored prices, orders, wallet balances, top-ups and analytics remain denominated in RUB.
+- Header remains compact on narrow mobile screens.
+
+Supabase / backend already applied directly to the connected project
+- kds-admin Edge Function deployed as version 30; kds-api-v9 deployed as version 5. Customer Telegram fulfillment messages now obey the order_fulfilled notification preference; notification delivery failures do not roll back a completed order action. Analytics now fetches orders in 1,000-row pages (up to 50,000) so the all-time report is not silently clipped by the API row limit. Public rating aggregates and fulfilled-purchase eligibility queries also paginate in 1,000-row pages (up to 50,000).
+- EXECUTE on public.kds_admin_fulfill_order(uuid,bigint,text,text,text,text,text) revoked from PUBLIC, anon and authenticated; retained for service_role. Verified anon/authenticated cannot execute it and service_role can.
+- Security advisor no longer reports a publicly executable SECURITY DEFINER RPC. Remaining RLS-enabled/no-policy findings are INFO: direct table access stays blocked and the application accesses data through authenticated Edge Functions using server credentials.
+
+Preserved
+- Existing Glass Hybrid Red Edition styling, products, plans, catalog, favorites, announcements, Telegram integration, Supabase API, orders, RUB wallet accounting and analytics.
