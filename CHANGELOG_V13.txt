@@ -1,0 +1,13 @@
+KADZI STORE V13
+
+- Added a separate notification center page with a back-to-profile action.
+- Added a top-right notification bell next to the balance; the red dot appears when unread notifications exist.
+- Notification history loads in pages of 30 as the customer scrolls; notification cards can be marked read individually or all at once.
+- Added a custom Hybrid Glass Gradient certificate selector.
+- Every iOS software product can now be purchased with the shared iOS certificate, or without adding a certificate when the customer already owns one.
+- Added the Certificates catalog filter for Oxide Survival Island, PUBG Mobile, and Counter Flame. The same universal certificate product appears in each of these filters.
+- Added the Certificates category to the admin product editor.
+- Updated the existing iOS Certificate product image and category in Supabase; no duplicate product was created.
+- Added the generic atomic iOS + certificate order RPC and deployed kds-api-v9 Edge Function version 7.
+
+No purchase was made as a test. Please verify the visual layout and then test a small real or admin-approved test order before publishing.
