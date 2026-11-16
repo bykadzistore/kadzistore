@@ -1,0 +1,7 @@
+V15.3 - APK upload fix
+
+- Updated only admin.html upload flow.
+- Browser now posts the raw file to the authenticated kds-admin Edge Function route.
+- Uses Telegram initData header and stores returned storage_path.
+- No RLS policies disabled or broadened.
+- All other archive files preserved unchanged.
