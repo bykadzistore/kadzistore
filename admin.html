@@ -40,6 +40,14 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
 @media(max-width:480px){.ann-button-row{grid-template-columns:1fr}.ann-button-row input:last-child{grid-column:1}.tabs{gap:5px}}
 
 .glass-dropdown .dropdown-menu{background:linear-gradient(145deg,#211723f2,#100d17f5);border:1px solid #ffffff35;backdrop-filter:blur(22px) saturate(150%);-webkit-backdrop-filter:blur(22px) saturate(150%);box-shadow:0 18px 45px #000b,inset 0 1px #ffffff20;border-radius:15px;padding:7px}.glass-dropdown .dropdown-option{border-radius:10px;padding:12px}.glass-dropdown .dropdown-option.active,.glass-dropdown .dropdown-option:hover{background:linear-gradient(110deg,#ff29472c,#b20f3020);color:#ff9aaa}.bulk-check{accent-color:#ff2947;width:18px;height:18px}.notice-pill{display:inline-flex;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:800;background:#f3b54420;color:#ffd17b;border:1px solid #f3b54455}.audit-row{padding:12px 0;border-bottom:1px solid #ffffff16}.file-pick{display:block;width:100%;padding:12px;border:1px dashed #ffffff44;border-radius:13px;background:#ffffff08;color:#ddd}.modal-backdrop{position:fixed;inset:0;background:#000b;z-index:20;display:flex;align-items:center;justify-content:center;padding:16px}.modal-card{width:min(100%,520px);max-height:90vh;overflow:auto;background:linear-gradient(145deg,#211723,#100d17);border:1px solid #ffffff30;border-radius:20px;padding:16px;box-shadow:0 20px 70px #000c}.hide{display:none!important}
+
+/* KADZI STORE ADMIN PERFORMANCE: preserve glass panels, reduce expensive blur on phones/tablets. */
+@media (pointer:coarse) and (max-width:900px){
+ header,.tabs,.panel,.order,.product,.stat,.glass-dropdown .dropdown-menu{
+  -webkit-backdrop-filter:blur(12px) saturate(135%) !important;
+  backdrop-filter:blur(12px) saturate(135%) !important;
+ }
+}
 </style></head>
 <body>
 <header><div><div class="logo"><b>KD</b>S ADMIN</div><div class="tag">Панель управления магазином</div></div><div class="actions" style="margin:0"><button id="backToStore">← В магазин</button><button id="reload">↻ Обновить</button></div></header>
@@ -139,11 +147,10 @@ const initData=tg?.initData||"";
 let allOrders=[], filter="all", allProducts=[], selectedProductIds=new Set();
 const labels={awaiting_fulfillment:"Оплачено",processing:"В обработке",in_delivery:"В доставке",delivering:"В доставке",shipping:"В доставке",fulfilled:"Выполнено",refunded:"Возврат",cancelled:"Отменено"};
 const money=v=>new Intl.NumberFormat("ru-RU").format(v)+" ₽";
-function adminFriendlyError(raw){const code=String(raw||"").trim(),key=code.toLowerCase();const map={rate_limit:"Слишком много запросов. Подождите минуту и попробуйте снова.",rate_limited:"Слишком много запросов. Подождите минуту и попробуйте снова.",insufficient_balance:"Недостаточно средств на балансе.",order_not_found:"Заказ не найден. Обновите список заказов.",internal_error:"Произошла непредвиденная ошибка. Попробуйте позже.",delivery_failed:"Не удалось выдать товар. Проверьте заказ и повторите попытку.",unauthorized:"Нет доступа к этому действию. Проверьте права администратора.",session_expired:"Сессия устарела. Перезапустите админ-панель через бота."};if(map[key])return map[key];if(/(internal_error|pgrst|postgrest|supabase|jwt|fetch failed|networkerror|typeerror|syntaxerror|duplicate key|violates .*constraint)/i.test(code))return "Не удалось выполнить действие. Попробуйте ещё раз. Если ошибка повторится, проверьте журнал ошибок.";return code||"Не удалось выполнить действие. Попробуйте ещё раз.";}
 async function api(method="GET",body,section){
  const url="https://vpuaihznkswrpsqxgcvm.supabase.co/functions/v1/kds-admin?api=1"+(section?"&section="+encodeURIComponent(section):"");
- let r;try{r=await fetch(url,{method,headers:{"Content-Type":"application/json","X-Telegram-Init-Data":initData},body:body?JSON.stringify(body):undefined});}catch(e){throw new Error("Не удалось связаться с сервером. Проверьте подключение.");}
- let d={};try{d=await r.json()}catch{} if(!r.ok)throw new Error(adminFriendlyError(d.error||d.code||"")); return d;
+ const r=await fetch(url,{method,headers:{"Content-Type":"application/json","X-Telegram-Init-Data":initData},body:body?JSON.stringify(body):undefined});
+ const d=await r.json(); if(!r.ok)throw new Error(d.error||"Ошибка запроса"); return d;
 }
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function setDropdown(id,options,value){const input=document.getElementById(id),wrap=input.closest(".dropdown"),menu=wrap.querySelector(".dropdown-menu");const selected=options.find(x=>String(x.value)===String(value));input.value=selected?selected.label:"";input.dataset.value=selected?selected.value:"";menu.innerHTML=options.map(x=>'<button type="button" class="dropdown-option '+(selected&&String(selected.value)===String(x.value)?'active':'')+'" data-option-value="'+esc(x.value)+'">'+esc(x.label)+'</button>').join("")||'<div class="muted" style="padding:10px">Нет вариантов</div>';}
