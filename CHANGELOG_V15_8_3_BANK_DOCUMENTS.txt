@@ -1,0 +1,5 @@
+KADZI STORE V15.8.3 - Bank documentation access
+
+- Added public links to the Privacy Policy and User Agreement on the pre-entry screen shown outside Telegram.
+- Both documents open in a separate browser tab and are accessible without Mini App authorization.
+- Kept the existing Telegram entry button and all store, payment, order, Supabase and admin logic unchanged.
