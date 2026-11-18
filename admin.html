@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>KDS Admin · V14</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://telegram.org/js/telegram-web-app.js">
+</script>
 <style>
 :root{color-scheme:dark;--bg:#090909;--panel:#151515;--line:#292929;--red:#ef3434;--muted:#999;--green:#37c978;--yellow:#f3b544}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f5f5f5;font:14px Inter,system-ui,Arial,sans-serif}
@@ -48,11 +49,16 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
   backdrop-filter:blur(12px) saturate(135%) !important;
  }
 }
+
+.market-admin-card{border:1px solid var(--line);border-radius:14px;padding:13px;margin:10px 0;background:#141821}
+.market-admin-card h3{margin:0 0 7px;font-size:15px}.market-admin-card p{margin:5px 0;color:var(--muted);font-size:12px;overflow-wrap:anywhere}
+.market-admin-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.market-admin-actions button{min-width:110px}
+.market-admin-message{padding:9px 11px;border-radius:11px;background:#1a202a;margin:7px 0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}.market-admin-message.mine{background:#19372b;margin-left:18px}
 </style></head>
 <body>
 <header><div><div class="logo"><b>KD</b>S ADMIN</div><div class="tag">Панель управления магазином</div></div><div class="actions" style="margin:0"><button id="backToStore">← В магазин</button><button id="reload">↻ Обновить</button></div></header>
 <main>
-<div class="tabs"><button id="ordersTab" class="primary">Заказы</button><button id="productsTab">Товары</button><button id="inventoryTab">Склад</button><button id="announcementsTab">Объявления</button><button id="gamesTab">Игры</button><button id="analyticsTab">Аналитика</button><button id="auditTab">Журнал</button></div>
+<div class="tabs"><button id="ordersTab" class="primary">Заказы</button><button id="productsTab">Товары</button><button id="inventoryTab">Склад</button><button id="announcementsTab">Объявления</button><button id="gamesTab">Игры</button><button id="analyticsTab">Аналитика</button><button id="auditTab">Журнал</button><button id="marketplaceTab">Маркетплейс</button></div>
 <section id="ordersSection">
 <div class="stats"><div class="stat"><small>Новые</small><strong id="sNew">—</strong></div><div class="stat"><small>В работе</small><strong id="sWork">—</strong></div><div class="stat"><small>Выполнено</small><strong id="sDone">—</strong></div></div>
 <section class="panel" id="orderSearchPanel"><div class="number">Поиск заказов</div><div class="muted">Номер заказа, Telegram ID, username или название товара.</div><div class="actions" style="align-items:center"><input id="orderSearch" placeholder="Например, 1042 или @username" style="flex:1;min-width:180px"><button class="primary" id="orderSearchBtn">Найти</button><button id="orderSearchClear">Сбросить</button></div><div id="orderSearchResult" class="muted"></div></section>
@@ -142,6 +148,18 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
  <div id="gamesList"></div>
 </section>
 <section id="auditSection" class="hide"><div class="panel"><div class="number">Журнал действий</div><div class="muted">Изменения товаров, цен, склада, заказов и уведомлений.</div><button class="primary" id="reloadAudit">↻ Обновить журнал</button></div><div id="auditList"><div class="notice">Загрузка журнала…</div></div></section>
+
+<section id="marketplaceSection" class="hide">
+ <div class="panel">
+  <div class="number">Маркетплейс KADZI</div>
+  <div class="muted">Модерация объявлений, контроль сделок и рассмотрение споров. Все действия выполняются через сервер Supabase.</div>
+  <div class="actions"><button class="primary" id="reloadMarketplace">↻ Обновить данные</button></div>
+ </div>
+ <section class="panel"><div class="number">Споры</div><div class="muted">При открытом споре переписка покупателя и продавца разделяется. Ответы отправляются каждой стороне отдельно.</div><div id="marketplaceDisputes"><div class="notice">Нажми «Обновить данные».</div></div></section>
+ <section class="panel"><div class="number">Объявления</div><div id="marketplaceListings"><div class="notice">Загрузка после открытия раздела.</div></div></section>
+ <section class="panel"><div class="number">Сделки</div><div id="marketplaceOrders"><div class="notice">Загрузка после открытия раздела.</div></div></section>
+ <section class="panel hide" id="marketplaceSupportPanel"><div class="number" id="marketplaceSupportTitle">Чат по заказу</div><div id="marketplaceSupportMessages"></div><div class="actions"><button id="replyChat">Ответить в общий чат</button><button id="closeMarketplaceSupport">Закрыть переписку</button></div></section>
+</section>
 </main>
 <script>
 const tg=window.Telegram?.WebApp; tg?.ready(); tg?.expand();
@@ -345,7 +363,7 @@ document.getElementById("saveInventory").onclick=async()=>{const msg=document.ge
 document.getElementById("clearInventory").onclick=()=>{document.getElementById("inventoryLines").value="";document.getElementById("inventoryMsg").textContent="";};
 document.getElementById("inventoryProductsList").onclick=e=>{const b=e.target.closest("[data-stock]");if(!b)return;setDropdown("inventoryProduct",inventoryProducts.map(p=>({value:p.id,label:p.name})),b.dataset.stock);renderInventoryPlans();document.getElementById("inventoryLines").focus();};
 async function showInventoryForProduct(productId){showAdminSection("inventorySection");try{await loadInventory();setDropdown("inventoryProduct",inventoryProducts.map(p=>({value:p.id,label:p.name})),productId);renderInventoryPlans();document.getElementById("inventoryLines").focus();}catch(e){document.getElementById("inventoryMsg").textContent="Ошибка загрузки: "+e.message;}}
-function showAdminSection(which){for(const id of ["ordersSection","productsSection","inventorySection","announcementsSection","gamesSection","analyticsSection","auditSection"])document.getElementById(id).classList.toggle("hide",id!==which);for(const id of ["ordersTab","productsTab","inventoryTab","announcementsTab","gamesTab","analyticsTab","auditTab"])document.getElementById(id).classList.toggle("primary",id===(which+"Tab").replace("Section",""));if(which==="productsSection")loadProducts();if(which==="inventorySection")loadInventory();if(which==="announcementsSection"){loadAnnouncements();loadBroadcastHistory();}if(which==="gamesSection")loadGames();if(which==="analyticsSection")loadAnalytics();if(which==="auditSection")loadAudit();}
+function showAdminSection(which){for(const id of ["ordersSection","productsSection","inventorySection","announcementsSection","gamesSection","analyticsSection","auditSection","marketplaceSection"])document.getElementById(id).classList.toggle("hide",id!==which);for(const id of ["ordersTab","productsTab","inventoryTab","announcementsTab","gamesTab","analyticsTab","auditTab","marketplaceTab"])document.getElementById(id).classList.toggle("primary",id===(which+"Tab").replace("Section",""));if(which==="productsSection")loadProducts();if(which==="inventorySection")loadInventory();if(which==="announcementsSection"){loadAnnouncements();loadBroadcastHistory();}if(which==="gamesSection")loadGames();if(which==="analyticsSection")loadAnalytics();if(which==="auditSection")loadAudit();if(which==="marketplaceSection")loadMarketplaceAdmin();}
 
 document.getElementById("ordersTab").onclick=()=>showAdminSection("ordersSection");
 document.getElementById("productsTab").onclick=()=>showAdminSection("productsSection");
@@ -414,4 +432,59 @@ document.getElementById("pPlatform").value="Android";
 setBulkStatusOptions();
 if(!initData){document.getElementById("orders").innerHTML='<div class="notice error">Открой эту страницу через Telegram Mini App, чтобы подтвердить администратора.</div>';}
 else load();
+const MARKET_API="https://vpuaihznkswrpsqxgcvm.supabase.co/functions/v1/kds-marketplace";
+let marketAdminDisputes=[],marketAdminOrders=[],marketAdminListings=[],marketAdminCurrentDispute=null,marketAdminUserId=null;
+async function marketAdminApi(method="GET",body=null,section="bootstrap",params={}){
+ const q=new URLSearchParams({section,...Object.fromEntries(Object.entries(params).filter(([,v])=>v!==undefined&&v!==null&&v!==""))});
+ const r=await fetch(MARKET_API+"?"+q.toString(),{method,headers:{"Content-Type":"application/json","X-Telegram-Init-Data":initData},body:body?JSON.stringify(body):undefined});
+ let d={};try{d=await r.json()}catch(_){}if(!r.ok)throw new Error(d.error||"Ошибка маркетплейса");return d;
+}
+async function loadMarketplaceAdmin(){
+ const targets=["marketplaceDisputes","marketplaceListings","marketplaceOrders"];
+ targets.forEach(id=>document.getElementById(id).innerHTML='<div class="notice">Загружаю данные…</div>');
+ try{
+  const [boot,d,l,o]=await Promise.all([marketAdminApi("GET",null,"bootstrap"),marketAdminApi("GET",null,"admin_disputes"),marketAdminApi("GET",null,"admin_listings"),marketAdminApi("GET",null,"admin_orders")]);
+  marketAdminUserId=boot.user?.id||null;marketAdminDisputes=d.disputes||[];marketAdminListings=l.listings||[];marketAdminOrders=o.orders||[];
+  renderMarketplaceAdmin();
+ }catch(e){targets.forEach(id=>document.getElementById(id).innerHTML='<div class="notice error">'+esc(e.message)+'</div>');}
+}
+function renderMarketplaceAdmin(){
+ const disputes=document.getElementById("marketplaceDisputes");
+ disputes.innerHTML=marketAdminDisputes.length?marketAdminDisputes.map(x=>{const o=x.kds_marketplace_orders||{},l=o.kds_marketplace_listings||{};return '<article class="market-admin-card"><h3>Спор по заказу #'+esc(o.order_code||"")+'</h3><p>'+esc(l.title||"Товар")+' · '+money(o.total_rub||0)+' · '+esc(o.status||"")+'</p><p>Причина: '+esc(x.reason)+'</p><p>Открыт: '+new Date(x.created_at).toLocaleString("ru-RU")+'</p><div class="market-admin-actions"><button class="primary" data-market-chat="'+esc(o.id||x.order_id)+'">Открыть переписку</button><button data-market-verdict="buyer" data-market-order="'+esc(o.id||x.order_id)+'">Решить в пользу покупателя</button><button data-market-verdict="seller" data-market-order="'+esc(o.id||x.order_id)+'">Решить в пользу продавца</button></div></article>';}).join(""):'<div class="notice">Открытых споров нет.</div>';
+ const listings=document.getElementById("marketplaceListings");
+ listings.innerHTML=marketAdminListings.length?marketAdminListings.map(x=>'<article class="market-admin-card"><h3>'+esc(x.title)+'</h3><p>'+esc(x.kds_games?.name||"Игра")+' · '+esc(x.kds_marketplace_categories?.category_name||"Категория")+' · продавец: '+esc(x.seller_nickname)+'</p><p>'+money(x.unit_price_rub)+(x.pricing_mode==="per_g"?" / G":"")+' · остаток: '+esc(x.quantity_available)+' · статус: '+esc(x.status)+'</p><div class="market-admin-actions"><button data-market-listing-status="active" data-market-listing="'+x.id+'">Опубликовать</button><button data-market-listing-status="paused" data-market-listing="'+x.id+'">Приостановить</button><button data-market-listing-status="under_review" data-market-listing="'+x.id+'">На проверку</button><button data-market-listing-status="removed" data-market-listing="'+x.id+'">Снять с продажи</button></div></article>').join(""):'<div class="notice">Объявлений пока нет.</div>';
+ const orders=document.getElementById("marketplaceOrders");
+ orders.innerHTML=marketAdminOrders.length?marketAdminOrders.map(x=>'<article class="market-admin-card"><h3>Заказ #'+esc(x.order_code)+'</h3><p>'+esc(x.kds_marketplace_listings?.title||"Лот")+' · '+esc(x.kds_marketplace_listings?.kds_games?.name||"Игра")+'</p><p>'+money(x.total_rub)+' · '+esc(x.status)+' · '+new Date(x.created_at).toLocaleString("ru-RU")+'</p><div class="market-admin-actions"><button data-market-chat-order="'+esc(x.id)+'">Открыть чат</button>'+(x.status==="delivered"?'<button class="primary" data-market-admin-confirm="'+esc(x.id)+'">Подтвердить заказ</button>':'')+'</div></article>').join(''):'<div class="notice">Сделок пока нет.</div>';
+}
+async function openMarketplaceSupport(orderId){
+ const dispute=marketAdminDisputes.find(x=>(x.kds_marketplace_orders?.id||x.order_id)===orderId);
+ const order=marketAdminOrders.find(x=>x.id===orderId);
+ if(!dispute&&!order)return;
+ const o=dispute?.kds_marketplace_orders||order||{};
+ marketAdminCurrentDispute={...(dispute||{}),order_id:orderId,kds_marketplace_orders:o};
+ document.getElementById("marketplaceSupportTitle").textContent=(dispute?"Чат спора по заказу #":"Приватный чат заказа #")+(o.order_code||"");
+ document.getElementById("marketplaceSupportPanel").classList.remove("hide");
+ const d=await marketAdminApi("GET",null,"messages",{order_id:orderId});
+ document.getElementById("marketplaceSupportMessages").innerHTML=(d.messages||[]).map(m=>'<div class="market-admin-message '+(m.sender_id===undefined?"":"")+'"><b>'+esc(m.sender_id===marketAdminUserId?"Администратор":"Участник")+'</b><p>'+esc(m.message_text)+'</p>'+(m.image_url?'<img src="'+esc(m.image_url)+'" style="max-width:180px;border-radius:9px">':"")+'<small>'+new Date(m.created_at).toLocaleString("ru-RU")+'</small></div>').join("")||'<div class="notice">Сообщений пока нет.</div>';
+ document.getElementById("marketplaceSupportPanel").scrollIntoView({behavior:"smooth",block:"start"});
+}
+async function sendMarketplaceSupportReply(){
+ if(!marketAdminCurrentDispute)return;const o=marketAdminCurrentDispute.kds_marketplace_orders||{};const message=prompt("Сообщение покупателю и продавцу в общий чат");if(!message)return;
+ try{await marketAdminApi("POST",{action:"send_message",order_id:o.id||marketAdminCurrentDispute.order_id,message_text:message});await openMarketplaceSupport(o.id||marketAdminCurrentDispute.order_id);}catch(e){alert(e.message);}
+}
+document.getElementById("marketplaceTab").onclick=()=>showAdminSection("marketplaceSection");
+document.getElementById("reloadMarketplace").onclick=loadMarketplaceAdmin;
+document.getElementById("marketplaceDisputes").addEventListener("click",async e=>{
+ const chat=e.target.closest("[data-market-chat]");if(chat){try{await openMarketplaceSupport(chat.dataset.marketChat);}catch(x){alert(x.message);}return;}
+ const verdict=e.target.closest("[data-market-verdict]");if(verdict){const note=prompt("Комментарий администратора (необязательно):","")||"";if(!confirm("Подтвердить решение по спору?"))return;try{await marketAdminApi("POST",{action:"resolve_dispute",order_id:verdict.dataset.marketOrder,verdict:verdict.dataset.marketVerdict,admin_note:note});alert("Решение сохранено.");await loadMarketplaceAdmin();}catch(x){alert(x.message);}}
+});
+document.getElementById("marketplaceOrders").addEventListener("click",async e=>{
+ const chat=e.target.closest("[data-market-chat-order]");if(chat){try{await openMarketplaceSupport(chat.dataset.marketChatOrder);}catch(x){alert(x.message);}return;}
+ const confirmBtn=e.target.closest("[data-market-admin-confirm]");if(confirmBtn){if(!confirm("Подтвердить выполнение заказа вручную? Средства продавца будут заморожены на 48 часов."))return;try{await marketAdminApi("POST",{action:"admin_confirm_order",order_id:confirmBtn.dataset.marketAdminConfirm});alert("Заказ подтверждён администратором.");await loadMarketplaceAdmin();}catch(x){alert(x.message);}}
+});
+document.getElementById("marketplaceListings").addEventListener("click",async e=>{const b=e.target.closest("[data-market-listing-status]");if(!b)return;try{await marketAdminApi("POST",{action:"admin_set_listing_status",listing_id:b.dataset.marketListing,status:b.dataset.marketListingStatus});await loadMarketplaceAdmin();}catch(x){alert(x.message);}});
+document.getElementById("replyChat").onclick=()=>sendMarketplaceSupportReply();
+document.getElementById("closeMarketplaceSupport").onclick=()=>document.getElementById("marketplaceSupportPanel").classList.add("hide");
+
+
 </script></body></html>

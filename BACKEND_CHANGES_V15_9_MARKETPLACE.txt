@@ -1,0 +1,72 @@
+KADZI STORE V15.9 - BACKEND STATUS
+
+Supabase project ref: vpuaihznkswrpsqxgcvm
+Project status: ACTIVE_HEALTHY
+
+LIVE EDGE FUNCTION
+- kds-marketplace: ACTIVE, version 14, verify_jwt=false.
+- Telegram initData is verified inside the function using TELEGRAM_BOT_TOKEN.
+- SUPABASE_SERVICE_ROLE_KEY is read only server-side; no service key is included in frontend files.
+- Existing kds-api-v9, kds-api and kds-admin functions were not replaced.
+
+APPLIED MARKETPLACE MIGRATIONS
+- kds_marketplace_v1 (pre-existing)
+- kds_marketplace_v2_workflows (pre-existing)
+- kds_marketplace_v2_permissions_and_cron (pre-existing)
+- kds_marketplace_v3_support_threads
+- kds_marketplace_v4_auto_delivery_linebreak
+- kds_marketplace_v5_paused_minimum
+- kds_marketplace_v6_restock_listing
+- kds_marketplace_v7_restock_rpc_permissions
+- kds_marketplace_v8_rpc_search_path_hardening
+- kds_marketplace_v9_restock_sold_listing
+- kds_marketplace_v10_manual_confirmation_and_admin_confirm
+- kds_marketplace_v11_manual_confirmation_stock_linebreak
+
+Do not reapply these migrations to the current live project.
+
+ORDER CONFIRMATION
+- Automatic confirmation is disabled. Cron job 1 was removed.
+- public.kds_marketplace_auto_confirm_due() is now a no-op returning 0.
+- Existing auto_confirm_at values were cleared; current order count is zero.
+- New orders are created with auto_confirm_at = NULL.
+- Buyer confirms using kds_marketplace_confirm_order.
+- Administrator confirms manually using kds_marketplace_admin_confirm_order through the Edge Function action admin_confirm_order.
+- Confirmation moves seller proceeds into frozen_balance_rub for 48 hours.
+- The 24-hour deadline remains only the seller delivery deadline.
+- The only remaining marketplace cron job releases matured 48-hour holds.
+
+CHATS AND PRIVACY
+- Non-admin access is restricted to the buyer and seller on the specific order.
+- Admin can read and write the order chat.
+- Normal paid-order messages are visible only to buyer, seller and admin.
+- During an open dispute, buyer and seller messages are broadcast into one shared support thread; both parties and admin can read all messages and write to the same thread.
+- The Edge Function returns signed URLs for private chat images.
+
+CATALOG
+- Bootstrap returns all game rows; marketplace frontend now displays all games, regardless of the general store is_active flag.
+- Active marketplace categories are currently present for all 8 game records.
+- Main store game visibility remains governed separately by the store catalog logic.
+
+SECURITY / STORAGE
+- RLS is enabled on marketplace tables; no public direct policies were found.
+- Marketplace reads/writes use the Telegram-authenticated Edge Function.
+- kds_marketplace_media is private; images use signed URLs.
+- Purchase/restock RPC execution is restricted to service_role.
+- Admin confirmation RPC execution is restricted to service_role and verifies the admin Telegram ID.
+
+CURRENT DATA STATE
+- listings: 0
+- orders: 0
+- profiles: 0
+- messages: 0
+- No test transactions or fake listings were created.
+
+VALIDATION
+- JavaScript syntax checked for storefront and admin page.
+- Edge Function version 14 deployed successfully.
+- Cron schedule, auto-confirm function, order auto_confirm_at state, game/category availability and key SQL functions verified.
+- Full end-to-end purchase and Telegram-authenticated browser testing remains pending until frontend publication and a test listing/test buyer are available.
+
+GITHUB
+- No GitHub repository was changed and no commit was created. The owner handles the GitHub commit.
