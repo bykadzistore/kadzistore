@@ -384,6 +384,29 @@ body.kds-market-open .nav{display:none!important}
 #market button:active{transform:scale(.985)}
 @media(prefers-reduced-motion:reduce){#market .kds-market-view,#market .kds-market-loading span{animation:none!important}}
 
+
+/* KADZI MARKETPLACE V15.9.4 — scroll-flow navigation + lightweight surfaces */
+#market.page.active{overflow-y:auto!important;overflow-x:hidden!important; -webkit-overflow-scrolling:touch}
+#market .kds-market-topbar{position:relative!important;top:auto!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:#10131b!important}
+#market .kds-market-menu{position:relative!important;inset:auto!important;top:auto!important;left:auto!important;right:auto!important;width:100%!important;max-height:none!important;overflow:visible!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;flex-direction:initial!important;gap:8px!important;margin:0 0 14px!important;padding:10px!important;box-sizing:border-box!important;border:1px solid rgba(255,255,255,.17)!important;border-radius:16px!important;background:linear-gradient(135deg,rgba(255,255,255,.13),rgba(255,255,255,.035) 58%,rgba(255,65,98,.09))!important;box-shadow:0 10px 24px rgba(0,0,0,.24),inset 0 1px rgba(255,255,255,.14)!important;backdrop-filter:blur(12px) saturate(135%)!important;-webkit-backdrop-filter:blur(12px) saturate(135%)!important;z-index:5!important}
+#market .kds-market-menu[hidden]{display:none!important}
+#market .kds-market-view{margin:0!important;width:100%!important;min-height:0!important;animation:none!important}
+#market .kds-market-view.active{display:block!important}
+/* Keep marketplace content fast: no backdrop blur on repeated cards or form surfaces. */
+#market .kds-market-banner,#market .kds-market-wallet,#market .kds-market-game-fav,#market .kds-market-game-row,#market .kds-market-category,#market .kds-market-lot,#market .kds-market-card,#market .kds-market-detail-card,#market .kds-market-order,#market .kds-market-my-lot,#market .kds-market-support-card,#market .kds-market-rule,#market .kds-market-rules-intro,#market .kds-market-rules-foot,#market .kds-market-chat-row,#market .kds-market-form-step,#market .kds-market-fixed-delivery{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important}
+#market .kds-market-banner,#market .kds-market-wallet,#market .kds-market-game-fav,#market .kds-market-game-row,#market .kds-market-category,#market .kds-market-lot,#market .kds-market-detail-card,#market .kds-market-order,#market .kds-market-my-lot,#market .kds-market-support-card,#market .kds-market-rule,#market .kds-market-rules-intro,#market .kds-market-form-step,#market .kds-market-fixed-delivery{background:#151923!important;border-color:rgba(255,255,255,.12)!important}
+#market .kds-market-view .kds-market-search,#market .kds-market-view input:not([type=checkbox]):not([type=file]),#market .kds-market-view textarea{background:#11151e!important;box-shadow:none!important}
+/* Dropdown panel is the intentional Hybrid Glass Gradient component. */
+#market .kds-market-select-wrap{position:relative;width:100%}
+#market .kds-market-select-trigger{width:100%;min-height:40px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 11px;border:1px solid rgba(255,255,255,.2);border-radius:12px;background:linear-gradient(135deg,rgba(255,255,255,.13),rgba(255,255,255,.035) 65%,rgba(255,73,105,.1));color:#fff;font:inherit;font-size:11px;font-weight:750;box-shadow:inset 0 1px rgba(255,255,255,.14)}
+#market .kds-market-select-trigger span{color:#ff9aaa;font-size:15px}
+#market .kds-market-select-popover{position:absolute;right:0;top:calc(100% + 7px);width:100%;min-width:175px;z-index:60;display:grid;gap:5px;padding:8px;border:1px solid rgba(255,255,255,.2);border-radius:14px;background:linear-gradient(145deg,rgba(32,36,48,.97),rgba(15,18,27,.97));box-shadow:0 14px 32px rgba(0,0,0,.48),inset 0 1px rgba(255,255,255,.12);backdrop-filter:blur(14px) saturate(145%);-webkit-backdrop-filter:blur(14px) saturate(145%)}
+#market .kds-market-select-popover[hidden]{display:none!important}
+#market .kds-market-select-popover button{width:100%;padding:10px 11px;border:1px solid transparent;border-radius:9px;background:transparent;color:#e8eaf0;text-align:left;font:inherit;font-size:11px}
+#market .kds-market-select-popover button.active{border-color:rgba(255,113,140,.42);background:linear-gradient(135deg,rgba(255,83,115,.24),rgba(255,255,255,.05));color:#ffb0bd}
+#market .kds-market-sort-label{gap:5px}
+@media(max-width:520px){#market .kds-market-menu{grid-template-columns:repeat(2,minmax(0,1fr))!important}#market .kds-market-select-popover{min-width:160px}}
+
 </style>
 </head>
 <body>
@@ -442,7 +465,7 @@ body.kds-market-open .nav{display:none!important}
   <div class="kds-market-section-head"><h3>Категории</h3></div>
   <div class="kds-market-categories" id="kdsMarketCategories"></div>
   <div class="kds-market-lots-head"><div><h3 id="kdsMarketLotsTitle">Лоты</h3><small id="kdsMarketLotsCount"></small></div><input class="kds-market-search" id="kdsMarketLotSearch" placeholder="Поиск по лотам..."></div>
-  <div class="kds-market-filters"><label class="kds-market-online-filter"><span><b>Только в сети</b><small>Показывать продавцов онлайн</small></span><input id="kdsMarketOnlineOnly" type="checkbox"><i aria-hidden="true"></i></label><label class="kds-market-sort-label">Сортировка<select id="kdsMarketLotSort"><option value="random">В разброс</option><option value="cheap">Сначала дешёвые</option><option value="expensive">Сначала дорогие</option></select></label></div>
+  <div class="kds-market-filters"><label class="kds-market-online-filter"><span><b>Только в сети</b><small>Показывать продавцов онлайн</small></span><input id="kdsMarketOnlineOnly" type="checkbox"><i aria-hidden="true"></i></label><div class="kds-market-sort-label"><span>Сортировка</span><div class="kds-market-select-wrap" id="kdsMarketSortWrap"><button type="button" class="kds-market-select-trigger" id="kdsMarketSortTrigger" aria-expanded="false">В разброс <span aria-hidden="true">⌄</span></button><div class="kds-market-select-popover" id="kdsMarketSortPopover" hidden><button type="button" data-sort-value="random" class="active">В разброс</button><button type="button" data-sort-value="cheap">Сначала дешёвые</button><button type="button" data-sort-value="expensive">Сначала дорогие</button></div><select id="kdsMarketLotSort" hidden aria-hidden="true" tabindex="-1"><option value="random">В разброс</option><option value="cheap">Сначала дешёвые</option><option value="expensive">Сначала дорогие</option></select></div></div></div>
   <div class="kds-market-lots" id="kdsMarketLots"></div>
  </div>
  <div class="kds-market-view" id="kdsMarketDetailView">
@@ -708,6 +731,10 @@ function bind(){
  $('kdsMarketCategories').addEventListener('click',e=>{const b=e.target.closest('[data-market-category]');if(!b)return;m.categoryId=b.dataset.marketCategory;renderCategories();loadListings().catch(x=>toast(x.message));});
  $('kdsMarketBackGames').addEventListener('click',()=>showView('home'));$('kdsMarketDetailBack').addEventListener('click',()=>showView('game'));
  $('kdsMarketLotSearch').addEventListener('input',()=>loadListings().catch(x=>toast(x.message)));$('kdsMarketOnlineOnly').addEventListener('change',renderLots);$('kdsMarketLotSort').addEventListener('change',()=>loadListings().catch(x=>toast(x.message)));
+ const sortWrap=$('kdsMarketSortWrap'),sortTrigger=$('kdsMarketSortTrigger'),sortPopover=$('kdsMarketSortPopover'),sortSelect=$('kdsMarketLotSort');
+ sortTrigger?.addEventListener('click',()=>{sortPopover.hidden=!sortPopover.hidden;sortTrigger.setAttribute('aria-expanded',String(!sortPopover.hidden));});
+ sortPopover?.addEventListener('click',e=>{const option=e.target.closest('[data-sort-value]');if(!option)return;sortSelect.value=option.dataset.sortValue;sortTrigger.innerHTML=option.textContent+' <span aria-hidden="true">⌄</span>';sortPopover.querySelectorAll('[data-sort-value]').forEach(x=>x.classList.toggle('active',x===option));sortPopover.hidden=true;sortTrigger.setAttribute('aria-expanded','false');sortSelect.dispatchEvent(new Event('change',{bubbles:true}));});
+ document.addEventListener('click',e=>{if(sortWrap&&!sortWrap.contains(e.target)){sortPopover.hidden=true;sortTrigger?.setAttribute('aria-expanded','false');}});
  $('kdsMarketLots').addEventListener('click',e=>{const b=e.target.closest('[data-open-lot]');if(b)openLot(b.dataset.openLot);});
  $('kdsMarketMyLotsList').addEventListener('click',async e=>{const edit=e.target.closest('[data-edit-my-lot]');if(edit){editLot(edit.dataset.editMyLot);return;}const restock=e.target.closest('[data-restock-lot]');if(restock){restockLot(restock.dataset.restockLot);return;}const b=e.target.closest('[data-listing-status]');if(b){try{await api('POST',{action:'set_listing_status',listing_id:b.dataset.listingId,status:b.dataset.listingStatus},'');await loadMine();toast('Статус объявления изменён');}catch(x){toast(x.message);}}});
  $('kdsSellGame').addEventListener('change',fillCategories);$('kdsSellCategory').addEventListener('change',syncSellFields);$('kdsSellAuto').addEventListener('change',syncSellFields);$('kdsSellStock').addEventListener('input',syncSellFields);$('kdsSellShort').addEventListener('input',()=>$('kdsSellShortCount').textContent=$('kdsSellShort').value.length+' / 140');
