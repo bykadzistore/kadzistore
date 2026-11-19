@@ -454,6 +454,28 @@ header{background:linear-gradient(110deg,#0b0a11f5,#17101af2)!important}
 .kds-market-sell-cta{width:100%;margin:8px 0 15px;min-height:45px;font-weight:900}
 @media(max-width:390px){.kds-order-filters{grid-template-columns:1fr}}
 
+
+/* V15.10.9 readability pass: opaque store cards, crisp text, restrained depth. */
+.card,.order,.profile,.profile-card,.profile-link,.wallet-premium,.product-modal{
+ background:linear-gradient(145deg,#242a35 0%,#1a1e27 56%,#1b1821 100%)!important;
+ border-color:rgba(255,255,255,.15)!important;
+ box-shadow:0 8px 20px rgba(0,0,0,.36),inset 0 1px rgba(255,255,255,.055)!important;
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+.card p,.order p,.profile p,.product-modal p{color:#d0d5df!important}
+.card small,.order small,.profile small{color:#aab3c2!important}
+#market .kds-market-card,#market .kds-market-lot,#market .kds-market-detail-card,#market .kds-market-order,#market .kds-market-profile-lot{
+ background:linear-gradient(145deg,#252b36 0%,#1b2029 58%,#211b25 100%)!important;
+ border-color:rgba(255,255,255,.16)!important;box-shadow:0 8px 20px rgba(0,0,0,.34)!important;
+ color:#f2f4f8!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+#market .kds-market-card p,#market .kds-market-lot p,#market .kds-market-detail-card p,#market .kds-market-profile-lot p{color:#cbd2de!important}
+/* Loading shimmer: soft, slow, and staggered; reduced-motion remains respected. */
+.kds-skeleton-card{background:linear-gradient(145deg,#1c222d,#151922)!important;border-color:#ffffff18!important}
+.kds-skeleton-card:after,.kds-skeleton-line:after{background:linear-gradient(90deg,transparent,rgba(255,255,255,.085),rgba(255,94,120,.045),transparent)!important;animation:kdsSkeletonSweep 1.35s ease-in-out infinite!important}
+.kds-skeleton-card:nth-child(2):after{animation-delay:.14s!important}.kds-skeleton-card:nth-child(3):after{animation-delay:.28s!important}.kds-skeleton-card:nth-child(4):after{animation-delay:.42s!important}
+@media(prefers-reduced-motion:reduce){.kds-skeleton-card:after,.kds-skeleton-line:after{animation:none!important}}
+
 </style>
 </head>
 <body>
@@ -531,7 +553,7 @@ header{background:linear-gradient(110deg,#0b0a11f5,#17101af2)!important}
   <div class="kds-market-form" id="kdsMarketListingForm">
    <div class="kds-market-form-step"><b>1. Что продаёшь?</b><small>Выбери игру и категорию.</small></div>
    <label id="kdsSellSellerNicknameWrap" hidden>Имя продавца (2–40 символов)<input id="kdsSellSellerNickname" maxlength="40" autocomplete="nickname" placeholder="Как тебя будут видеть покупатели"></label>
-   <label>Игра<div class="kds-glass-select" id="kdsSellGameWrap"><button type="button" class="kds-glass-select-trigger" id="kdsSellGameTrigger" aria-expanded="false"><span>Выбери игру</span><b>⌄</b></button><div class="kds-glass-select-popover" id="kdsSellGamePopover" hidden></div><select id="kdsSellGame" aria-hidden="true" tabindex="-1"></select></div></label>
+   <div hidden aria-hidden="true"><select id="kdsSellGame" tabindex="-1"></select></div>
    <label>Категория<div class="kds-glass-select" id="kdsSellCategoryWrap"><button type="button" class="kds-glass-select-trigger" id="kdsSellCategoryTrigger" aria-expanded="false"><span>Выбери категорию</span><b>⌄</b></button><div class="kds-glass-select-popover" id="kdsSellCategoryPopover" hidden></div><select id="kdsSellCategory" aria-hidden="true" tabindex="-1"></select></div></label>
    <div class="kds-market-form-step"><b>2. Информация о лоте</b><small>Укажи точное название и понятное описание.</small></div>
    <label>Название объявления<input id="kdsSellTitle" maxlength="70" placeholder="Например: 1000 голды Standoff 2"></label>
@@ -552,7 +574,7 @@ header{background:linear-gradient(110deg,#0b0a11f5,#17101af2)!important}
    <div class="kds-market-form-step"><b>4. Фотографии товара</b><small>Можно добавить несколько фотографий. В списке лотов они не показываются, но будут видны в полном объявлении.</small></div>
    <label>Добавить фотографии<input id="kdsSellImages" type="file" accept="image/jpeg,image/png,image/webp" multiple></label><div id="kdsSellImagePreview" class="kds-market-image-preview"></div>
    <label class="kds-market-check"><input id="kdsSellAgree" type="checkbox"> Подтверждаю, что описание соответствует товару, цена верна, а условия передачи понятны.</label>
-   <button class="primary" id="kdsSellSubmit" type="button">Подтвердить объявление</button>
+   <button class="primary" id="kdsSellSubmit" type="button">Подтвердить</button>
    <div class="kds-market-note">Объявление появится в каталоге после публикации.</div>
    <div id="kdsSellPreview" class="kds-market-listing-preview" hidden></div>
   </div>
@@ -835,8 +857,8 @@ function renderFinance(){
  $('kdsMarketFinanceHistory').innerHTML=visible.length?visible.map(x=>{const amount=Number(x.amount_rub||0),positive=amount>0&&x.kind!=='seller_hold';const color=x.kind==='seller_hold'?'#ffb86b':(positive?'#6ce4aa':'#ff8999');return `<article class="kds-market-finance-row"><div><b>${esc(x.title||x.note||x.kind||'Операция')}</b><small>${new Date(x.created_at).toLocaleString('ru-RU')} · ${esc(x.source||'Баланс')}</small></div><span class="kds-market-finance-amount" style="color:${color}">${amount>0?'+':''}${rub(amount)}</span></article>`;}).join(''):'<div class="empty">Операций в этой категории пока нет</div>';
 }
 async function loadFinance(){const d=await api('GET',null,'finance');m.finance=d.transactions||[];renderFinance();}
-function fillSelects(){const game=$('kdsSellGame'),category=$('kdsSellCategory');const prev=game.value;game.innerHTML=m.games.map(g=>`<option value="${g.id}">${esc(g.name)}</option>`).join('');if(m.games.some(g=>g.id===prev))game.value=prev;fillCategories();renderSellDropdowns();}
-function fillCategories(){const gameId=$('kdsSellGame').value;const rows=m.categories.filter(c=>c.game_id===gameId);$('kdsSellCategory').innerHTML=rows.map(c=>`<option value="${c.id}">${esc(c.category_name)}</option>`).join('');syncSellFields();renderSellDropdowns();}
+function fillSelects(){const game=$('kdsSellGame');game.innerHTML=m.games.map(g=>`<option value="${g.id}">${esc(g.name)}</option>`).join('');if(m.gameId&&m.games.some(g=>g.id===m.gameId))game.value=m.gameId;fillCategories();renderSellDropdowns();}
+function fillCategories(){const gameId=m.gameId||$('kdsSellGame').value;const category=$('kdsSellCategory'),previous=category.value;const rows=m.categories.filter(c=>c.game_id===gameId&&c.is_active!==false);category.innerHTML=rows.map(c=>`<option value="${c.id}">${esc(c.category_name)}</option>`).join('');if(rows.some(c=>c.id===previous))category.value=previous;else if(m.categoryId&&rows.some(c=>c.id===m.categoryId))category.value=m.categoryId;else if(rows.length)category.selectedIndex=0;syncSellFields();renderSellDropdowns();}
 function renderOneSellDropdown(selectId,triggerId,popoverId,placeholder){const sel=$(selectId),trigger=$(triggerId),pop=$(popoverId);if(!sel||!trigger||!pop)return;const opts=[...sel.options];trigger.querySelector('span').textContent=sel.selectedOptions[0]?.textContent||placeholder;pop.innerHTML=opts.map(o=>`<button type="button" class="kds-glass-option ${o.value===sel.value?'active':''}" data-glass-value="${esc(o.value)}">${esc(o.textContent)}</button>`).join('')||'<div class="kds-market-note">Нет доступных вариантов</div>'; }
 function renderSellDropdowns(){renderOneSellDropdown('kdsSellGame','kdsSellGameTrigger','kdsSellGamePopover','Выбери игру');renderOneSellDropdown('kdsSellCategory','kdsSellCategoryTrigger','kdsSellCategoryPopover','Выбери категорию');}
 function isGoldForm(){const game=m.games.find(g=>g.id===$('kdsSellGame').value);const cat=m.categories.find(c=>c.id===$('kdsSellCategory').value);return game?.slug==='standoff-2'&&cat?.category_name==='Золото';}
@@ -847,7 +869,8 @@ async function ensureProfile(){if(m.profile)return true;const field=$('kdsSellSe
 async function createListing(){
  const btn=$('kdsSellSubmit');if(btn.disabled)return;btn.disabled=true;btn.textContent='Проверяем…';
  try{
-  if(m.gameId){$('kdsSellGame').value=m.gameId;fillCategories();}
+  if(!m.gameId||!m.games.some(g=>g.id===m.gameId)){toast('Сначала открой нужную игру в каталоге.');return;}
+  $('kdsSellGame').value=m.gameId;fillCategories();
   if(m.categoryId&&m.categories.some(c=>c.id===m.categoryId&&c.game_id===m.gameId))$('kdsSellCategory').value=m.categoryId;
   syncSellFields();const gold=isGoldForm(),auto=!gold&&$('kdsSellAuto').checked;
   const autoItems=$('kdsSellAutoItems').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
@@ -855,10 +878,17 @@ async function createListing(){
   const min=gold?Number($('kdsSellGoldMin').value||1):Number($('kdsSellMin').value||1);
   const price=parseRubInput(gold?$('kdsSellGoldPrice').value:$('kdsSellPrice').value);
   const title=$('kdsSellTitle').value.trim(),short=$('kdsSellShort').value.trim(),description=$('kdsSellDescription').value.trim();
-  if(!$('kdsSellGame').value||!$('kdsSellCategory').value||!title||short.length<5||description.length<5||!validRubAmount(price)||!Number.isInteger(stock)||stock<1||!Number.isInteger(min)||min<1||min>stock||(auto&&!autoItems.length)){toast('Проверь игру, категорию, название, описание, цену и остаток.');return;}
-  if(!$('kdsSellAgree').checked){toast('Подтверди корректность объявления.');return;}
+  if(!$('kdsSellCategory').value||!m.categories.some(c=>c.id===$('kdsSellCategory').value&&c.game_id===m.gameId&&c.is_active!==false)){toast('Выбери категорию для выбранной игры.');$('kdsSellCategoryTrigger').focus();return;}
+  if(title.length<3){toast('Название должно содержать минимум 3 символа.');$('kdsSellTitle').focus();return;}
+  if(short.length<5){toast('Краткое описание должно содержать минимум 5 символов.');$('kdsSellShort').focus();return;}
+  if(description.length<5){toast('Полное описание должно содержать минимум 5 символов.');$('kdsSellDescription').focus();return;}
+  if(!validRubAmount(price)){toast('Укажи корректную цену больше 0 ₽.');return;}
+  if(!Number.isInteger(stock)||stock<1){toast('Количество товара должно быть не меньше 1.');return;}
+  if(!Number.isInteger(min)||min<1||min>stock){toast('Минимальный заказ не может быть больше остатка.');return;}
+  if(auto&&!autoItems.length){toast('Добавь строки товара для автоматической выдачи.');$('kdsSellAutoItems').focus();return;}
+  if(!$('kdsSellAgree').checked){toast('Поставь галочку подтверждения условий объявления.');$('kdsSellAgree').focus();return;}
   btn.textContent='Публикуем…';if(!await ensureProfile())return;
-  const payload={game_id:$('kdsSellGame').value,category_id:$('kdsSellCategory').value,title,short_description:short,description,unit_price_rub:price,quantity_available:stock,min_quantity:min,delivery_method:auto?'automatic':'manual',inventory_items:auto?autoItems:[],image_paths:[]};
+  const payload={game_id:m.gameId,category_id:$('kdsSellCategory').value,title,short_description:short,description,unit_price_rub:price,quantity_available:stock,min_quantity:min,delivery_method:auto?'automatic':'manual',inventory_items:auto?autoItems:[],image_paths:[]};
   for(const file of m.images){const d=await api('POST',{action:'upload_listing_image',file},'');if(!d?.storage_path)throw new Error('Фото загружено без подтверждения пути. Попробуй без фотографий.');payload.image_paths.push(d.storage_path);}
   const result=await api('POST',{action:'create_listing',...payload},'');if(!result?.success||!result?.listing?.id)throw new Error('Сервер не подтвердил публикацию объявления.');
   toast('Объявление опубликовано');$('kdsSellPreview').hidden=true;
@@ -866,7 +896,7 @@ async function createListing(){
   $('kdsSellAgree').checked=false;$('kdsSellAuto').checked=false;$('kdsSellStock').value='1';$('kdsSellMin').value='1';$('kdsSellImagePreview').innerHTML='';$('kdsSellImages').value='';m.images=[];syncSellFields();
   showView('profile');try{await loadOwnProfile();}catch(refreshError){toast('Объявление опубликовано, но профиль не удалось обновить.');}try{await loadListings();}catch(refreshError){toast('Объявление опубликовано, но каталог не удалось обновить.');}
  }catch(e){toast(e.message||'Не удалось опубликовать объявление.');}
- finally{btn.disabled=false;btn.textContent='Подтвердить объявление';}
+ finally{btn.disabled=false;btn.textContent='Подтвердить';}
 }
 
 async function bootstrap(){if(m.loading)return;m.loading=true;try{const d=await api('GET',null,'bootstrap');m.user=d.user;notifyStoreBalance();m.profile=d.profile;$('kdsSellSellerNicknameWrap').hidden=!!m.profile;m.games=d.games||[];m.categories=d.categories||[];m.top=d.top_game_ids||[];m.loaded=true;fillSelects();renderAlphabet();renderGames();const w=$('kdsMarketWallet');if(w)w.innerHTML='<b>Доступно: '+rub(m.user.balance_rub)+'</b><span>На заморозке: '+rub(m.user.frozen_balance_rub)+'</span>';const fw=$('kdsMarketFinanceBalance');if(fw)renderFinance();await loadOrders();}catch(e){toast(e.message);}finally{m.loading=false;}}
@@ -885,7 +915,7 @@ function bind(){
  $('kdsMarketGameList').addEventListener('click',pickGameClick);$('kdsMarketTopGames').addEventListener('click',pickGameClick);
  function pickGameClick(e){const b=e.target.closest('[data-pick-game]');if(!b)return;const g=m.games.find(x=>x.id===b.dataset.pickGame);if(!g)return;m.gameId=g.id;m.categoryId='';renderBanner(g);renderCategories();$('kdsMarketLotSearch').value='';$('kdsMarketLots').innerHTML='<div class="kds-market-loading"><span></span>Загружаем объявления…</div>';$('kdsMarketLotsTitle').textContent='Лоты';$('kdsMarketLotsCount').textContent='';showView('game');loadListings().catch(x=>toast(x.message));}
  $('kdsMarketCategories').addEventListener('click',e=>{const b=e.target.closest('[data-market-category]');if(!b)return;m.categoryId=b.dataset.marketCategory;renderCategories();loadListings().catch(x=>toast(x.message));});
- $('kdsMarketSellFromGame').addEventListener('click',()=>{if(!m.gameId){toast('Сначала выбери игру.');return;}$('kdsSellGame').value=m.gameId;fillCategories();$('kdsSellCategory').value=m.categoryId&&m.categories.some(c=>c.id===m.categoryId&&c.game_id===m.gameId)?m.categoryId:'';syncSellFields();renderSellDropdowns();showView('create');});
+ $('kdsMarketSellFromGame').addEventListener('click',()=>{if(!m.gameId){toast('Сначала выбери игру.');return;}$('kdsSellGame').value=m.gameId;fillCategories();if(m.categoryId&&m.categories.some(c=>c.id===m.categoryId&&c.game_id===m.gameId))$('kdsSellCategory').value=m.categoryId;else if($('kdsSellCategory').options.length)$('kdsSellCategory').selectedIndex=0;syncSellFields();renderSellDropdowns();showView('create');});
  $('kdsMarketBackGames').addEventListener('click',()=>showView('home'));$('kdsMarketDetailBack').addEventListener('click',()=>showView(m.detailReturnView||'game'));$('kdsMarketPublicProfileBack').addEventListener('click',()=>showView(m.publicProfileReturnView||'game'));
  $('kdsMarketLotSearch').addEventListener('input',()=>loadListings().catch(x=>toast(x.message)));$('kdsMarketOnlineOnly').addEventListener('change',renderLots);$('kdsMarketLotSort').addEventListener('change',()=>loadListings().catch(x=>toast(x.message)));
  const sortWrap=$('kdsMarketSortWrap'),sortTrigger=$('kdsMarketSortTrigger'),sortPopover=$('kdsMarketSortPopover'),sortSelect=$('kdsMarketLotSort');
@@ -898,8 +928,8 @@ function bind(){
  $('kdsMarketProfile').addEventListener('click',e=>{const b=e.target.closest('[data-copy-profile]');if(b){navigator.clipboard?.writeText(b.dataset.copyProfile).then(()=>toast('ID профиля скопирован')).catch(()=>toast('Не удалось скопировать ID'));}});
  $('kdsMarketFinanceFilters').addEventListener('click',e=>{const b=e.target.closest('[data-finance-filter]');if(!b)return;m.financeFilter=b.dataset.financeFilter;renderFinance();});
  $('kdsMarketProfileLots').addEventListener('click',async e=>{const edit=e.target.closest('[data-edit-my-lot]');if(edit){editLot(edit.dataset.editMyLot);return;}const restock=e.target.closest('[data-restock-lot]');if(restock){restockLot(restock.dataset.restockLot);return;}const b=e.target.closest('[data-listing-status]');if(b){try{await api('POST',{action:'set_listing_status',listing_id:b.dataset.listingId,status:b.dataset.listingStatus},'');await loadMine();toast('Статус объявления изменён');}catch(x){toast(x.message);}}});
- $('kdsSellGame').addEventListener('change',()=>{fillCategories();renderSellDropdowns();});$('kdsSellCategory').addEventListener('change',()=>{syncSellFields();renderSellDropdowns();});
- ['kdsSellGame','kdsSellCategory'].forEach((sid)=>{const isGame=sid==='kdsSellGame',tid=isGame?'kdsSellGameTrigger':'kdsSellCategoryTrigger',pid=isGame?'kdsSellGamePopover':'kdsSellCategoryPopover',wrap=isGame?'kdsSellGameWrap':'kdsSellCategoryWrap';$(tid).addEventListener('click',()=>{$(pid).hidden=!$(pid).hidden;$(tid).setAttribute('aria-expanded',String(!$(pid).hidden));});$(pid).addEventListener('click',e=>{const b=e.target.closest('[data-glass-value]');if(!b)return;$(sid).value=b.dataset.glassValue;$(sid).dispatchEvent(new Event('change',{bubbles:true}));$(pid).hidden=true;$(tid).setAttribute('aria-expanded','false');});document.addEventListener('click',e=>{if(!$(wrap).contains(e.target)){$(pid).hidden=true;$(tid).setAttribute('aria-expanded','false');}});});$('kdsSellAuto').addEventListener('change',syncSellFields);$('kdsSellStock').addEventListener('input',syncSellFields);$('kdsSellShort').addEventListener('input',()=>$('kdsSellShortCount').textContent=$('kdsSellShort').value.length+' / 140');
+ $('kdsSellCategory').addEventListener('change',()=>{syncSellFields();renderSellDropdowns();});
+ const catTrigger=$('kdsSellCategoryTrigger'),catPopover=$('kdsSellCategoryPopover'),catWrap=$('kdsSellCategoryWrap');catTrigger.addEventListener('click',()=>{catPopover.hidden=!catPopover.hidden;catTrigger.setAttribute('aria-expanded',String(!catPopover.hidden));});catPopover.addEventListener('click',e=>{const b=e.target.closest('[data-glass-value]');if(!b)return;$('kdsSellCategory').value=b.dataset.glassValue;$('kdsSellCategory').dispatchEvent(new Event('change',{bubbles:true}));catPopover.hidden=true;catTrigger.setAttribute('aria-expanded','false');});document.addEventListener('click',e=>{if(!catWrap.contains(e.target)){catPopover.hidden=true;catTrigger.setAttribute('aria-expanded','false');}});$('kdsSellAuto').addEventListener('change',syncSellFields);$('kdsSellStock').addEventListener('input',syncSellFields);$('kdsSellShort').addEventListener('input',()=>$('kdsSellShortCount').textContent=$('kdsSellShort').value.length+' / 140');
  $('kdsSellImages').addEventListener('change',async e=>{const files=Array.from(e.target.files||[]);if(files.length>6||files.some(f=>!f.type.startsWith('image/')||f.size>6*1024*1024)){toast('Можно добавить до 6 изображений, каждое до 6 МБ.');e.target.value='';return;}m.images=[];for(const file of files){const base64=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(String(r.result).split(',')[1]);r.onerror=reject;r.readAsDataURL(file);});m.images.push({mime:file.type,base64});}$('kdsSellImagePreview').innerHTML=m.images.length?'<span>'+m.images.length+' фото выбрано</span>':'';});
  $('kdsSellSubmit').onclick=createListing;
  for(const prefix of ['kdsBuy','kdsSales']){['GameSearch','NumberFilter','NickFilter'].forEach(suffix=>$(prefix+suffix)?.addEventListener('input',renderOrders));$(prefix+'StatusFilter')?.addEventListener('change',renderOrders);}document.querySelectorAll('[data-reset-order-filters]').forEach(b=>b.addEventListener('click',()=>{const prefix=b.dataset.resetOrderFilters==='buyer'?'kdsBuy':'kdsSales';['GameSearch','StatusFilter','NumberFilter','NickFilter'].forEach(suffix=>{const el=$(prefix+suffix);if(el)el.value='';});refreshGlassFilter(prefix+'StatusFilter');document.querySelector('#'+prefix+'GameSearch')?.parentElement?.querySelector('.kds-order-game-suggestions')?.setAttribute('hidden','');renderOrders();}));
