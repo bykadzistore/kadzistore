@@ -163,13 +163,14 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
 <section id="sanctionsSection" class="hide">
  <div class="panel">
   <div class="number">Наказания пользователей</div>
-  <div class="muted">Блокировка операций запрещает покупки, пополнения, вывод средств, создание объявлений и действия по сделкам. Просмотр профиля и истории остаётся доступен.</div>
+  <div class="muted">Выбирай конкретное ограничение или предупреждение. Срок можно задать от 1 часа до бессрочного.</div>
   <div class="field"><label>Telegram ID или username</label><div class="actions" style="margin-top:0"><input id="sanctionUserSearch" placeholder="Например, 123456789 или @username" style="flex:1;min-width:180px"><button class="primary" id="sanctionUserFind">Найти пользователя</button></div></div>
   <div id="sanctionUserResult" class="muted"></div>
   <div id="sanctionControls" class="hide">
-   <div class="field"><label>Срок блокировки</label><select id="sanctionDuration"><option value="0">Бессрочно</option><option value="24">24 часа</option><option value="168">7 дней</option><option value="720">30 дней</option></select></div>
+   <div class="field"><label>Тип наказания</label><select id="sanctionType"><option value="warning">Предупреждение</option><option value="block_buying">Запрет покупок</option><option value="block_selling">Запрет продаж</option><option value="block_marketplace">Блокировка маркетплейса</option><option value="block_chat">Блокировка чата</option><option value="block_financial">Блокировка финансовых операций</option><option value="block_all_operations">Полная блокировка операций</option></select></div>
+   <div class="field"><label>Срок наказания</label><select id="sanctionDuration"><option value="1">1 час</option><option value="24">24 часа</option><option value="72">3 дня</option><option value="168">7 дней</option><option value="720">30 дней</option><option value="0">Бессрочно</option></select></div>
    <div class="field"><label>Причина наказания</label><textarea id="sanctionReason" rows="3" maxlength="500" placeholder="Укажи причину блокировки операций"></textarea></div>
-   <div class="actions"><button class="primary" id="sanctionApply">Заблокировать операции</button></div>
+   <div class="actions"><button class="primary" id="sanctionApply">Применить наказание</button></div>
    <div id="sanctionMsg" class="muted"></div>
   </div>
  </div>
@@ -516,7 +517,8 @@ async function loadSanctionHistory(){
   out.innerHTML=rows.length?rows.map(x=>{
    const active=!x.revoked_at&&(!x.expires_at||new Date(x.expires_at).getTime()>Date.now());
    const status=active?"Активна":(x.revoked_at?"Снята":"Истекла");
-   return '<article class="market-admin-card"><h3>'+esc(status)+' · '+(x.expires_at?'до '+new Date(x.expires_at).toLocaleString("ru-RU"):"бессрочно")+'</h3><p>Причина: '+esc(x.reason)+'</p><p>Создано: '+new Date(x.created_at).toLocaleString("ru-RU")+' · Администратор: '+esc(x.created_by_telegram_id)+'</p>'+(active?'<div class="market-admin-actions"><button class="primary" data-sanction-revoke="'+esc(x.id)+'">Снять блокировку</button></div>':'')+'</article>';
+   const sanctionLabels={warning:"Предупреждение",block_buying:"Запрет покупок",block_selling:"Запрет продаж",block_marketplace:"Блокировка маркетплейса",block_chat:"Блокировка чата",block_financial:"Блокировка финансовых операций",block_all_operations:"Полная блокировка операций"};
+   return '<article class="market-admin-card"><h3>'+esc(sanctionLabels[x.sanction_type]||x.sanction_type||"Наказание")+' · '+esc(status)+' · '+(x.expires_at?'до '+new Date(x.expires_at).toLocaleString("ru-RU"):"бессрочно")+'</h3><p>Причина: '+esc(x.reason)+'</p><p>Создано: '+new Date(x.created_at).toLocaleString("ru-RU")+' · Администратор: '+esc(x.created_by_telegram_id)+'</p>'+(active?'<div class="market-admin-actions"><button class="primary" data-sanction-revoke="'+esc(x.id)+'">Снять наказание</button></div>':'')+'</article>';
   }).join(""):'<div class="notice">Наказаний нет.</div>';
  }catch(e){out.innerHTML='<div class="notice error">'+esc(e.message)+'</div>';}
 }
@@ -533,12 +535,12 @@ document.getElementById("sanctionUserFind").onclick=async()=>{
 };
 document.getElementById("sanctionApply").onclick=async()=>{
  if(!sanctionSelectedUser)return;
- const reason=document.getElementById("sanctionReason").value.trim(),duration_hours=Number(document.getElementById("sanctionDuration").value),msg=document.getElementById("sanctionMsg"),btn=document.getElementById("sanctionApply");
+ const reason=document.getElementById("sanctionReason").value.trim(),duration_hours=Number(document.getElementById("sanctionDuration").value),sanction_type=document.getElementById("sanctionType").value,msg=document.getElementById("sanctionMsg"),btn=document.getElementById("sanctionApply");
  if(reason.length<3){msg.textContent="Укажи причину не короче 3 символов.";return;}
- const term=duration_hours===0?"бессрочно":duration_hours===24?"на 24 часа":duration_hours===168?"на 7 дней":"на 30 дней";
- if(!confirm("Заблокировать все операции пользователя "+sanctionSelectedUser.telegram_user_id+" "+term+"?"))return;
+ const typeLabels={warning:"Предупреждение",block_buying:"запрет покупок",block_selling:"запрет продаж",block_marketplace:"блокировка маркетплейса",block_chat:"блокировка чата",block_financial:"блокировка финансовых операций",block_all_operations:"полная блокировка операций"},term=duration_hours===0?"бессрочно":duration_hours===1?"на 1 час":duration_hours===24?"на 24 часа":duration_hours===72?"на 3 дня":duration_hours===168?"на 7 дней":"на 30 дней";
+ if(!confirm("Применить "+typeLabels[sanction_type]+" пользователю "+sanctionSelectedUser.telegram_user_id+" "+term+"?"))return;
  btn.disabled=true;msg.textContent="Применяю наказание…";
- try{await api("POST",{action:"set_user_sanction",telegram_user_id:sanctionSelectedUser.telegram_user_id,reason,duration_hours});msg.textContent="Операции заблокированы.";document.getElementById("sanctionReason").value="";await loadSanctionHistory();}
+ try{await api("POST",{action:"set_user_sanction",telegram_user_id:sanctionSelectedUser.telegram_user_id,reason,duration_hours,sanction_type});msg.textContent="Наказание применено.";document.getElementById("sanctionReason").value="";await loadSanctionHistory();}
  catch(e){msg.textContent="Ошибка: "+e.message;}finally{btn.disabled=false;}
 };
 document.getElementById("sanctionHistory").addEventListener("click",async e=>{
