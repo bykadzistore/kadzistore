@@ -196,14 +196,27 @@ button,.btn,.announcement-cta{transition:transform .22s cubic-bezier(.2,.8,.2,1)
 @media(prefers-reduced-motion:reduce){.kds-topup-overlay:before,.kds-topup-overlay:after,.kds-topup-orbit,.kds-topup-ring,.kds-topup-core,.kds-topup-core:after,.kds-topup-track:after{animation:none!important}.kds-topup-card{transition:none!important}}
 
 
-/* KADZI STORE PERFORMANCE: retain premium glass styling with a lighter blur budget on touch devices. */
+/* V15.10.36 PERFORMANCE: marketplace purchase feedback uses a solid, non-glass surface. */
 @media (pointer:coarse) and (max-width:900px){
- .game-category,.nav,header,.balance,.hero,.announcement,.card,.order,.profile,.profile-card,.profile-link,.wallet-premium,.product-modal,.favorite-toggle,.certificate-picker,.certificate-options,.kds-boot-shell,.kds-action-overlay,.kds-topup-overlay{
+ .game-category,.nav,header,.balance,.hero,.announcement,.card,.order,.profile,.profile-card,.profile-link,.wallet-premium,.product-modal,.favorite-toggle,.certificate-picker,.certificate-options,.kds-boot-shell,.kds-topup-overlay{
   -webkit-backdrop-filter:blur(12px) saturate(135%) !important;
   backdrop-filter:blur(12px) saturate(135%) !important;
  }
+ .kds-action-overlay,.kds-action-card,.kds-action-symbol{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
  .kds-topup-overlay:before,.kds-topup-overlay:after{filter:blur(32px)}
 }
+/* Lightweight purchase overlay: no glass blur, animated shine, or oversized glow. */
+.kds-action-overlay{background:#07070bdc!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.kds-action-card{background:#17171d!important;border:1px solid #383841!important;border-radius:22px!important;box-shadow:0 12px 26px #0008!important;}
+.kds-action-card:after{display:none!important;animation:none!important}
+.kds-action-overlay.loading .kds-action-card{background:#17171d!important;border-color:#493039!important;box-shadow:0 12px 26px #0008!important}
+.kds-action-symbol{background:#2a1820!important;border:1px solid #7b3949!important;box-shadow:none!important}
+.kds-action-overlay.success .kds-action-card{background:#17201c!important;border-color:#34654d!important;box-shadow:0 12px 26px #0008!important}
+.kds-action-overlay.success .kds-action-symbol{background:#1c3428!important;border-color:#4a9a72!important;box-shadow:none!important}
+.kds-action-overlay.success .kds-action-symbol:after{display:none!important;animation:none!important}
+.kds-action-overlay.success .kds-action-title{text-shadow:none!important}
+.kds-action-progress{background:#292931!important}
+.kds-action-progress:after{box-shadow:none!important}
 /* Keep product photos crisp while decoding them off the main rendering path. */
 img{image-rendering:auto}
 
