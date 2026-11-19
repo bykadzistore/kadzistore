@@ -54,6 +54,7 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
 .market-admin-card h3{margin:0 0 7px;font-size:15px}.market-admin-card p{margin:5px 0;color:var(--muted);font-size:12px;overflow-wrap:anywhere}
 .market-admin-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.market-admin-actions button{min-width:110px}
 .market-admin-message{padding:9px 11px;border-radius:11px;background:#1a202a;margin:7px 0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}.market-admin-message.mine{background:#19372b;margin-left:18px}
+/* V15.10.22 support message types */ .market-admin-message.system{background:rgba(125,135,150,.13);border:1px solid rgba(160,170,185,.35)}.market-admin-message.delivery{background:rgba(40,150,110,.12);border:1px solid rgba(70,190,145,.35)}
 </style></head>
 <body>
 <header><div><div class="logo"><b>KD</b>S ADMIN</div><div class="tag">Панель управления магазином</div></div><div class="actions" style="margin:0"><button id="backToStore">← В магазин</button><button id="reload">↻ Обновить</button></div></header>
@@ -483,12 +484,13 @@ async function openMarketplaceSupport(orderId){
  document.getElementById("marketplaceSupportTitle").textContent=(dispute?"Чат спора по заказу #":"Приватный чат заказа #")+(o.order_code||"");
  document.getElementById("marketplaceSupportPanel").classList.remove("hide");
  const d=await marketAdminApi("GET",null,"messages",{order_id:orderId});
- document.getElementById("marketplaceSupportMessages").innerHTML=(d.messages||[]).map(m=>'<div class="market-admin-message '+(m.sender_id===undefined?"":"")+'"><b>'+esc(m.sender_id===marketAdminUserId?"Администратор":"Участник")+'</b><p>'+esc(m.message_text)+'</p>'+(m.image_url?'<img src="'+esc(m.image_url)+'" style="max-width:180px;border-radius:9px">':"")+'<small>'+new Date(m.created_at).toLocaleString("ru-RU")+'</small></div>').join("")||'<div class="notice">Сообщений пока нет.</div>';
+ document.getElementById("marketplaceSupportMessages").innerHTML=(d.messages||[]).map(m=>'<div class="market-admin-message '+(m.message_type==='system'?'system':m.message_type==='delivery'?'delivery':'user')+'"><b>'+esc(m.sender_id===marketAdminUserId?"Администратор":"Участник")+'</b><p>'+esc(m.message_text)+'</p>'+(m.image_url?'<img src="'+esc(m.image_url)+'" style="max-width:180px;border-radius:9px">':"")+'<small>'+new Date(m.created_at).toLocaleString("ru-RU")+'</small></div>').join("")||'<div class="notice">Сообщений пока нет.</div>';
  document.getElementById("marketplaceSupportPanel").scrollIntoView({behavior:"smooth",block:"start"});
 }
+function marketClientMessageId(){if(window.crypto?.randomUUID)return window.crypto.randomUUID();return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return (c==='x'?r:(r&3|8)).toString(16);});}
 async function sendMarketplaceSupportReply(){
  if(!marketAdminCurrentDispute)return;const o=marketAdminCurrentDispute.kds_marketplace_orders||{};const message=prompt("Сообщение покупателю и продавцу в общий чат");if(!message)return;
- try{await marketAdminApi("POST",{action:"send_message",order_id:o.id||marketAdminCurrentDispute.order_id,message_text:message});await openMarketplaceSupport(o.id||marketAdminCurrentDispute.order_id);}catch(e){alert(e.message);}
+ try{await marketAdminApi("POST",{action:"send_message",order_id:o.id||marketAdminCurrentDispute.order_id,message_text:message,client_message_id:marketClientMessageId()});await openMarketplaceSupport(o.id||marketAdminCurrentDispute.order_id);}catch(e){alert(e.message);}
 }
 document.getElementById("marketplaceTab").onclick=()=>showAdminSection("marketplaceSection");
 document.getElementById("reloadMarketplace").onclick=loadMarketplaceAdmin;
