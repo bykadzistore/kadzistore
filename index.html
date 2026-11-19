@@ -573,7 +573,6 @@ header{background:linear-gradient(110deg,#0b0a11f5,#17101af2)!important}
    <div class="kds-market-fixed-delivery">Срок передачи: <b>до 24 часов</b></div>
    <div class="kds-market-form-step"><b>4. Фотографии товара</b><small>Можно добавить несколько фотографий. В списке лотов они не показываются, но будут видны в полном объявлении.</small></div>
    <label>Добавить фотографии<input id="kdsSellImages" type="file" accept="image/jpeg,image/png,image/webp" multiple></label><div id="kdsSellImagePreview" class="kds-market-image-preview"></div>
-   <label class="kds-market-check"><input id="kdsSellAgree" type="checkbox"> Подтверждаю, что описание соответствует товару, цена верна, а условия передачи понятны.</label>
    <button class="primary" id="kdsSellSubmit" type="button">Подтвердить</button>
    <div class="kds-market-note">Объявление появится в каталоге после публикации.</div>
    <div id="kdsSellPreview" class="kds-market-listing-preview" hidden></div>
@@ -886,14 +885,13 @@ async function createListing(){
   if(!Number.isInteger(stock)||stock<1){toast('Количество товара должно быть не меньше 1.');return;}
   if(!Number.isInteger(min)||min<1||min>stock){toast('Минимальный заказ не может быть больше остатка.');return;}
   if(auto&&!autoItems.length){toast('Добавь строки товара для автоматической выдачи.');$('kdsSellAutoItems').focus();return;}
-  if(!$('kdsSellAgree').checked){toast('Поставь галочку подтверждения условий объявления.');$('kdsSellAgree').focus();return;}
   btn.textContent='Публикуем…';if(!await ensureProfile())return;
   const payload={game_id:m.gameId,category_id:$('kdsSellCategory').value,title,short_description:short,description,unit_price_rub:price,quantity_available:stock,min_quantity:min,delivery_method:auto?'automatic':'manual',inventory_items:auto?autoItems:[],image_paths:[]};
   for(const file of m.images){const d=await api('POST',{action:'upload_listing_image',file},'');if(!d?.storage_path)throw new Error('Фото загружено без подтверждения пути. Попробуй без фотографий.');payload.image_paths.push(d.storage_path);}
   const result=await api('POST',{action:'create_listing',...payload},'');if(!result?.success||!result?.listing?.id)throw new Error('Сервер не подтвердил публикацию объявления.');
   toast('Объявление опубликовано');$('kdsSellPreview').hidden=true;
   ['kdsSellTitle','kdsSellShort','kdsSellDescription','kdsSellAutoItems','kdsSellPrice','kdsSellGoldPrice','kdsSellGoldStock','kdsSellGoldMin'].forEach(id=>{if($(id))$(id).value='';});
-  $('kdsSellAgree').checked=false;$('kdsSellAuto').checked=false;$('kdsSellStock').value='1';$('kdsSellMin').value='1';$('kdsSellImagePreview').innerHTML='';$('kdsSellImages').value='';m.images=[];syncSellFields();
+  $('kdsSellAuto').checked=false;$('kdsSellStock').value='1';$('kdsSellMin').value='1';$('kdsSellImagePreview').innerHTML='';$('kdsSellImages').value='';m.images=[];syncSellFields();
   showView('profile');try{await loadOwnProfile();}catch(refreshError){toast('Объявление опубликовано, но профиль не удалось обновить.');}try{await loadListings();}catch(refreshError){toast('Объявление опубликовано, но каталог не удалось обновить.');}
  }catch(e){toast(e.message||'Не удалось опубликовать объявление.');}
  finally{btn.disabled=false;btn.textContent='Подтвердить';}
@@ -942,7 +940,7 @@ function bind(){
  $('kdsMarketSupportChat').onclick=()=>window.open('https://t.me/ByKadzi','_blank');
  document.querySelectorAll('[data-go="market"]').forEach(b=>b.addEventListener('click',()=>{bootstrap();showView('home');}));document.querySelectorAll('[data-go="chats"]').forEach(b=>b.addEventListener('click',()=>loadOrders().catch(e=>toast(e.message))));
 }
-if($('market')){const submitListingButton=$('kdsSellSubmit');if(submitListingButton)submitListingButton.addEventListener('click',createListing);try{bind();}catch(initError){console.error('KADZI marketplace bind/init error:',initError);toast('Ошибка инициализации магазина. Перезагрузи страницу.');}bootstrap();}
+if($('market')){const submitListingButton=$('kdsSellSubmit');if(submitListingButton)submitListingButton.onclick=createListing;try{bind();}catch(initError){console.error('KADZI marketplace bind/init error:',initError);toast('Ошибка инициализации магазина. Перезагрузи страницу.');}bootstrap();}
 })();
 
 </script></body></html>
