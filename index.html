@@ -859,11 +859,12 @@ async function api(method='GET',body=null,section='bootstrap',params={}){
  const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),18000);
  try{
   const response=await fetch(API+'?'+q.toString(),{method,headers:{'Content-Type':'application/json','X-Telegram-Init-Data':tg?.initData||''},body:body?JSON.stringify(body):undefined,signal:controller.signal});
-  let data={};try{data=await response.json();}catch(_){}
-  if(!response.ok)throw new Error(data.error||'Ошибка запроса к маркетплейсу');
+  let data;
+  try{data=await response.json();}catch(parseError){throw new Error('Сервер прислал некорректный ответ. Проверь заказ перед повторной оплатой.');}
+  if(!response.ok)throw new Error(data?.error||'Ошибка запроса к маркетплейсу');
   return data;
  }catch(error){
-  if(error?.name==='AbortError')throw new Error('Сервер не ответил за 18 секунд. Если покупка могла пройти, сначала проверь «Мои покупки», не повторяй оплату вслепую.');
+  if(error?.name==='AbortError')throw new Error('Ответ сервера не получен за 18 секунд. Проверь заказ в «Мои покупки» перед повторной оплатой.');
   throw new Error(error?.message||'Не удалось подключиться к серверу');
  }finally{clearTimeout(timeout);}
 }
