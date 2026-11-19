@@ -776,6 +776,10 @@ const tg=window.Telegram?.WebApp;
 const m={user:null,profile:null,games:[],categories:[],top:[],listings:[],mine:[],orders:[],finance:[],financeFilter:'all',publicProfileCache:{},publicProfilePending:{},publicProfileReturnView:'game',detailReturnView:'game',gameId:'',categoryId:'',lot:null,order:null,images:[],chatImage:null,loaded:false,loading:false};
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const rub=v=>new Intl.NumberFormat('ru-RU',{minimumFractionDigits:0,maximumFractionDigits:1}).format(Number(v||0))+' ₽';
+// Helpers are intentionally scoped to this marketplace IIFE; the main-store script has a separate scope.
+function parseRubInput(v){const raw=String(v??'').trim().replace(/\s/g,'').replace(',', '.');if(!/^\d+(?:\.\d)?$/.test(raw))return NaN;return Number(raw);}
+function validRubAmount(v,allowZero=false){return Number.isFinite(v)&&(allowZero?v>=0:v>0)&&v<=1000000000&&Math.abs(v*10-Math.round(v*10))<1e-7;}
+function roundRub(v){return Math.round((Number(v)+Number.EPSILON)*10)/10;}
 function toast(s){const el=$('toast');if(!el)return;el.textContent=s;el.style.display='block';el.classList.add('show');setTimeout(()=>{el.classList.remove('show');el.style.display='';},2600);}
 function notifyStoreBalance(){if(m.user)window.dispatchEvent(new CustomEvent('kds:balance-updated',{detail:{balance_rub:m.user.balance_rub,frozen_balance_rub:m.user.frozen_balance_rub}}));}
 async function api(method='GET',body=null,section='bootstrap',params={}){
