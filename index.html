@@ -146,6 +146,29 @@ button,.btn,.announcement-cta{transition:transform .22s cubic-bezier(.2,.8,.2,1)
 .kds-action-overlay.error .kds-action-symbol:before{content:"!";font-size:30px}
 .kds-action-title{font-size:18px;font-weight:950;letter-spacing:-.3px}
 .kds-action-subtitle{margin-top:7px;color:#b9b5c1;font-size:12px;line-height:1.55}
+/* V15.10.45 Marketplace isolated copy of original main-store processing animation; no shared selectors. */
+.kds-market-purchase-overlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;background:#050509bd;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);opacity:0;visibility:hidden;transition:opacity .22s ease,visibility .22s ease}
+.kds-market-purchase-overlay.show{opacity:1;visibility:visible}
+.kds-market-purchase-card{width:min(100%,340px);padding:27px 22px 24px;text-align:center;border:1px solid #ffffff30;border-radius:25px;background:linear-gradient(145deg,#ffffff1b,#ffffff08 58%,#ff233b14);box-shadow:0 25px 80px #000b,inset 0 1px #ffffff2c;transform:translateY(12px) scale(.97);transition:transform .28s cubic-bezier(.2,.8,.2,1)}
+.kds-market-purchase-overlay.show .kds-market-purchase-card{transform:translateY(0) scale(1)}
+.kds-market-purchase-symbol{width:64px;height:64px;margin:0 auto 17px;border-radius:21px;display:grid;place-items:center;border:1px solid #ff536b66;background:radial-gradient(circle,#ff36572b,#ff365708 70%);color:#ff657a;font-size:27px;font-weight:900;animation:kdsMarketPurchasePulse 1.8s ease infinite}
+.kds-market-purchase-overlay.loading .kds-market-purchase-symbol:before{content:"";width:28px;height:28px;border:2px solid #ffffff25;border-top-color:#ff536b;border-right-color:#ff536b;border-radius:50%;animation:kdsMarketPurchaseSpin .8s linear infinite}
+
+
+
+
+
+
+
+
+@keyframes kdsSuccessPop{0%{transform:scale(.45) rotate(-18deg);opacity:0}70%{transform:scale(1.12) rotate(4deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+@keyframes kdsSuccessRing{0%{transform:scale(.72);opacity:0}35%{opacity:.9}100%{transform:scale(1.28);opacity:0}}
+@keyframes kdsSuccessProgress{0%{width:0}100%{width:100%}}
+.kds-market-purchase-overlay.error .kds-market-purchase-symbol{color:#ff6479;animation:none}
+.kds-market-purchase-overlay.error .kds-market-purchase-symbol:before{content:"!";font-size:30px}
+.kds-market-purchase-title{font-size:18px;font-weight:950;letter-spacing:-.3px}
+@keyframes kdsMarketPurchaseSpin{to{transform:rotate(360deg)}}@keyframes kdsMarketPurchasePulse{0%,100%{box-shadow:0 0 0 0 #ff345533}50%{box-shadow:0 0 0 8px #ff345500}}
+
 /* V15.6 - lively notification and instant purchase feedback */
 .notification-loading{position:relative;overflow:hidden;display:flex;align-items:center;gap:12px;margin:14px 0 8px;padding:14px 15px;border:1px solid #ffffff20;border-radius:18px;background:linear-gradient(125deg,#ffffff0c,#ffffff04 55%,#ff304014);box-shadow:inset 0 1px #ffffff12;}
 .notification-loading[hidden]{display:none!important}
@@ -740,6 +763,9 @@ function go(id){document.querySelectorAll(".page").forEach(x=>x.classList.toggle
 function kdsPurchaseState(mode,title,subtitle){let el=$("kdsActionOverlay");if(!el){el=document.createElement("div");el.id="kdsActionOverlay";el.className="kds-action-overlay";el.innerHTML='<div class="kds-action-card"><div class="kds-action-symbol"></div><div class="kds-action-title"></div><div class="kds-action-subtitle"></div><div class="kds-action-progress" aria-hidden="true"></div></div>';document.body.appendChild(el);}el.style.display="flex";el.className="kds-action-overlay "+mode;el.querySelector(".kds-action-title").textContent=title;el.querySelector(".kds-action-subtitle").textContent=subtitle;void el.offsetWidth;el.classList.add("show")}
 function kdsHidePurchaseState(){const el=$("kdsActionOverlay");if(el){el.classList.remove("show");el.style.display="none"}}
 window.kdsPurchaseState=kdsPurchaseState;window.kdsHidePurchaseState=kdsHidePurchaseState;
+function kdsMarketPurchaseState(mode,title,subtitle){let el=$('kdsMarketPurchaseOverlay');if(!el){el=document.createElement('div');el.id='kdsMarketPurchaseOverlay';el.className='kds-market-purchase-overlay';el.setAttribute('role','status');el.setAttribute('aria-live','polite');el.innerHTML='<div class="kds-market-purchase-card"><div class="kds-market-purchase-symbol"></div><div class="kds-market-purchase-title"></div><div class="kds-market-purchase-subtitle"></div></div>';document.body.appendChild(el);}el.style.display='flex';el.className='kds-market-purchase-overlay '+mode;el.querySelector('.kds-market-purchase-title').textContent=title;el.querySelector('.kds-market-purchase-subtitle').textContent=subtitle;void el.offsetWidth;el.classList.add('show');}
+function kdsMarketPurchaseHide(){const el=$('kdsMarketPurchaseOverlay');if(el){el.classList.remove('show');el.style.display='none';}}
+
 function kdsTopupState(mode,title,subtitle,amount,method){let el=$("kdsTopupOverlay");if(!el){el=document.createElement("div");el.id="kdsTopupOverlay";el.className="kds-topup-overlay";el.setAttribute("role","status");el.setAttribute("aria-live","polite");el.innerHTML='<div class="kds-topup-card"><div class="kds-topup-brand">KADZI <span>STORE</span> · WALLET</div><div class="kds-topup-visual" aria-hidden="true"><div class="kds-topup-orbit"></div><div class="kds-topup-ring"></div><div class="kds-topup-core">₽</div></div><div class="kds-topup-kicker">SECURE BALANCE</div><div class="kds-topup-title"></div><div class="kds-topup-subtitle"></div><div class="kds-topup-amount"><small>TOP UP</small><span></span></div><div class="kds-topup-track" aria-hidden="true"></div><div class="kds-topup-foot">HYBRID GLASS · KADZI DIGITAL</div></div>';document.body.appendChild(el);}el.className="kds-topup-overlay is-"+mode;el.querySelector(".kds-topup-title").textContent=title;el.querySelector(".kds-topup-subtitle").textContent=subtitle;el.querySelector(".kds-topup-amount span").textContent=Number(amount).toLocaleString("ru-RU")+" ₽";el.querySelector(".kds-topup-amount small").textContent=method==="sbp"?"СБП · TOP UP":"CRYPTO · TOP UP";requestAnimationFrame(()=>el.classList.add("show"));}
 function kdsHideTopupState(){const el=$("kdsTopupOverlay");if(el)el.classList.remove("show")}
 
@@ -903,7 +929,7 @@ function openLot(id){const currentView=document.querySelector('#market .kds-mark
  let orderResponse=null;
  // Copy the main-store purchase sequence: show the overlay first, then send payment request.
  try{
-  window.kdsPurchaseState('loading','Оформляем покупку','Проверяем баланс и создаём заказ. Не закрывай магазин…');
+  kdsMarketPurchaseState('loading','Оформляем покупку','Проверяем баланс и создаём заказ. Не закрывай магазин…');
   await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
   await new Promise(resolve=>setTimeout(resolve,250));
   orderResponse=await api('POST',{action:'purchase_listing',listing_id:l.id,quantity:Number(qty.value)},'bootstrap',{},20000);
@@ -911,7 +937,7 @@ function openLot(id){const currentView=document.querySelector('#market .kds-mark
   clearPendingPurchase(l.id);
  }catch(error){
   if(isAmbiguousPurchaseError(error)){
-   window.kdsPurchaseState('loading','Проверяем статус покупки','Ответ сервера не получен. Проверяем заказ, не повторяй оплату…');
+   kdsMarketPurchaseState('loading','Проверяем статус покупки','Ответ сервера не получен. Проверяем заказ, не повторяй оплату…');
    try{
     const check=await api('GET',null,'orders',{},8000);const rows=check.orders||[];
     const found=rows.find(o=>o.role==='buyer'&&o.kds_marketplace_listings?.id===l.id&&Date.parse(o.created_at||'')>=started-60000);
@@ -920,12 +946,12 @@ function openLot(id){const currentView=document.querySelector('#market .kds-mark
    }catch(checkError){
     buy.dataset.purchasing='0';buy.textContent=originalLabel;buy.disabled=true;
     purchaseError='Статус покупки не подтверждён. Проверь «Мои покупки» позже. Повторная оплата заблокирована.';
-    hint.textContent=purchaseError;window.kdsPurchaseState('error','Статус покупки неизвестен','Проверь «Мои покупки» позже. Повторная оплата заблокирована.');
-    await new Promise(resolve=>setTimeout(resolve,1500));window.kdsHidePurchaseState();toast(purchaseError);return;
+    hint.textContent=purchaseError;kdsMarketPurchaseState('error','Статус покупки неизвестен','Проверь «Мои покупки» позже. Повторная оплата заблокирована.');
+    await new Promise(resolve=>setTimeout(resolve,1500));kdsMarketPurchaseHide();toast(purchaseError);return;
    }
   }else{
-   clearPendingPurchase(l.id);window.kdsPurchaseState('error','Не удалось оформить заказ',error.message||'Попробуй ещё раз');
-   await new Promise(resolve=>setTimeout(resolve,1100));window.kdsHidePurchaseState();toast(error.message||'Не удалось оформить покупку.');
+   clearPendingPurchase(l.id);kdsMarketPurchaseState('error','Не удалось оформить заказ',error.message||'Попробуй ещё раз');
+   await new Promise(resolve=>setTimeout(resolve,1100));kdsMarketPurchaseHide();toast(error.message||'Не удалось оформить покупку.');
    buy.dataset.purchasing='0';buy.textContent=originalLabel;buy.disabled=!!purchaseError;return;
   }
  }
