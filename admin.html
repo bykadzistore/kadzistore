@@ -59,7 +59,7 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
 <body>
 <header><div><div class="logo"><b>KD</b>S ADMIN</div><div class="tag">Панель управления магазином</div></div><div class="actions" style="margin:0"><button id="backToStore">← В магазин</button><button id="reload">↻ Обновить</button></div></header>
 <main>
-<div class="tabs"><button id="ordersTab" class="primary">Заказы</button><button id="productsTab">Товары</button><button id="inventoryTab">Склад</button><button id="announcementsTab">Объявления</button><button id="gamesTab">Игры</button><button id="analyticsTab">Аналитика</button><button id="auditTab">Журнал</button><button id="marketplaceTab">Маркетплейс</button><button id="sanctionsTab">Наказания</button></div>
+<div class="tabs"><button id="ordersTab" class="primary">Заказы</button><button id="productsTab">Товары</button><button id="inventoryTab">Склад</button><button id="announcementsTab">Объявления</button><button id="gamesTab">Игры</button><button id="analyticsTab">Аналитика</button><button id="auditTab">Журнал</button><button id="marketplaceTab">Маркетплейс</button><button id="amlTab">AML</button><button id="sanctionsTab">Наказания</button></div>
 <section id="ordersSection">
 <div class="stats"><div class="stat"><small>Новые</small><strong id="sNew">—</strong></div><div class="stat"><small>В работе</small><strong id="sWork">—</strong></div><div class="stat"><small>Выполнено</small><strong id="sDone">—</strong></div></div>
 <section class="panel" id="orderSearchPanel"><div class="number">Поиск заказов</div><div class="muted">Номер заказа, Telegram ID, username или название товара.</div><div class="actions" style="align-items:center"><input id="orderSearch" placeholder="Например, 1042 или @username" style="flex:1;min-width:180px"><button class="primary" id="orderSearchBtn">Найти</button><button id="orderSearchClear">Сбросить</button></div><div id="orderSearchResult" class="muted"></div></section>
@@ -160,6 +160,23 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
  <section class="panel"><div class="number">Объявления</div><div id="marketplaceListings"><div class="notice">Загрузка после открытия раздела.</div></div></section>
  <section class="panel"><div class="number">Сделки</div><div id="marketplaceOrders"><div class="notice">Загрузка после открытия раздела.</div></div></section>
  <section class="panel hide" id="marketplaceSupportPanel"><div class="number" id="marketplaceSupportTitle">Чат по заказу</div><div id="marketplaceSupportMessages"></div><div class="actions"><button id="replyChat">Ответить в общий чат</button><button id="closeMarketplaceSupport">Закрыть переписку</button></div></section>
+</section>
+<section id="amlSection" class="hide">
+ <div class="panel">
+  <div class="number">Центр AML-проверок</div>
+  <div class="muted">Подозрительная активность требует проверки. Риск-балл сам по себе не доказывает нарушение и не означает автоматическую блокировку аккаунта.</div>
+  <div class="actions"><button class="primary" id="amlRefresh">↻ Обновить данные</button><span class="muted" id="amlUpdated"></span></div>
+  <div class="stats" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-top:12px">
+   <div class="stat"><small>Открытые AML-кейсы</small><strong id="amlOpenCount">—</strong></div>
+   <div class="stat"><small>Заявки на вывод</small><strong id="amlWithdrawCount">—</strong></div>
+  </div>
+  <div id="amlCases"><div class="notice">Открой раздел и нажми «Обновить данные».</div></div>
+ </div>
+ <div class="panel">
+  <div class="number">Заявки на вывод</div>
+  <div class="muted">Выплату отмечай только после фактического перевода денег. При открытом AML-флаге сервер не разрешит отметить заявку оплаченной.</div>
+  <div id="amlWithdrawals"><div class="notice">Загрузка после открытия раздела.</div></div>
+ </div>
 </section>
 <section id="sanctionsSection" class="hide">
  <div class="panel">
@@ -382,7 +399,7 @@ document.getElementById("saveInventory").onclick=async()=>{const msg=document.ge
 document.getElementById("clearInventory").onclick=()=>{document.getElementById("inventoryLines").value="";document.getElementById("inventoryMsg").textContent="";};
 document.getElementById("inventoryProductsList").onclick=e=>{const b=e.target.closest("[data-stock]");if(!b)return;setDropdown("inventoryProduct",inventoryProducts.map(p=>({value:p.id,label:p.name})),b.dataset.stock);renderInventoryPlans();document.getElementById("inventoryLines").focus();};
 async function showInventoryForProduct(productId){showAdminSection("inventorySection");try{await loadInventory();setDropdown("inventoryProduct",inventoryProducts.map(p=>({value:p.id,label:p.name})),productId);renderInventoryPlans();document.getElementById("inventoryLines").focus();}catch(e){document.getElementById("inventoryMsg").textContent="Ошибка загрузки: "+e.message;}}
-function showAdminSection(which){for(const id of ["ordersSection","productsSection","inventorySection","announcementsSection","gamesSection","analyticsSection","auditSection","marketplaceSection","sanctionsSection"])document.getElementById(id).classList.toggle("hide",id!==which);for(const id of ["ordersTab","productsTab","inventoryTab","announcementsTab","gamesTab","analyticsTab","auditTab","marketplaceTab","sanctionsTab"])document.getElementById(id).classList.toggle("primary",id===(which+"Tab").replace("Section",""));if(which==="productsSection")loadProducts();if(which==="inventorySection")loadInventory();if(which==="announcementsSection"){loadAnnouncements();loadBroadcastHistory();}if(which==="gamesSection")loadGames();if(which==="analyticsSection")loadAnalytics();if(which==="auditSection")loadAudit();if(which==="marketplaceSection")loadMarketplaceAdmin();}
+function showAdminSection(which){for(const id of ["ordersSection","productsSection","inventorySection","announcementsSection","gamesSection","analyticsSection","auditSection","marketplaceSection","amlSection","sanctionsSection"])document.getElementById(id).classList.toggle("hide",id!==which);for(const id of ["ordersTab","productsTab","inventoryTab","announcementsTab","gamesTab","analyticsTab","auditTab","marketplaceTab","amlTab","sanctionsTab"])document.getElementById(id).classList.toggle("primary",id===(which+"Tab").replace("Section",""));if(which==="productsSection")loadProducts();if(which==="inventorySection")loadInventory();if(which==="announcementsSection"){loadAnnouncements();loadBroadcastHistory();}if(which==="gamesSection")loadGames();if(which==="analyticsSection")loadAnalytics();if(which==="auditSection")loadAudit();if(which==="marketplaceSection")loadMarketplaceAdmin();if(which==="amlSection")loadAmlAdmin();}
 
 document.getElementById("ordersTab").onclick=()=>showAdminSection("ordersSection");
 document.getElementById("productsTab").onclick=()=>showAdminSection("productsSection");
@@ -524,6 +541,66 @@ async function loadSanctionHistory(){
   }).join(""):'<div class="notice">Наказаний нет.</div>';
  }catch(e){out.innerHTML='<div class="notice error">'+esc(e.message)+'</div>';}
 }
+
+document.getElementById("amlTab").onclick=()=>showAdminSection("amlSection");
+document.getElementById("amlRefresh").onclick=loadAmlAdmin;
+async function loadAmlAdmin(){
+ const casesEl=document.getElementById("amlCases"),withdrawalsEl=document.getElementById("amlWithdrawals");
+ casesEl.innerHTML='<div class="notice">Загружаю AML-кейсы…</div>';
+ withdrawalsEl.innerHTML='<div class="notice">Загружаю заявки…</div>';
+ try{
+  const [c,w]=await Promise.all([api("POST",{action:"list_aml_cases"}),api("POST",{action:"list_withdrawals"})]);
+  const cases=c.cases||[],withdrawals=w.withdrawals||[];
+  document.getElementById("amlOpenCount").textContent=cases.length;
+  document.getElementById("amlWithdrawCount").textContent=withdrawals.length;
+  renderAmlCases(cases);renderAmlWithdrawals(withdrawals);
+  document.getElementById("amlUpdated").textContent="Обновлено: "+new Date().toLocaleTimeString("ru-RU");
+ }catch(e){
+  casesEl.innerHTML='<div class="notice error">Не удалось загрузить AML-кейсы: '+esc(e.message)+'</div>';
+  withdrawalsEl.innerHTML='<div class="notice error">Не удалось загрузить заявки: '+esc(e.message)+'</div>';
+ }
+}
+function renderAmlCases(rows){
+ const out=document.getElementById("amlCases");
+ out.innerHTML=rows.length?rows.map(c=>{
+  const u=c.kds_users||{},who=[u.first_name,u.username?"@"+u.username:null].filter(Boolean).join(" · ")||"Пользователь";
+  const rules=(c.rule_codes||[]).map(esc).join(", ")||"Не указаны";
+  const details=typeof c.details==="string"?c.details:JSON.stringify(c.details||{},null,2);
+  const severity={critical:"Критический",high:"Высокий",medium:"Средний",low:"Низкий"}[c.severity]||c.severity||"—";
+  return '<article class="market-admin-card"><h3>Риск '+esc(c.risk_score)+' / 100 · '+esc(severity)+'</h3><p>'+esc(who)+' · Telegram ID: '+esc(u.telegram_user_id||"—")+'</p><p>Правила: '+rules+'</p><p>Создан: '+(c.created_at?new Date(c.created_at).toLocaleString("ru-RU"):"—")+'</p>'+(c.related_order_id?'<p>Связанная сделка: '+esc(c.related_order_id)+'</p>':"")+(c.related_withdrawal_id?'<p>Связанная заявка: '+esc(c.related_withdrawal_id)+'</p>':"")+'<details><summary>Подробности и метрики</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px">'+esc(details)+'</pre></details><div class="market-admin-actions"><button class="good" data-aml-decision="clear" data-aml-id="'+esc(c.id)+'">Проверено — снять флаг</button><button class="warn" data-aml-decision="restrict" data-aml-id="'+esc(c.id)+'">Подтвердить риск</button></div></article>';
+ }).join(""):'<div class="notice">Открытых AML-кейсов нет.</div>';
+}
+function renderAmlWithdrawals(rows){
+ const out=document.getElementById("amlWithdrawals");
+ out.innerHTML=rows.length?rows.map(w=>{
+  const u=w.kds_users||{},who=[u.first_name,u.username?"@"+u.username:null].filter(Boolean).join(" · ")||"Пользователь";
+  const statusLabels={pending:"Ожидает",paid:"Выплачена",rejected:"Отклонена"};
+  const flagged=w.risk_review_required===true;
+  const canProcess=w.status==="pending";
+  return '<article class="market-admin-card"><h3>'+money(w.amount_rub)+' · '+esc(statusLabels[w.status]||w.status)+'</h3><p>'+esc(who)+' · Telegram ID: '+esc(u.telegram_user_id||"—")+'</p><p>Способ: '+esc(w.payout_method||"—")+' · Риск на момент заявки: '+esc(w.risk_score_at_request??"—")+'</p><p>Создана: '+(w.created_at?new Date(w.created_at).toLocaleString("ru-RU"):"—")+'</p>'+(flagged?'<p class="error"><b>Требуется AML-проверка. Выплата не может быть отмечена оплаченной.</b></p>':"")+(w.admin_note?'<p>Комментарий: '+esc(w.admin_note)+'</p>':"")+(canProcess?'<div class="market-admin-actions">'+(flagged?'':'<button class="good" data-withdraw-decision="paid" data-withdraw-id="'+esc(w.id)+'">Отметить выплаченной</button>')+'<button class="warn" data-withdraw-decision="rejected" data-withdraw-id="'+esc(w.id)+'">Отклонить заявку</button></div>':'')+'</article>';
+ }).join(""):'<div class="notice">Заявок на вывод пока нет.</div>';
+}
+document.getElementById("amlCases").addEventListener("click",async e=>{
+ const b=e.target.closest("button[data-aml-decision]");if(!b)return;
+ const decision=b.dataset.amlDecision;
+ const note=prompt(decision==="clear"?"Комментарий к снятию AML-флага:":"Причина подтверждения риска:");
+ if(note===null)return;
+ if(!confirm(decision==="clear"?"Закрыть AML-кейс как проверенный и снять ограничение на вывод, если других оснований нет?":"Подтвердить риск и сохранить ограничение на вывод?"))return;
+ b.disabled=true;
+ try{await api("POST",{action:"resolve_aml_case",case_id:b.dataset.amlId,decision,note});await loadAmlAdmin();}
+ catch(err){alert(err.message);b.disabled=false;}
+});
+document.getElementById("amlWithdrawals").addEventListener("click",async e=>{
+ const b=e.target.closest("button[data-withdraw-decision]");if(!b)return;
+ const decision=b.dataset.withdrawDecision;
+ const note=prompt(decision==="paid"?"Комментарий к фактической выплате:":"Причина отклонения заявки:");
+ if(note===null)return;
+ if(!confirm(decision==="paid"?"Подтверди, что деньги действительно переведены пользователю. Отметить заявку выплаченной?":"Отклонить заявку и вернуть сумму на баланс заработка?"))return;
+ b.disabled=true;
+ try{await api("POST",{action:"process_withdrawal",request_id:b.dataset.withdrawId,decision,admin_note:note});await loadAmlAdmin();}
+ catch(err){alert(err.message);b.disabled=false;}
+});
+
 document.getElementById("sanctionsTab").onclick=()=>showAdminSection("sanctionsSection");
 document.getElementById("sanctionUserFind").onclick=async()=>{
  const query=document.getElementById("sanctionUserSearch").value.trim(),out=document.getElementById("sanctionUserResult");
