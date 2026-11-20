@@ -125,20 +125,6 @@ button,.btn,.announcement-cta{transition:transform .22s cubic-bezier(.2,.8,.2,1)
 .kds-notice-skeleton i{display:block;height:9px;border-radius:9px;background:#ffffff16}
 .kds-notice-skeleton i:first-child{width:48%;height:13px;background:#ffffff22}
 .kds-notice-skeleton i:last-child{width:28%;height:7px}
-/* V15.10.46: isolated Marketplace copy of main-store purchase-processing animation */
-.kds-market-purchase-overlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;background:#050509bd;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);opacity:0;visibility:hidden;transition:opacity .22s ease,visibility .22s ease}
-.kds-market-purchase-overlay.show{opacity:1;visibility:visible}
-.kds-market-purchase-card{width:min(100%,340px);padding:27px 22px 24px;text-align:center;border:1px solid #ffffff30;border-radius:25px;background:linear-gradient(145deg,#ffffff1b,#ffffff08 58%,#ff233b14);box-shadow:0 25px 80px #000b,inset 0 1px #ffffff2c;transform:translateY(12px) scale(.97);transition:transform .28s cubic-bezier(.2,.8,.2,1)}
-.kds-market-purchase-overlay.show .kds-market-purchase-card{transform:translateY(0) scale(1)}
-.kds-market-purchase-symbol{width:64px;height:64px;margin:0 auto 17px;border-radius:21px;display:grid;place-items:center;border:1px solid #ff536b66;background:radial-gradient(circle,#ff36572b,#ff365708 70%);color:#ff657a;font-size:27px;font-weight:900;animation:kdsMarketPurchasePulse 1.8s ease infinite}
-.kds-market-purchase-overlay.loading .kds-market-purchase-symbol:before{content:"";width:28px;height:28px;border:2px solid #ffffff25;border-top-color:#ff536b;border-right-color:#ff536b;border-radius:50%;animation:kdsMarketPurchaseSpin .8s linear infinite}
-.kds-market-purchase-title{font-size:18px;font-weight:950;letter-spacing:-.3px}
-.kds-market-purchase-subtitle{margin-top:7px;color:#b9b5c1;font-size:12px;line-height:1.55}
-.kds-market-purchase-overlay.error .kds-market-purchase-symbol{color:#ff6479;animation:none}
-.kds-market-purchase-overlay.error .kds-market-purchase-symbol:before{content:"!";font-size:30px}
-@keyframes kdsMarketPurchaseSpin{to{transform:rotate(360deg)}}
-@keyframes kdsMarketPurchasePulse{0%,100%{box-shadow:0 0 0 0 #ff345533}50%{box-shadow:0 0 0 8px #ff345500}}
-
 .kds-action-overlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;background:#050509bd;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);opacity:0;visibility:hidden;transition:opacity .22s ease,visibility .22s ease}
 .kds-action-overlay.show{opacity:1;visibility:visible}
 .kds-action-card{width:min(100%,340px);padding:27px 22px 24px;text-align:center;border:1px solid #ffffff30;border-radius:25px;background:linear-gradient(145deg,#ffffff1b,#ffffff08 58%,#ff233b14);box-shadow:0 25px 80px #000b,inset 0 1px #ffffff2c;transform:translateY(12px) scale(.97);transition:transform .28s cubic-bezier(.2,.8,.2,1)}
@@ -549,6 +535,14 @@ header{background:linear-gradient(110deg,#0b0a11f5,#17101af2)!important}
 .kds-chat-msg.system.kds-system-purchase .kds-system-purchase-body span{display:inline}
 .kds-chat-msg.system.kds-system-purchase .kds-chat-msg-time{display:block;padding:0 14px 11px;text-align:center;color:#8d9099;font-size:10px}
 
+
+/* V15.10.47: marketplace-only green/red purchase button feedback */
+#kdsMarketBuyFresh.kds-market-pay-loading{background:#176b43!important;border-color:#2bd781!important;color:#fff!important;opacity:1!important;filter:none!important;cursor:wait!important}
+#kdsMarketBuyFresh.kds-market-pay-loading::before{content:"";display:inline-block;width:14px;height:14px;margin-right:8px;vertical-align:-2px;border:2px solid #ffffff55;border-top-color:#fff;border-radius:50%;animation:kdsMarketPaySpin .7s linear infinite}
+#kdsMarketBuyFresh.kds-market-pay-success{background:#176b43!important;border-color:#2bd781!important;color:#fff!important;opacity:1!important;filter:none!important}
+#kdsMarketBuyFresh.kds-market-pay-error{background:#8f202b!important;border-color:#ff5261!important;color:#fff!important;opacity:1!important;filter:none!important}
+@keyframes kdsMarketPaySpin{to{transform:rotate(360deg)}}
+
 </style>
 </head>
 <body>
@@ -868,10 +862,6 @@ tg.ready();tg.expand();async function finishKdsBoot(){const ok=await refresh();i
 <script>(()=>{
 const API='https://vpuaihznkswrpsqxgcvm.supabase.co/functions/v1/kds-marketplace';
 const $=id=>document.getElementById(id);
-// Isolated Marketplace purchase overlay. Kept inside the Marketplace IIFE so it cannot leak into or depend on the main store.
-function kdsMarketPurchaseState(mode,title,subtitle){let el=$('kdsMarketPurchaseOverlay');if(!el){el=document.createElement('div');el.id='kdsMarketPurchaseOverlay';el.className='kds-market-purchase-overlay';el.setAttribute('role','status');el.setAttribute('aria-live','polite');el.innerHTML='<div class="kds-market-purchase-card"><div class="kds-market-purchase-symbol"></div><div class="kds-market-purchase-title"></div><div class="kds-market-purchase-subtitle"></div></div>';document.body.appendChild(el);}el.style.display='flex';el.className='kds-market-purchase-overlay '+mode;el.querySelector('.kds-market-purchase-title').textContent=title;el.querySelector('.kds-market-purchase-subtitle').textContent=subtitle;void el.offsetWidth;el.classList.add('show');}
-function kdsMarketPurchaseHide(){const el=$('kdsMarketPurchaseOverlay');if(el){el.classList.remove('show');el.style.display='none';}}
-
 const tg=window.Telegram?.WebApp;
 const m={user:null,profile:null,games:[],categories:[],top:[],listings:[],mine:[],orders:[],finance:[],financeFilter:'all',publicProfileCache:{},publicProfilePending:{},publicProfileReturnView:'game',detailReturnView:'game',gameId:'',categoryId:'',lot:null,order:null,chatOrders:[],chatGroup:null,images:[],editImages:[],chatImage:null,chatPoll:null,chatMessageFingerprint:'',chatRefreshBusy:false,chatMessages:[],chatOutbox:[],chatLastMessageAt:null,chatLoadToken:0,chatSending:false,presenceHeartbeatTimer:null,presenceRefreshTimer:null,presenceStarted:false,activePublicProfileId:null,loaded:false,loading:false};
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -930,36 +920,33 @@ function openLot(id){const currentView=document.querySelector('#market .kds-mark
  const amount=roundRub(Number(qty.value)*Number(l.unit_price_rub));
  if(!await confirmMarketplacePurchase('Оплатить заказ на '+rub(amount)+'?'))return;
  const originalLabel=buy.textContent;const started=Date.now();
- buy.dataset.purchasing='1';buy.disabled=true;setPendingPurchase(l.id,started);
+  buy.dataset.purchasing='1';buy.disabled=true;buy.classList.remove('kds-market-pay-success','kds-market-pay-error');buy.classList.add('kds-market-pay-loading');buy.textContent='Обрабатываем покупку…';setPendingPurchase(l.id,started);
  let orderResponse=null;
- // Copy the main-store purchase sequence: show the overlay first, then send payment request.
+ // Marketplace-only button feedback; payment request sequence remains unchanged.
  try{
-  kdsMarketPurchaseState('loading','Оформляем покупку','Проверяем баланс и создаём заказ. Не закрывай магазин…');
-  await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
-  await new Promise(resolve=>setTimeout(resolve,250));
   orderResponse=await api('POST',{action:'purchase_listing',listing_id:l.id,quantity:Number(qty.value)},'bootstrap',{},20000);
   if(!orderResponse?.success||!orderResponse?.order?.id)throw new Error('Сервер не подтвердил оплату заказа.');
   clearPendingPurchase(l.id);
  }catch(error){
   if(isAmbiguousPurchaseError(error)){
-   kdsMarketPurchaseState('loading','Проверяем статус покупки','Ответ сервера не получен. Проверяем заказ, не повторяй оплату…');
+   
    try{
     const check=await api('GET',null,'orders',{},8000);const rows=check.orders||[];
     const found=rows.find(o=>o.role==='buyer'&&o.kds_marketplace_listings?.id===l.id&&Date.parse(o.created_at||'')>=started-60000);
     if(found){orderResponse={success:true,order:found,balance_r:m.user.balance_rub,frozen_balance_r:m.user.frozen_balance_rub};clearPendingPurchase(l.id);}
     else throw new Error('Покупка пока не подтверждена.');
    }catch(checkError){
-    buy.dataset.purchasing='0';buy.textContent=originalLabel;buy.disabled=true;
+    buy.dataset.purchasing='0';buy.classList.remove('kds-market-pay-loading');buy.classList.add('kds-market-pay-error');buy.textContent='Статус не подтверждён';buy.disabled=true;
     purchaseError='Статус покупки не подтверждён. Проверь «Мои покупки» позже. Повторная оплата заблокирована.';
-    hint.textContent=purchaseError;kdsMarketPurchaseState('error','Статус покупки неизвестен','Проверь «Мои покупки» позже. Повторная оплата заблокирована.');
-    await new Promise(resolve=>setTimeout(resolve,1500));kdsMarketPurchaseHide();toast(purchaseError);return;
+    hint.textContent=purchaseError;toast(purchaseError);return;
    }
   }else{
-   clearPendingPurchase(l.id);kdsMarketPurchaseState('error','Не удалось оформить заказ',error.message||'Попробуй ещё раз');
-   await new Promise(resolve=>setTimeout(resolve,1100));kdsMarketPurchaseHide();toast(error.message||'Не удалось оформить покупку.');
+   clearPendingPurchase(l.id);buy.classList.remove('kds-market-pay-loading');buy.classList.add('kds-market-pay-error');buy.textContent='Ошибка покупки';toast(error.message||'Не удалось оформить покупку.');
    buy.dataset.purchasing='0';buy.textContent=originalLabel;buy.disabled=!!purchaseError;return;
   }
  }
+ // Confirmed success: brief button state, with no wait or payment-flow delay.
+ buy.classList.remove('kds-market-pay-loading','kds-market-pay-error');buy.classList.add('kds-market-pay-success');buy.textContent='✓ Покупка оплачена';
  // After server confirmation, UI refreshes must not be treated as payment failures.
  const d=orderResponse;
  if(Number.isFinite(Number(d.balance_r)))m.user.balance_rub=Number(d.balance_r);
@@ -968,12 +955,12 @@ function openLot(id){const currentView=document.querySelector('#market .kds-mark
  const seller=l.seller||{user_id:l.seller_id,seller_nickname:'Продавец'};
  const localOrder={...d.order,buyer_id:d.order.buyer_id||m.user.id,seller_id:d.order.seller_id||l.seller_id,role:'buyer',partner:d.order.partner||seller,created_at:d.order.created_at||new Date().toISOString(),total_rub:d.order.total_rub??amount,quantity:d.order.quantity??Number(qty.value),kds_marketplace_listings:d.order.kds_marketplace_listings||{title:l.title,game_id:l.game_id,kds_games:l.kds_games||m.games.find(g=>g.id===l.game_id),kds_marketplace_categories:l.kds_marketplace_categories}};
  if(!m.orders.some(x=>x.id===localOrder.id))m.orders.unshift(localOrder);renderOrders();renderChats();goPage('buys');
- kdsMarketPurchaseHide();toast('Покупка оформлена. Открываем чат заказа…');
+ toast('Покупка оформлена. Открываем чат заказа…');
  api('GET',null,'bootstrap').then(b=>{if(b.user){m.user=b.user;notifyStoreBalance();const w=$('kdsMarketWallet');if(w)w.innerHTML='<b>Общий баланс: '+rub(Number(m.user.balance_rub||0)+Number(m.user.frozen_balance_rub||0))+'</b><span>Доступно: '+rub(m.user.balance_rub)+'</span><span>На заморозке: '+rub(m.user.frozen_balance_rub)+'</span>';}}).catch(e=>console.warn('Balance refresh after confirmed marketplace purchase failed:',e));
  api('GET',null,'orders').then(rows=>{m.orders=rows.orders||[];if(!m.orders.some(x=>x.id===localOrder.id))m.orders.unshift(localOrder);renderOrders();renderChats();}).catch(e=>console.warn('Order refresh after confirmed marketplace purchase failed:',e));
  try{loadListings().catch(e=>console.warn('Listing refresh after confirmed marketplace purchase failed:',e));}catch(e){console.warn('Listing refresh after confirmed marketplace purchase failed:',e);}
- // Success is shown as a non-blocking toast; hide the overlay before opening the order chat.
- kdsMarketPurchaseHide();
+ // Continue directly to order chat after confirmed payment.
+ 
  const chatId=partnerIdFor(localOrder);if(chatId){goPage('chats');openChat(chatId,localOrder).catch(e=>{console.warn('Open chat after confirmed purchase failed:',e);goPage('buys');toast('Покупка прошла успешно. Чат можно открыть из заказа в «Мои покупки».');});}else{goPage('buys');toast('Покупка прошла успешно. Открой чат из заказа в «Мои покупки».');}
  buy.dataset.purchasing='0';buy.textContent=originalLabel;buy.disabled=!!purchaseError;
 });
