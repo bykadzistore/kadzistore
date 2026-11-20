@@ -125,6 +125,20 @@ button,.btn,.announcement-cta{transition:transform .22s cubic-bezier(.2,.8,.2,1)
 .kds-notice-skeleton i{display:block;height:9px;border-radius:9px;background:#ffffff16}
 .kds-notice-skeleton i:first-child{width:48%;height:13px;background:#ffffff22}
 .kds-notice-skeleton i:last-child{width:28%;height:7px}
+/* V15.10.46: isolated Marketplace copy of main-store purchase-processing animation */
+.kds-market-purchase-overlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;background:#050509bd;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);opacity:0;visibility:hidden;transition:opacity .22s ease,visibility .22s ease}
+.kds-market-purchase-overlay.show{opacity:1;visibility:visible}
+.kds-market-purchase-card{width:min(100%,340px);padding:27px 22px 24px;text-align:center;border:1px solid #ffffff30;border-radius:25px;background:linear-gradient(145deg,#ffffff1b,#ffffff08 58%,#ff233b14);box-shadow:0 25px 80px #000b,inset 0 1px #ffffff2c;transform:translateY(12px) scale(.97);transition:transform .28s cubic-bezier(.2,.8,.2,1)}
+.kds-market-purchase-overlay.show .kds-market-purchase-card{transform:translateY(0) scale(1)}
+.kds-market-purchase-symbol{width:64px;height:64px;margin:0 auto 17px;border-radius:21px;display:grid;place-items:center;border:1px solid #ff536b66;background:radial-gradient(circle,#ff36572b,#ff365708 70%);color:#ff657a;font-size:27px;font-weight:900;animation:kdsMarketPurchasePulse 1.8s ease infinite}
+.kds-market-purchase-overlay.loading .kds-market-purchase-symbol:before{content:"";width:28px;height:28px;border:2px solid #ffffff25;border-top-color:#ff536b;border-right-color:#ff536b;border-radius:50%;animation:kdsMarketPurchaseSpin .8s linear infinite}
+.kds-market-purchase-title{font-size:18px;font-weight:950;letter-spacing:-.3px}
+.kds-market-purchase-subtitle{margin-top:7px;color:#b9b5c1;font-size:12px;line-height:1.55}
+.kds-market-purchase-overlay.error .kds-market-purchase-symbol{color:#ff6479;animation:none}
+.kds-market-purchase-overlay.error .kds-market-purchase-symbol:before{content:"!";font-size:30px}
+@keyframes kdsMarketPurchaseSpin{to{transform:rotate(360deg)}}
+@keyframes kdsMarketPurchasePulse{0%,100%{box-shadow:0 0 0 0 #ff345533}50%{box-shadow:0 0 0 8px #ff345500}}
+
 .kds-action-overlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;background:#050509bd;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);opacity:0;visibility:hidden;transition:opacity .22s ease,visibility .22s ease}
 .kds-action-overlay.show{opacity:1;visibility:visible}
 .kds-action-card{width:min(100%,340px);padding:27px 22px 24px;text-align:center;border:1px solid #ffffff30;border-radius:25px;background:linear-gradient(145deg,#ffffff1b,#ffffff08 58%,#ff233b14);box-shadow:0 25px 80px #000b,inset 0 1px #ffffff2c;transform:translateY(12px) scale(.97);transition:transform .28s cubic-bezier(.2,.8,.2,1)}
@@ -146,29 +160,6 @@ button,.btn,.announcement-cta{transition:transform .22s cubic-bezier(.2,.8,.2,1)
 .kds-action-overlay.error .kds-action-symbol:before{content:"!";font-size:30px}
 .kds-action-title{font-size:18px;font-weight:950;letter-spacing:-.3px}
 .kds-action-subtitle{margin-top:7px;color:#b9b5c1;font-size:12px;line-height:1.55}
-/* V15.10.45 Marketplace isolated copy of original main-store processing animation; no shared selectors. */
-.kds-market-purchase-overlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;background:#050509bd;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);opacity:0;visibility:hidden;transition:opacity .22s ease,visibility .22s ease}
-.kds-market-purchase-overlay.show{opacity:1;visibility:visible}
-.kds-market-purchase-card{width:min(100%,340px);padding:27px 22px 24px;text-align:center;border:1px solid #ffffff30;border-radius:25px;background:linear-gradient(145deg,#ffffff1b,#ffffff08 58%,#ff233b14);box-shadow:0 25px 80px #000b,inset 0 1px #ffffff2c;transform:translateY(12px) scale(.97);transition:transform .28s cubic-bezier(.2,.8,.2,1)}
-.kds-market-purchase-overlay.show .kds-market-purchase-card{transform:translateY(0) scale(1)}
-.kds-market-purchase-symbol{width:64px;height:64px;margin:0 auto 17px;border-radius:21px;display:grid;place-items:center;border:1px solid #ff536b66;background:radial-gradient(circle,#ff36572b,#ff365708 70%);color:#ff657a;font-size:27px;font-weight:900;animation:kdsMarketPurchasePulse 1.8s ease infinite}
-.kds-market-purchase-overlay.loading .kds-market-purchase-symbol:before{content:"";width:28px;height:28px;border:2px solid #ffffff25;border-top-color:#ff536b;border-right-color:#ff536b;border-radius:50%;animation:kdsMarketPurchaseSpin .8s linear infinite}
-
-
-
-
-
-
-
-
-@keyframes kdsSuccessPop{0%{transform:scale(.45) rotate(-18deg);opacity:0}70%{transform:scale(1.12) rotate(4deg)}100%{transform:scale(1) rotate(0);opacity:1}}
-@keyframes kdsSuccessRing{0%{transform:scale(.72);opacity:0}35%{opacity:.9}100%{transform:scale(1.28);opacity:0}}
-@keyframes kdsSuccessProgress{0%{width:0}100%{width:100%}}
-.kds-market-purchase-overlay.error .kds-market-purchase-symbol{color:#ff6479;animation:none}
-.kds-market-purchase-overlay.error .kds-market-purchase-symbol:before{content:"!";font-size:30px}
-.kds-market-purchase-title{font-size:18px;font-weight:950;letter-spacing:-.3px}
-@keyframes kdsMarketPurchaseSpin{to{transform:rotate(360deg)}}@keyframes kdsMarketPurchasePulse{0%,100%{box-shadow:0 0 0 0 #ff345533}50%{box-shadow:0 0 0 8px #ff345500}}
-
 /* V15.6 - lively notification and instant purchase feedback */
 .notification-loading{position:relative;overflow:hidden;display:flex;align-items:center;gap:12px;margin:14px 0 8px;padding:14px 15px;border:1px solid #ffffff20;border-radius:18px;background:linear-gradient(125deg,#ffffff0c,#ffffff04 55%,#ff304014);box-shadow:inset 0 1px #ffffff12;}
 .notification-loading[hidden]{display:none!important}
@@ -219,14 +210,27 @@ button,.btn,.announcement-cta{transition:transform .22s cubic-bezier(.2,.8,.2,1)
 @media(prefers-reduced-motion:reduce){.kds-topup-overlay:before,.kds-topup-overlay:after,.kds-topup-orbit,.kds-topup-ring,.kds-topup-core,.kds-topup-core:after,.kds-topup-track:after{animation:none!important}.kds-topup-card{transition:none!important}}
 
 
-/* Restore the original shared purchase-processing animation used by the main store and Marketplace. */
+/* V15.10.36 PERFORMANCE: marketplace purchase feedback uses a solid, non-glass surface. */
 @media (pointer:coarse) and (max-width:900px){
  .game-category,.nav,header,.balance,.hero,.announcement,.card,.order,.profile,.profile-card,.profile-link,.wallet-premium,.product-modal,.favorite-toggle,.certificate-picker,.certificate-options,.kds-boot-shell,.kds-topup-overlay{
   -webkit-backdrop-filter:blur(12px) saturate(135%) !important;
   backdrop-filter:blur(12px) saturate(135%) !important;
  }
+ .kds-action-overlay,.kds-action-card,.kds-action-symbol{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
  .kds-topup-overlay:before,.kds-topup-overlay:after{filter:blur(32px)}
 }
+/* Lightweight purchase overlay: no glass blur, animated shine, or oversized glow. */
+.kds-action-overlay{background:#07070bdc!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.kds-action-card{background:#17171d!important;border:1px solid #383841!important;border-radius:22px!important;box-shadow:0 12px 26px #0008!important;}
+.kds-action-card:after{display:none!important;animation:none!important}
+.kds-action-overlay.loading .kds-action-card{background:#17171d!important;border-color:#493039!important;box-shadow:0 12px 26px #0008!important}
+.kds-action-symbol{background:#2a1820!important;border:1px solid #7b3949!important;box-shadow:none!important}
+.kds-action-overlay.success .kds-action-card{background:#17201c!important;border-color:#34654d!important;box-shadow:0 12px 26px #0008!important}
+.kds-action-overlay.success .kds-action-symbol{background:#1c3428!important;border-color:#4a9a72!important;box-shadow:none!important}
+.kds-action-overlay.success .kds-action-symbol:after{display:none!important;animation:none!important}
+.kds-action-overlay.success .kds-action-title{text-shadow:none!important}
+.kds-action-progress{background:#292931!important}
+.kds-action-progress:after{box-shadow:none!important}
 /* Keep product photos crisp while decoding them off the main rendering path. */
 img{image-rendering:auto}
 
@@ -763,9 +767,6 @@ function go(id){document.querySelectorAll(".page").forEach(x=>x.classList.toggle
 function kdsPurchaseState(mode,title,subtitle){let el=$("kdsActionOverlay");if(!el){el=document.createElement("div");el.id="kdsActionOverlay";el.className="kds-action-overlay";el.innerHTML='<div class="kds-action-card"><div class="kds-action-symbol"></div><div class="kds-action-title"></div><div class="kds-action-subtitle"></div><div class="kds-action-progress" aria-hidden="true"></div></div>';document.body.appendChild(el);}el.style.display="flex";el.className="kds-action-overlay "+mode;el.querySelector(".kds-action-title").textContent=title;el.querySelector(".kds-action-subtitle").textContent=subtitle;void el.offsetWidth;el.classList.add("show")}
 function kdsHidePurchaseState(){const el=$("kdsActionOverlay");if(el){el.classList.remove("show");el.style.display="none"}}
 window.kdsPurchaseState=kdsPurchaseState;window.kdsHidePurchaseState=kdsHidePurchaseState;
-function kdsMarketPurchaseState(mode,title,subtitle){let el=$('kdsMarketPurchaseOverlay');if(!el){el=document.createElement('div');el.id='kdsMarketPurchaseOverlay';el.className='kds-market-purchase-overlay';el.setAttribute('role','status');el.setAttribute('aria-live','polite');el.innerHTML='<div class="kds-market-purchase-card"><div class="kds-market-purchase-symbol"></div><div class="kds-market-purchase-title"></div><div class="kds-market-purchase-subtitle"></div></div>';document.body.appendChild(el);}el.style.display='flex';el.className='kds-market-purchase-overlay '+mode;el.querySelector('.kds-market-purchase-title').textContent=title;el.querySelector('.kds-market-purchase-subtitle').textContent=subtitle;void el.offsetWidth;el.classList.add('show');}
-function kdsMarketPurchaseHide(){const el=$('kdsMarketPurchaseOverlay');if(el){el.classList.remove('show');el.style.display='none';}}
-
 function kdsTopupState(mode,title,subtitle,amount,method){let el=$("kdsTopupOverlay");if(!el){el=document.createElement("div");el.id="kdsTopupOverlay";el.className="kds-topup-overlay";el.setAttribute("role","status");el.setAttribute("aria-live","polite");el.innerHTML='<div class="kds-topup-card"><div class="kds-topup-brand">KADZI <span>STORE</span> · WALLET</div><div class="kds-topup-visual" aria-hidden="true"><div class="kds-topup-orbit"></div><div class="kds-topup-ring"></div><div class="kds-topup-core">₽</div></div><div class="kds-topup-kicker">SECURE BALANCE</div><div class="kds-topup-title"></div><div class="kds-topup-subtitle"></div><div class="kds-topup-amount"><small>TOP UP</small><span></span></div><div class="kds-topup-track" aria-hidden="true"></div><div class="kds-topup-foot">HYBRID GLASS · KADZI DIGITAL</div></div>';document.body.appendChild(el);}el.className="kds-topup-overlay is-"+mode;el.querySelector(".kds-topup-title").textContent=title;el.querySelector(".kds-topup-subtitle").textContent=subtitle;el.querySelector(".kds-topup-amount span").textContent=Number(amount).toLocaleString("ru-RU")+" ₽";el.querySelector(".kds-topup-amount small").textContent=method==="sbp"?"СБП · TOP UP":"CRYPTO · TOP UP";requestAnimationFrame(()=>el.classList.add("show"));}
 function kdsHideTopupState(){const el=$("kdsTopupOverlay");if(el)el.classList.remove("show")}
 
@@ -867,6 +868,10 @@ tg.ready();tg.expand();async function finishKdsBoot(){const ok=await refresh();i
 <script>(()=>{
 const API='https://vpuaihznkswrpsqxgcvm.supabase.co/functions/v1/kds-marketplace';
 const $=id=>document.getElementById(id);
+// Isolated Marketplace purchase overlay. Kept inside the Marketplace IIFE so it cannot leak into or depend on the main store.
+function kdsMarketPurchaseState(mode,title,subtitle){let el=$('kdsMarketPurchaseOverlay');if(!el){el=document.createElement('div');el.id='kdsMarketPurchaseOverlay';el.className='kds-market-purchase-overlay';el.setAttribute('role','status');el.setAttribute('aria-live','polite');el.innerHTML='<div class="kds-market-purchase-card"><div class="kds-market-purchase-symbol"></div><div class="kds-market-purchase-title"></div><div class="kds-market-purchase-subtitle"></div></div>';document.body.appendChild(el);}el.style.display='flex';el.className='kds-market-purchase-overlay '+mode;el.querySelector('.kds-market-purchase-title').textContent=title;el.querySelector('.kds-market-purchase-subtitle').textContent=subtitle;void el.offsetWidth;el.classList.add('show');}
+function kdsMarketPurchaseHide(){const el=$('kdsMarketPurchaseOverlay');if(el){el.classList.remove('show');el.style.display='none';}}
+
 const tg=window.Telegram?.WebApp;
 const m={user:null,profile:null,games:[],categories:[],top:[],listings:[],mine:[],orders:[],finance:[],financeFilter:'all',publicProfileCache:{},publicProfilePending:{},publicProfileReturnView:'game',detailReturnView:'game',gameId:'',categoryId:'',lot:null,order:null,chatOrders:[],chatGroup:null,images:[],editImages:[],chatImage:null,chatPoll:null,chatMessageFingerprint:'',chatRefreshBusy:false,chatMessages:[],chatOutbox:[],chatLastMessageAt:null,chatLoadToken:0,chatSending:false,presenceHeartbeatTimer:null,presenceRefreshTimer:null,presenceStarted:false,activePublicProfileId:null,loaded:false,loading:false};
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -963,12 +968,12 @@ function openLot(id){const currentView=document.querySelector('#market .kds-mark
  const seller=l.seller||{user_id:l.seller_id,seller_nickname:'Продавец'};
  const localOrder={...d.order,buyer_id:d.order.buyer_id||m.user.id,seller_id:d.order.seller_id||l.seller_id,role:'buyer',partner:d.order.partner||seller,created_at:d.order.created_at||new Date().toISOString(),total_rub:d.order.total_rub??amount,quantity:d.order.quantity??Number(qty.value),kds_marketplace_listings:d.order.kds_marketplace_listings||{title:l.title,game_id:l.game_id,kds_games:l.kds_games||m.games.find(g=>g.id===l.game_id),kds_marketplace_categories:l.kds_marketplace_categories}};
  if(!m.orders.some(x=>x.id===localOrder.id))m.orders.unshift(localOrder);renderOrders();renderChats();goPage('buys');
- window.kdsHidePurchaseState();toast('Покупка оформлена. Открываем чат заказа…');
+ kdsMarketPurchaseHide();toast('Покупка оформлена. Открываем чат заказа…');
  api('GET',null,'bootstrap').then(b=>{if(b.user){m.user=b.user;notifyStoreBalance();const w=$('kdsMarketWallet');if(w)w.innerHTML='<b>Общий баланс: '+rub(Number(m.user.balance_rub||0)+Number(m.user.frozen_balance_rub||0))+'</b><span>Доступно: '+rub(m.user.balance_rub)+'</span><span>На заморозке: '+rub(m.user.frozen_balance_rub)+'</span>';}}).catch(e=>console.warn('Balance refresh after confirmed marketplace purchase failed:',e));
  api('GET',null,'orders').then(rows=>{m.orders=rows.orders||[];if(!m.orders.some(x=>x.id===localOrder.id))m.orders.unshift(localOrder);renderOrders();renderChats();}).catch(e=>console.warn('Order refresh after confirmed marketplace purchase failed:',e));
  try{loadListings().catch(e=>console.warn('Listing refresh after confirmed marketplace purchase failed:',e));}catch(e){console.warn('Listing refresh after confirmed marketplace purchase failed:',e);}
  // Success is shown as a non-blocking toast; hide the overlay before opening the order chat.
- window.kdsHidePurchaseState();
+ kdsMarketPurchaseHide();
  const chatId=partnerIdFor(localOrder);if(chatId){goPage('chats');openChat(chatId,localOrder).catch(e=>{console.warn('Open chat after confirmed purchase failed:',e);goPage('buys');toast('Покупка прошла успешно. Чат можно открыть из заказа в «Мои покупки».');});}else{goPage('buys');toast('Покупка прошла успешно. Открой чат из заказа в «Мои покупки».');}
  buy.dataset.purchasing='0';buy.textContent=originalLabel;buy.disabled=!!purchaseError;
 });
