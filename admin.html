@@ -68,12 +68,22 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
 <section class="panel" id="orderSearchPanel"><div class="number">Поиск заказов</div><div class="muted">Номер заказа, Telegram ID, username или название товара.</div><div class="actions" style="align-items:center"><input id="orderSearch" placeholder="Например, 1042 или @username" style="flex:1;min-width:180px"><button class="primary" id="orderSearchBtn">Найти</button><button id="orderSearchClear">Сбросить</button></div><div id="orderSearchResult" class="muted"></div></section>
 <section class="order" style="margin:0 0 16px">
   <div class="number">Баланс пользователей</div>
-  <div class="meta">Найди покупателя по Telegram ID или username, чтобы начислить или списать рубли.</div>
+  <div class="meta">Поиск по Telegram ID, username или имени. Пользователь всегда определяется по постоянному Telegram ID.</div>
   <div style="display:flex;gap:8px;flex-wrap:wrap">
-    <input id="userSearch" placeholder="Telegram ID или @username" style="flex:1;min-width:190px">
+    <input id="userSearch" placeholder="Telegram ID, @username или имя" style="flex:1;min-width:190px">
     <button class="primary" id="userFind">Найти</button>
   </div>
   <div id="userResult" style="margin-top:12px"></div>
+</section>
+<section class="panel" id="adminUsersPanel">
+  <div class="number">Пользователи</div><div class="muted">Показывает зарегистрированные аккаунты, включая пользователей без username. Открывай профиль по постоянному Telegram ID.</div>
+  <div class="actions"><button id="loadNoUsernameUsers">Показать без username</button><button id="loadRecentUsers">Последние пользователи</button></div>
+  <div id="adminUsersResult" style="margin-top:10px"></div>
+</section>
+<section class="panel" id="adminWalletHistoryPanel">
+  <div class="number">История пополнений и списаний через админку</div><div class="muted">Все ручные операции сохраняются независимо от изменения username. Нажми «Открыть пользователя», чтобы перейти к его профилю и истории.</div>
+  <div class="actions"><button class="primary" id="reloadAdminWalletHistory">↻ Обновить историю</button></div>
+  <div id="adminWalletHistory" style="margin-top:10px"></div>
 </section>
 <div class="filters" id="filters">
 <button data-filter="all" class="primary">Все</button><button data-filter="awaiting_fulfillment">Оплачено</button><button data-filter="processing">В обработке</button><button data-filter="in_delivery">В доставке</button><button data-filter="fulfilled">Выполнены</button><button data-filter="refunded">Возвраты</button>
@@ -449,28 +459,51 @@ function auditDetailsHuman(details){
 async function loadAudit(){const el=document.getElementById("auditList");el.innerHTML='<div class="notice">Загрузка…</div>';try{const d=await api("GET",null,"audit");const rows=d.entries||[];el.innerHTML=rows.length?rows.map(x=>'<div class="panel audit-row"><b>'+esc(x.action)+'</b><div class="muted">'+esc(x.target_type||"—")+' · '+esc(x.target_id||"—")+'<br>Администратор: '+esc(x.admin_telegram_id)+'<br>'+new Date(x.created_at).toLocaleString("ru-RU")+'</div><div class="audit-details">'+auditDetailsHuman(x.details||{})+'</div></div>').join(""):'<div class="empty">Записей пока нет</div>'; }catch(e){el.innerHTML='<div class="notice error">'+esc(e.message)+'</div>';}}
 document.getElementById("reloadAudit").onclick=loadAudit;
 let selectedUser=null;
-document.getElementById("userFind").onclick=async()=>{
- const query=document.getElementById("userSearch").value.trim(),out=document.getElementById("userResult");
- if(!query){out.innerHTML='<div class="meta error">Введи Telegram ID или username</div>';return;}
- out.innerHTML='<div class="meta">Поиск…</div>';
- try{
-  const d=await api("POST",{action:"search_user",query});selectedUser=d.user;
-  out.innerHTML='<div class="stat" style="margin-top:8px"><small>Покупатель</small><strong style="font-size:16px">'+esc(d.user.first_name||"Пользователь")+(d.user.username?' · @'+esc(d.user.username):'')+'</strong><div class="meta">Telegram ID: '+esc(d.user.telegram_user_id)+'</div><div class="price">Баланс: '+money(d.user.balance_rub)+'</div></div>'+
-  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><input id="balanceAmount" type="text" inputmode="decimal" placeholder="Например, 100,1 ₽"><input id="balanceReason" placeholder="Причина операции"></div>'+
-  '<div class="actions"><button class="good" data-balance="credit">＋ Начислить</button><button class="warn" data-balance="debit">− Списать</button></div>';
- }catch(e){selectedUser=null;out.innerHTML='<div class="meta error">'+esc(e.message)+'</div>';}
+function renderUserPicker(rows,container){
+ const users=rows||[];
+ container.innerHTML=users.length?users.map(u=>'<div class="audit-row"><b>'+esc(u.first_name||'Пользователь без имени')+'</b> · '+(u.username?'@'+esc(u.username):'<span class="notice-pill">Без username</span>')+'<div class="muted">Telegram ID: '+esc(u.telegram_user_id)+' · Баланс: '+money(u.balance_rub)+'<br>Регистрация: '+(u.created_at?new Date(u.created_at).toLocaleString("ru-RU"):'—')+'</div><div class="actions"><button class="primary" data-admin-openuser="'+esc(u.telegram_user_id)+'">Открыть пользователя</button></div></div>').join(''):'<div class="empty">Пользователи не найдены.</div>';
+}
+function renderWalletTransactions(rows,container){
+ container.innerHTML=rows.length?rows.map(t=>{const u=t.kds_users||{},amount=Number(t.amount_rub||0),label=amount>0?'Пополнение':'Списание';return '<div class="audit-row"><b class="'+(amount>=0?'':'error')+'">'+(amount>0?'+':'')+money(amount)+'</b> · '+esc(label)+'<div class="muted">'+esc(u.first_name||'Пользователь без имени')+' · '+(u.username?'@'+esc(u.username):'Без username')+'<br>Telegram ID: '+esc(u.telegram_user_id||'—')+'<br>Баланс после операции: '+money(t.balance_after_rub)+'<br>'+new Date(t.created_at).toLocaleString('ru-RU')+'<br>'+esc(t.note||'Без комментария')+'</div><div class="actions"><button data-admin-openuser="'+esc(u.telegram_user_id||'')+'">Открыть пользователя</button></div></div>';}).join(''):'<div class="empty">Ручных пополнений и списаний пока нет.</div>';
+}
+async function openAdminUserById(id){
+ const out=document.getElementById('userResult');out.innerHTML='<div class="muted">Открываю профиль…</div>';document.getElementById('userSearch').value=String(id);
+ try{const d=await api('POST',{action:'search_user',query:String(id)});const u=d.user||d.users?.[0];if(!u)throw new Error('USER_NOT_FOUND');await renderSelectedAdminUser(u);out.scrollIntoView({behavior:'smooth',block:'start'});}
+ catch(e){out.innerHTML='<div class="meta error">'+esc(e.message)+'</div>';}
+}
+async function renderSelectedAdminUser(u){
+ selectedUser=u;const out=document.getElementById('userResult');
+ out.innerHTML='<div class="stat" style="margin-top:8px"><small>Профиль пользователя</small><strong style="font-size:16px">'+esc(u.first_name||'Пользователь без имени')+(u.username?' · @'+esc(u.username):' · Без username')+'</strong><div class="meta">Telegram ID: '+esc(u.telegram_user_id)+'</div><div class="price">Всего доступно: '+money(u.balance_rub)+'</div><div class="meta">Пополнения: '+money(u.topup_balance_rub)+' · Заработок к выводу: '+money(u.earnings_balance_rub)+' · На удержании: '+money(u.frozen_balance_rub)+'</div><div class="actions"><button data-copy-user-id="'+esc(u.telegram_user_id)+'">Копировать ID</button></div></div>'+
+ '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><input id="balanceAmount" type="text" inputmode="decimal" placeholder="Например, 100,1 ₽"><input id="balanceReason" placeholder="Причина операции"></div>'+
+ '<div class="actions"><button class="good" data-balance="credit">＋ Начислить</button><button class="warn" data-balance="debit">− Списать</button></div>'+
+ '<div class="panel" style="margin-top:12px"><b>Финансовая история пользователя</b><div id="selectedUserWalletHistory" class="muted">Загрузка истории…</div></div>';
+ const hist=document.getElementById('selectedUserWalletHistory');
+ try{const d=await api('POST',{action:'list_user_wallet_transactions',telegram_user_id:u.telegram_user_id});renderWalletTransactionsForUser(d.transactions||[],hist);}catch(e){hist.innerHTML='<div class="meta error">История недоступна: '+esc(e.message)+'</div>';}
+}
+function renderWalletTransactionsForUser(rows,container){
+ container.innerHTML=rows.length?rows.map(t=>{const amount=Number(t.amount_rub||0);return '<div class="audit-row"><b class="'+(amount>=0?'':'error')+'">'+(amount>0?'+':'')+money(amount)+'</b><div class="muted">'+esc(t.kind||'Операция')+' · Баланс после: '+money(t.balance_after_rub)+'<br>'+new Date(t.created_at).toLocaleString('ru-RU')+'<br>'+esc(t.note||'')+'</div></div>';}).join(''):'<div class="empty">История операций пользователя пуста.</div>';
+}
+document.getElementById('userFind').onclick=async()=>{
+ const query=document.getElementById('userSearch').value.trim(),out=document.getElementById('userResult');if(!query){out.innerHTML='<div class="meta error">Введи Telegram ID, username или имя.</div>';return;}out.innerHTML='<div class="meta">Поиск…</div>';
+ try{const d=await api('POST',{action:'search_user',query});const users=d.users|| (d.user?[d.user]:[]);if(users.length===1){await renderSelectedAdminUser(users[0]);return;}selectedUser=null;renderUserPicker(users,out);}
+ catch(e){selectedUser=null;out.innerHTML='<div class="meta error">'+esc(e.message)+'</div>';}
 };
-document.getElementById("userResult").onclick=async e=>{
- const b=e.target.closest("button[data-balance]");if(!b||!selectedUser)return;
- const amount=parseRubInput(document.getElementById("balanceAmount").value),reason=document.getElementById("balanceReason").value.trim();
- if(!validRubAmount(amount)){alert("Введи сумму больше нуля, максимум с одной цифрой после запятой");return;}
- if(!reason){alert("Укажи причину операции");return;}
- const action=b.dataset.balance,verb=action==="credit"?"начислить":"списать";
- if(!confirm("Подтвердить: "+verb+" "+money(amount)+" пользователю "+selectedUser.telegram_user_id+"?"))return;
- b.disabled=true;
- try{const d=await api("POST",{action:"adjust_balance",telegram_user_id:selectedUser.telegram_user_id,amount_rub:amount,operation:action,reason});alert("Готово. Новый баланс: "+money(d.result.balance_rub));document.getElementById("userFind").click();}
+document.getElementById('userSearch').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('userFind').click();});
+document.getElementById('userResult').onclick=async e=>{
+ const open=e.target.closest('[data-admin-openuser]');if(open){await openAdminUserById(open.dataset.adminOpenuser);return;}
+ const copy=e.target.closest('[data-copy-user-id]');if(copy){try{await navigator.clipboard.writeText(String(copy.dataset.copyUserId));alert('Telegram ID скопирован');}catch(_){prompt('Скопируй Telegram ID:',copy.dataset.copyUserId);}return;}
+ const b=e.target.closest('button[data-balance]');if(!b||!selectedUser)return;
+ const amount=parseRubInput(document.getElementById('balanceAmount').value),reason=document.getElementById('balanceReason').value.trim();if(!validRubAmount(amount)){alert('Введи сумму больше нуля, максимум с одной цифрой после запятой');return;}if(!reason){alert('Укажи причину операции');return;}
+ const action=b.dataset.balance,verb=action==='credit'?'начислить':'списать';if(!confirm('Подтвердить: '+verb+' '+money(amount)+' пользователю '+selectedUser.telegram_user_id+'?'))return;b.disabled=true;
+ try{const d=await api('POST',{action:'adjust_balance',telegram_user_id:selectedUser.telegram_user_id,amount_rub:amount,operation:action,reason});alert('Готово. Новый баланс: '+money(d.result.balance_rub));await openAdminUserById(selectedUser.telegram_user_id);await loadAdminWalletHistory();}
  catch(err){alert(err.message);b.disabled=false;}
 };
+document.getElementById('adminUsersResult').onclick=async e=>{const b=e.target.closest('[data-admin-openuser]');if(b)await openAdminUserById(b.dataset.adminOpenuser);};
+async function loadAdminUsers(filter){const out=document.getElementById('adminUsersResult');out.innerHTML='<div class="meta">Загрузка пользователей…</div>';try{const d=await api('POST',{action:'list_admin_users',filter});renderUserPicker(d.users||[],out);}catch(e){out.innerHTML='<div class="meta error">'+esc(e.message)+'</div>';}}
+document.getElementById('loadNoUsernameUsers').onclick=()=>loadAdminUsers('no_username');document.getElementById('loadRecentUsers').onclick=()=>loadAdminUsers('recent');
+async function loadAdminWalletHistory(){const out=document.getElementById('adminWalletHistory');out.innerHTML='<div class="meta">Загрузка финансовой истории…</div>';try{const d=await api('POST',{action:'list_admin_balance_history'});renderWalletTransactions(d.transactions||[],out);}catch(e){out.innerHTML='<div class="meta error">'+esc(e.message)+'</div>';}}
+document.getElementById('reloadAdminWalletHistory').onclick=loadAdminWalletHistory;
+document.getElementById('adminWalletHistory').onclick=async e=>{const b=e.target.closest('[data-admin-openuser]');if(b&&b.dataset.adminOpenuser)await openAdminUserById(b.dataset.adminOpenuser);};
 document.getElementById("backToStore").onclick=()=>{location.href="https://bykadzistore.github.io/kadzistore/";};
 document.getElementById("reload").onclick=()=>{load();if(!document.getElementById("productsSection").classList.contains("hide"))loadProducts();if(!document.getElementById("analyticsSection").classList.contains("hide"))loadAnalytics();};
 document.getElementById("filters").onclick=e=>{const b=e.target.closest("button[data-filter]");if(!b)return;filter=b.dataset.filter;document.querySelectorAll("[data-filter]").forEach(x=>x.classList.toggle("primary",x===b));render();};
@@ -493,6 +526,7 @@ document.getElementById("pPlatform").value="Android";
 setBulkStatusOptions();
 if(!initData){document.getElementById("orders").innerHTML='<div class="notice error">Открой эту страницу через Telegram Mini App, чтобы подтвердить администратора.</div>';}
 else load();
+loadAdminWalletHistory();
 const MARKET_API="https://vpuaihznkswrpsqxgcvm.supabase.co/functions/v1/kds-marketplace";
 let marketAdminDisputes=[],marketAdminOrders=[],marketAdminListings=[],marketAdminCurrentDispute=null,marketAdminUserId=null,marketListingFilter="active",marketOrderFilter="all";
 async function marketAdminApi(method="GET",body=null,section="bootstrap",params={}){
