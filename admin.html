@@ -55,6 +55,9 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
 .market-admin-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.market-admin-actions button{min-width:110px}
 .market-admin-message{padding:9px 11px;border-radius:11px;background:#1a202a;margin:7px 0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}.market-admin-message.mine{background:#19372b;margin-left:18px}
 /* V15.10.22 support message types */ .market-admin-message.system{background:rgba(125,135,150,.13);border:1px solid rgba(160,170,185,.35)}.market-admin-message.delivery{background:rgba(40,150,110,.12);border:1px solid rgba(70,190,145,.35)}
+
+#marketAdminChatOverlay{position:fixed;inset:0;z-index:100;background:#07060beF;backdrop-filter:blur(20px);display:flex;flex-direction:column;padding:12px;}
+#marketAdminChatOverlay.hide{display:none!important}.market-chat-head{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px;border-bottom:1px solid #ffffff20}.market-chat-title{font-weight:850;font-size:16px}.market-chat-sub{font-size:11px;color:var(--muted);margin-top:4px}.market-chat-feed{flex:1;min-height:0;overflow:auto;padding:12px 3px;display:flex;flex-direction:column;gap:8px}.market-chat-msg{max-width:min(88%,600px);align-self:flex-start;background:#1b1721;border:1px solid #ffffff16;padding:11px 13px;border-radius:15px 15px 15px 4px;white-space:pre-wrap;overflow-wrap:anywhere}.market-chat-msg.mine{align-self:flex-end;background:#35202a;border-color:#ff294733;border-radius:15px 15px 4px 15px}.market-chat-msg.system{align-self:center;max-width:96%;background:#ffffff0a;border-color:#ffffff20;text-align:center;font-size:12px}.market-chat-msg.delivery{border-color:#37c97855;background:#153126}.market-chat-msg small{display:block;color:#a99fac;font-size:10px;margin-top:7px}.market-chat-msg img{display:block;max-width:min(100%,280px);border-radius:10px;margin-top:8px}.market-chat-compose{display:flex;gap:8px;padding-top:10px;border-top:1px solid #ffffff20;align-items:flex-end}.market-chat-compose textarea{flex:1;min-width:0;max-height:120px;resize:vertical;border-radius:14px;padding:12px;background:#0c0911;border:1px solid #ffffff2b;color:white;font:inherit}.market-chat-compose button{min-height:45px}.market-admin-card .market-admin-actions button{min-width:0}
 </style></head>
 <body>
 <header><div><div class="logo"><b>KD</b>S ADMIN</div><div class="tag">Панель управления магазином</div></div><div class="actions" style="margin:0"><button id="backToStore">← В магазин</button><button id="reload">↻ Обновить</button></div></header>
@@ -157,8 +160,8 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
   <div class="actions"><button class="primary" id="reloadMarketplace">↻ Обновить данные</button></div>
  </div>
  <section class="panel"><div class="number">Споры</div><div class="muted">При открытом споре переписка покупателя и продавца разделяется. Ответы отправляются каждой стороне отдельно.</div><div id="marketplaceDisputes"><div class="notice">Нажми «Обновить данные».</div></div></section>
- <section class="panel"><div class="number">Объявления</div><div id="marketplaceListings"><div class="notice">Загрузка после открытия раздела.</div></div></section>
- <section class="panel"><div class="number">Сделки</div><div id="marketplaceOrders"><div class="notice">Загрузка после открытия раздела.</div></div></section>
+ <section class="panel"><div class="number">Объявления</div><div class="filters" id="marketListingFilters"><button class="primary" data-market-filter="active">Активные</button><button data-market-filter="paused">Приостановлены</button><button data-market-filter="under_review">На проверке</button><button data-market-filter="sold">Проданы</button><button data-market-filter="removed">Сняты</button><button data-market-filter="all">Все</button></div><div id="marketplaceListings"><div class="notice">Загрузка после открытия раздела.</div></div></section>
+ <section class="panel"><div class="number">Аналитика маркетплейса</div><div class="muted">Статистика по последним 200 сделкам, возвращаемым сервером.</div><div class="stats" style="grid-template-columns:repeat(2,minmax(0,1fr))"><div class="stat"><small>Оборот покупок</small><strong id="marketStatTurnover">—</strong></div><div class="stat"><small>Расчётный доход KADZI*</small><strong id="marketStatIncome">—</strong></div><div class="stat"><small>Заказов</small><strong id="marketStatCount">—</strong></div><div class="stat"><small>Доставлено / завершено</small><strong id="marketStatDone">—</strong></div></div><div class="muted">*Оценка по 10% наценке. Точная прибыль появится после получения сервером суммы выплаты продавцу; оценка не является финансовым отчётом.</div></section><section class="panel"><div class="number">Сделки</div><div class="filters" id="marketOrderFilters"><button class="primary" data-market-order-filter="all">Все</button><button data-market-order-filter="active">В процессе</button><button data-market-order-filter="delivered">Доставлены</button><button data-market-order-filter="completed">Завершены</button><button data-market-order-filter="cancelled">Отменены</button></div><div id="marketplaceOrders"><div class="notice">Загрузка после открытия раздела.</div></div></section>
  <section class="panel hide" id="marketplaceSupportPanel"><div class="number" id="marketplaceSupportTitle">Чат по заказу</div><div id="marketplaceSupportMessages"></div><div class="actions"><button id="replyChat">Ответить в общий чат</button><button id="closeMarketplaceSupport">Закрыть переписку</button></div></section>
 </section>
 <section id="amlSection" class="hide">
@@ -195,6 +198,7 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
  <div class="panel"><div class="number">История наказаний выбранного пользователя</div><div id="sanctionHistory" class="muted">Найди пользователя, чтобы увидеть историю.</div></div>
 </section>
 </main>
+<div id="marketAdminChatOverlay" class="hide"><div class="market-chat-head"><div><div class="market-chat-title" id="marketChatModalTitle">Чат заказа</div><div class="market-chat-sub">Администратор · общий чат сделки</div></div><button id="marketChatClose">Закрыть</button></div><div class="market-chat-feed" id="marketChatModalMessages"><div class="notice">Загрузка переписки…</div></div><form class="market-chat-compose" id="marketChatCompose"><textarea id="marketChatInput" rows="2" maxlength="4000" placeholder="Написать сообщение…"></textarea><button class="primary" id="marketChatSend" type="submit">Отправить</button></form></div>
 <script>
 const tg=window.Telegram?.WebApp; tg?.ready(); tg?.expand();
 const initData=tg?.initData||"";
@@ -421,7 +425,13 @@ document.getElementById("selectAllProducts").onclick=()=>{allProducts.forEach(p=
 document.getElementById("clearProductSelection").onclick=()=>{selectedProductIds.clear();loadProducts();};
 document.getElementById("productsList").addEventListener("change",e=>{const c=e.target.closest("[data-product-select]");if(!c)return;if(c.checked)selectedProductIds.add(c.dataset.productSelect);else selectedProductIds.delete(c.dataset.productSelect);});
 document.getElementById("applyBulkNotice").onclick=async()=>{const ids=[...selectedProductIds],status=document.getElementById("bulkNoticeStatus").dataset.value||"",message=document.getElementById("bulkNoticeText").value.trim(),out=document.getElementById("bulkMsg");if(!ids.length){out.textContent="Сначала выбери товары.";return;}if(status&&!message){out.textContent="Добавь текст уведомления.";return;}try{await api("POST",{action:"bulk_product_notice",product_ids:ids,notice_status:status,notice_text:message});out.textContent="Обновлено товаров: "+ids.length;await loadProducts();}catch(e){out.textContent="Ошибка: "+e.message;}};
-async function loadAudit(){const el=document.getElementById("auditList");el.innerHTML='<div class="notice">Загрузка…</div>';try{const d=await api("GET",null,"audit");const rows=d.entries||[];el.innerHTML=rows.length?rows.map(x=>'<div class="panel audit-row"><b>'+esc(x.action)+'</b><div class="muted">'+esc(x.target_type||"—")+' · '+esc(x.target_id||"—")+'<br>Администратор: '+esc(x.admin_telegram_id)+'<br>'+new Date(x.created_at).toLocaleString("ru-RU")+'</div><div class="muted">'+esc(JSON.stringify(x.details||{}))+'</div></div>').join(""):'<div class="empty">Записей пока нет</div>'; }catch(e){el.innerHTML='<div class="notice error">'+esc(e.message)+'</div>';}}
+function auditDetailsHuman(details){
+ const names={product_id:"ID товара",plan_id:"ID тарифа",price_rub:"Цена",cost_rub:"Закупочная цена",old_price:"Старая цена",new_price:"Новая цена",quantity:"Количество",status:"Статус",is_active:"Активность",title:"Название",name:"Название",slug:"Slug",game:"Игра",section:"Раздел",subcategory:"Подраздел",platform:"Платформа",order_id:"ID заказа",order_number:"Номер заказа",user_id:"ID пользователя",telegram_user_id:"Telegram ID",reason:"Причина",action:"Действие",amount_rub:"Сумма",duration_days:"Длительность (дни)"
+ };
+ const flatten=(obj,prefix="")=>{if(obj==null)return [];if(typeof obj!=="object")return [[prefix, String(obj)]];return Object.entries(obj).flatMap(([k,v])=>flatten(v,prefix?prefix+" / "+(names[k]||k):(names[k]||k)));};
+ try{const parsed=typeof details==="string"?JSON.parse(details):details;const rows=flatten(parsed);return rows.length?rows.map(([k,v])=>'<div class="planline"><b>'+esc(k)+'</b>: '+esc(v)+'</div>').join(""):'<span class="muted">Подробностей нет</span>';}catch(_){return '<div class="muted">'+esc(String(details||"Подробностей нет"))+'</div>';}
+}
+async function loadAudit(){const el=document.getElementById("auditList");el.innerHTML='<div class="notice">Загрузка…</div>';try{const d=await api("GET",null,"audit");const rows=d.entries||[];el.innerHTML=rows.length?rows.map(x=>'<div class="panel audit-row"><b>'+esc(x.action)+'</b><div class="muted">'+esc(x.target_type||"—")+' · '+esc(x.target_id||"—")+'<br>Администратор: '+esc(x.admin_telegram_id)+'<br>'+new Date(x.created_at).toLocaleString("ru-RU")+'</div><div class="audit-details">'+auditDetailsHuman(x.details||{})+'</div></div>').join(""):'<div class="empty">Записей пока нет</div>'; }catch(e){el.innerHTML='<div class="notice error">'+esc(e.message)+'</div>';}}
 document.getElementById("reloadAudit").onclick=loadAudit;
 let selectedUser=null;
 document.getElementById("userFind").onclick=async()=>{
@@ -469,7 +479,7 @@ setBulkStatusOptions();
 if(!initData){document.getElementById("orders").innerHTML='<div class="notice error">Открой эту страницу через Telegram Mini App, чтобы подтвердить администратора.</div>';}
 else load();
 const MARKET_API="https://vpuaihznkswrpsqxgcvm.supabase.co/functions/v1/kds-marketplace";
-let marketAdminDisputes=[],marketAdminOrders=[],marketAdminListings=[],marketAdminCurrentDispute=null,marketAdminUserId=null;
+let marketAdminDisputes=[],marketAdminOrders=[],marketAdminListings=[],marketAdminCurrentDispute=null,marketAdminUserId=null,marketListingFilter="active",marketOrderFilter="all";
 async function marketAdminApi(method="GET",body=null,section="bootstrap",params={}){
  const q=new URLSearchParams({section,...Object.fromEntries(Object.entries(params).filter(([,v])=>v!==undefined&&v!==null&&v!==""))});
  const r=await fetch(MARKET_API+"?"+q.toString(),{method,headers:{"Content-Type":"application/json","X-Telegram-Init-Data":initData},body:body?JSON.stringify(body):undefined});
@@ -488,9 +498,22 @@ function renderMarketplaceAdmin(){
  const disputes=document.getElementById("marketplaceDisputes");
  disputes.innerHTML=marketAdminDisputes.length?marketAdminDisputes.map(x=>{const o=x.kds_marketplace_orders||{},l=o.kds_marketplace_listings||{};return '<article class="market-admin-card"><h3>Спор по заказу #'+esc(o.order_code||"")+'</h3><p>'+esc(l.title||"Товар")+' · '+money(o.total_rub||0)+' · '+esc(o.status||"")+'</p><p>Причина: '+esc(x.reason)+'</p><p>Открыт: '+new Date(x.created_at).toLocaleString("ru-RU")+'</p><div class="market-admin-actions"><button class="primary" data-market-chat="'+esc(o.id||x.order_id)+'">Открыть переписку</button><button data-market-verdict="buyer" data-market-order="'+esc(o.id||x.order_id)+'">Решить в пользу покупателя</button><button data-market-verdict="seller" data-market-order="'+esc(o.id||x.order_id)+'">Решить в пользу продавца</button></div></article>';}).join(""):'<div class="notice">Открытых споров нет.</div>';
  const listings=document.getElementById("marketplaceListings");
- listings.innerHTML=marketAdminListings.length?marketAdminListings.map(x=>'<article class="market-admin-card"><h3>'+esc(x.title)+'</h3><p>'+esc(x.kds_games?.name||"Игра")+' · '+esc(x.kds_marketplace_categories?.category_name||"Категория")+' · продавец: '+esc(x.seller_nickname)+'</p><p>'+money(x.unit_price_rub)+(x.pricing_mode==="per_g"?" / G":"")+' · остаток: '+esc(x.quantity_available)+' · статус: '+esc(x.status)+'</p><div class="market-admin-actions"><button data-market-listing-status="active" data-market-listing="'+x.id+'">Опубликовать</button><button data-market-listing-status="paused" data-market-listing="'+x.id+'">Приостановить</button><button data-market-listing-status="under_review" data-market-listing="'+x.id+'">На проверку</button><button data-market-listing-status="removed" data-market-listing="'+x.id+'">Снять с продажи</button></div></article>').join(""):'<div class="notice">Объявлений пока нет.</div>';
+ const statusLabels={active:"Активно",paused:"Приостановлено",under_review:"На проверке",sold:"Продано",removed:"Снято",inactive:"Неактивно"};
+ const visibleListings=marketListingFilter==="all"?marketAdminListings:marketAdminListings.filter(x=>String(x.status||"").toLowerCase()===marketListingFilter);
+ document.querySelectorAll("#marketListingFilters [data-market-filter]").forEach(b=>b.classList.toggle("primary",b.dataset.marketFilter===marketListingFilter));
+ listings.innerHTML=visibleListings.length?visibleListings.map(x=>'<article class="market-admin-card"><h3>'+esc(x.title)+'</h3><p>'+esc(x.kds_games?.name||"Игра")+' · '+esc(x.kds_marketplace_categories?.category_name||"Категория")+' · продавец: '+esc(x.seller_nickname)+'</p><p>'+money(x.unit_price_rub)+(x.pricing_mode==="per_g"?" / G":"")+' · остаток: '+esc(x.quantity_available)+' · статус: '+esc(statusLabels[x.status]||x.status)+'</p><div class="market-admin-actions">'+(x.status!=="active"?'<button class="primary" data-market-listing-status="active" data-market-listing="'+esc(x.id)+'">Опубликовать</button>':'')+(x.status!=="paused"?'<button data-market-listing-status="paused" data-market-listing="'+esc(x.id)+'">Приостановить</button>':'')+(x.status!=="under_review"?'<button data-market-listing-status="under_review" data-market-listing="'+esc(x.id)+'">На проверку</button>':'')+(x.status!=="removed"?'<button class="warn" data-market-listing-status="removed" data-market-listing="'+esc(x.id)+'">Снять с продажи</button>':'')+'</div></article>').join(""):'<div class="notice">Нет объявлений с выбранным статусом.</div>';
  const orders=document.getElementById("marketplaceOrders");
- orders.innerHTML=marketAdminOrders.length?marketAdminOrders.map(x=>'<article class="market-admin-card"><h3>Заказ #'+esc(x.order_code)+'</h3><p>'+esc(x.kds_marketplace_listings?.title||"Лот")+' · '+esc(x.kds_marketplace_listings?.kds_games?.name||"Игра")+'</p><p>'+money(x.total_rub)+' · '+esc(x.status)+' · '+new Date(x.created_at).toLocaleString("ru-RU")+'</p><div class="market-admin-actions"><button data-market-chat-order="'+esc(x.id)+'">Открыть чат</button>'+(x.status==="delivered"?'<button class="primary" data-market-admin-confirm="'+esc(x.id)+'">Подтвердить заказ</button>':'')+'</div></article>').join(''):'<div class="notice">Сделок пока нет.</div>';
+ const orderStatus=x=>String(x.status||"").toLowerCase();
+ const filteredOrders=marketAdminOrders.filter(x=>marketOrderFilter==="all"||(marketOrderFilter==="active"&&["pending","paid","processing","in_delivery","delivering","shipping","awaiting_confirmation"].includes(orderStatus(x)))||(marketOrderFilter==="delivered"&&orderStatus(x)==="delivered")||(marketOrderFilter==="completed"&&["completed","confirmed","fulfilled"].includes(orderStatus(x)))||(marketOrderFilter==="cancelled"&&["cancelled","refunded"].includes(orderStatus(x))));
+ document.querySelectorAll("#marketOrderFilters [data-market-order-filter]").forEach(b=>b.classList.toggle("primary",b.dataset.marketOrderFilter===marketOrderFilter));
+ const turnover=marketAdminOrders.filter(x=>!["cancelled","refunded"].includes(orderStatus(x))).reduce((a,x)=>a+Number(x.total_rub||0),0);
+ const estimate=turnover-(turnover/1.1);
+ document.getElementById("marketStatTurnover").textContent=money(turnover);
+ document.getElementById("marketStatIncome").textContent=money(estimate);
+ document.getElementById("marketStatCount").textContent=marketAdminOrders.length;
+ document.getElementById("marketStatDone").textContent=marketAdminOrders.filter(x=>["delivered","completed","confirmed","fulfilled"].includes(orderStatus(x))).length;
+ orders.innerHTML=filteredOrders.length?filteredOrders.map(x=>'<article class="market-admin-card"><h3>Заказ #'+esc(x.order_code)+'</h3><p>'+esc(x.kds_marketplace_listings?.title||"Лот")+' · '+esc(x.kds_marketplace_listings?.kds_games?.name||"Игра")+'</p><p>'+money(x.total_rub)+' · '+esc(x.status)+' · '+new Date(x.created_at).toLocaleString("ru-RU")+'</p><div class="market-admin-actions"><button data-market-chat-order="'+esc(x.id)+'">Открыть чат</button>'+(x.status==="delivered"?'<button class="primary" data-market-admin-confirm="'+esc(x.id)+'">Подтвердить заказ</button>':"")+'</div></article>').join(""):'<div class="notice">Нет сделок с выбранным фильтром.</div>';
+
 }
 async function openMarketplaceSupport(orderId){
  const dispute=marketAdminDisputes.find(x=>(x.kds_marketplace_orders?.id||x.order_id)===orderId);
@@ -498,12 +521,19 @@ async function openMarketplaceSupport(orderId){
  if(!dispute&&!order)return;
  const o=dispute?.kds_marketplace_orders||order||{};
  marketAdminCurrentDispute={...(dispute||{}),order_id:orderId,kds_marketplace_orders:o};
- document.getElementById("marketplaceSupportTitle").textContent=(dispute?"Чат спора по заказу #":"Приватный чат заказа #")+(o.order_code||"");
- document.getElementById("marketplaceSupportPanel").classList.remove("hide");
+ document.getElementById("marketChatModalTitle").textContent=(dispute?"Чат спора · ":"Чат заказа · ")+"#"+(o.order_code||"");
+ const overlay=document.getElementById("marketAdminChatOverlay");overlay.classList.remove("hide");document.body.style.overflow="hidden";
+ const feed=document.getElementById("marketChatModalMessages");feed.innerHTML='<div class="notice">Загрузка переписки…</div>';
  const d=await marketAdminApi("GET",null,"messages",{order_id:orderId});
- document.getElementById("marketplaceSupportMessages").innerHTML=(d.messages||[]).map(m=>'<div class="market-admin-message '+(m.message_type==='system'?'system':m.message_type==='delivery'?'delivery':'user')+'"><b>'+esc(m.sender_id===marketAdminUserId?"Администратор":"Участник")+'</b><p>'+esc(m.message_text)+'</p>'+(m.image_url?'<img src="'+esc(m.image_url)+'" style="max-width:180px;border-radius:9px">':"")+'<small>'+new Date(m.created_at).toLocaleString("ru-RU")+'</small></div>').join("")||'<div class="notice">Сообщений пока нет.</div>';
- document.getElementById("marketplaceSupportPanel").scrollIntoView({behavior:"smooth",block:"start"});
+ feed.innerHTML=(d.messages||[]).map(m=>'<div class="market-chat-msg '+(m.sender_id===marketAdminUserId?'mine ':"")+(m.message_type==='system'?'system':m.message_type==='delivery'?'delivery':'')+'"><b>'+esc(m.sender_id===marketAdminUserId?"Администратор":"Участник")+'</b><div>'+esc(m.message_text||"")+'</div>'+(m.image_url?'<img src="'+esc(m.image_url)+'" alt="Вложение">':"")+'<small>'+new Date(m.created_at).toLocaleString("ru-RU")+'</small></div>').join("")||'<div class="notice">Сообщений пока нет.</div>';
+ feed.scrollTop=feed.scrollHeight;document.getElementById("marketChatInput").focus();
 }
+async function sendMarketplaceSupportReply(){
+ if(!marketAdminCurrentDispute)return;const o=marketAdminCurrentDispute.kds_marketplace_orders||{},input=document.getElementById("marketChatInput"),message=input.value.trim();if(!message)return;
+ const btn=document.getElementById("marketChatSend");btn.disabled=true;
+ try{await marketAdminApi("POST",{action:"send_message",order_id:o.id||marketAdminCurrentDispute.order_id,message_text:message,client_message_id:marketClientMessageId()});input.value="";await openMarketplaceSupport(o.id||marketAdminCurrentDispute.order_id);}catch(e){alert(e.message);}finally{btn.disabled=false;input.focus();}
+}
+
 function marketClientMessageId(){if(window.crypto?.randomUUID)return window.crypto.randomUUID();return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return (c==='x'?r:(r&3|8)).toString(16);});}
 async function sendMarketplaceSupportReply(){
  if(!marketAdminCurrentDispute)return;const o=marketAdminCurrentDispute.kds_marketplace_orders||{};const message=prompt("Сообщение покупателю и продавцу в общий чат");if(!message)return;
@@ -521,7 +551,13 @@ document.getElementById("marketplaceOrders").addEventListener("click",async e=>{
 });
 document.getElementById("marketplaceListings").addEventListener("click",async e=>{const b=e.target.closest("[data-market-listing-status]");if(!b)return;try{await marketAdminApi("POST",{action:"admin_set_listing_status",listing_id:b.dataset.marketListing,status:b.dataset.marketListingStatus});await loadMarketplaceAdmin();}catch(x){alert(x.message);}});
 document.getElementById("replyChat").onclick=()=>sendMarketplaceSupportReply();
-document.getElementById("closeMarketplaceSupport").onclick=()=>document.getElementById("marketplaceSupportPanel").classList.add("hide");
+document.getElementById("closeMarketplaceSupport").onclick=()=>document.getElementById("marketAdminChatOverlay").classList.add("hide");
+document.getElementById("marketChatClose").onclick=()=>{document.getElementById("marketAdminChatOverlay").classList.add("hide");document.body.style.overflow="";};
+document.getElementById("marketChatCompose").addEventListener("submit",e=>{e.preventDefault();sendMarketplaceSupportReply();});
+document.getElementById("marketAdminChatOverlay").addEventListener("click",e=>{if(e.target.id==="marketAdminChatOverlay")document.getElementById("marketChatClose").click();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!document.getElementById("marketAdminChatOverlay").classList.contains("hide"))document.getElementById("marketChatClose").click();});
+document.getElementById("marketListingFilters").addEventListener("click",e=>{const b=e.target.closest("[data-market-filter]");if(!b)return;marketListingFilter=b.dataset.marketFilter;renderMarketplaceAdmin();});
+document.getElementById("marketOrderFilters").addEventListener("click",e=>{const b=e.target.closest("[data-market-order-filter]");if(!b)return;marketOrderFilter=b.dataset.marketOrderFilter;renderMarketplaceAdmin();});
 
 
 // User sanctions: server-enforced block of all financial and marketplace mutations.
