@@ -583,6 +583,18 @@ header{background:linear-gradient(110deg,#0b0a11f5,#17101af2)!important}
 @media(max-width:420px){#chats button.kds-chat-row{min-height:58px!important;padding:7px 8px!important}#chats .kds-chat-row .kds-chat-meta{max-width:85px!important}.kds-chat-notifications{padding:5px 7px!important;font-size:9px!important}}
 
 </style>
+<style id="kds-chat-open-fullscreen-v15-10-63">
+/* V15.10.63: true full-screen chat layout. The chat section itself owns viewport space. */
+#chats.page.active.kds-chat-open{top:0!important;bottom:0!important;left:0!important;right:0!important;width:100%!important;height:100vh!important;height:100dvh!important;max-width:none!important;margin:0!important;padding:0!important;z-index:20!important;background:var(--bg)!important;overflow:hidden!important}
+#chats.kds-chat-open .kds-market-head,#chats.kds-chat-open #kdsChatList{display:none!important}
+#chats.kds-chat-open #kdsChatRoom{display:flex!important;position:relative!important;flex-direction:column!important;flex:1 1 auto!important;min-height:0!important;height:100%!important;max-height:none!important;width:100%!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;overflow:hidden!important;background:var(--bg)!important}
+#chats.kds-chat-open .kds-chat-room-head{flex:0 0 auto!important;position:relative!important;z-index:2!important;padding:calc(9px + env(safe-area-inset-top)) 10px 9px!important;min-height:56px!important;box-sizing:border-box!important}
+#chats.kds-chat-open #kdsChatMessages{display:flex!important;flex:1 1 0!important;min-height:0!important;height:0!important;max-height:none!important;width:100%!important;overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;touch-action:pan-y!important}
+#chats.kds-chat-open #kdsChatAttachments{flex:0 0 auto!important;max-height:60px!important;overflow:auto!important}
+#chats.kds-chat-open .kds-chat-compose{flex:0 0 auto!important;position:relative!important;z-index:2!important;padding:9px 10px calc(9px + env(safe-area-inset-bottom))!important}
+#chats.kds-chat-open .nav{display:none!important}
+@media(max-width:600px){#chats.page.active.kds-chat-open{top:0!important;bottom:0!important;padding:0!important}}
+</style>
 </head>
 <body>
 <div id="kdsBoot" role="status" aria-live="polite">
@@ -1229,30 +1241,4 @@ if($('market')){const oldSubmit=$('kdsSellSubmit');if(oldSubmit){const freshSubm
 #market .kds-market-profile-finance .kds-market-profile-total b{font-size:clamp(27px,7vw,34px)!important}
 @media(max-width:360px){#market .kds-market-wallet-breakdown{grid-template-columns:1fr}#chats .kds-chat-meta{max-width:80px}}
 </style>
-
-<style id="kds-chat-open-fullscreen-v15-10-62">
-/* Open order chat uses the full app viewport; list mode retains the compact layout. */
-#chats.page.active.kds-chat-open{top:0!important;bottom:0!important;padding:0!important;height:100vh!important;height:100dvh!important;z-index:20!important;background:var(--bg)!important}
-#chats.kds-chat-open .kds-market-head,#chats.kds-chat-open #kdsChatList{display:none!important}
-#chats.kds-chat-open #kdsChatRoom{margin:0!important;border:0!important;border-radius:0!important;width:100%!important;height:100%!important;max-height:none!important;min-height:0!important;flex:1 1 auto!important}
-#chats.kds-chat-open .kds-chat-room-head{padding:calc(9px + env(safe-area-inset-top)) 10px 9px!important;min-height:56px!important;box-sizing:border-box!important}
-#chats.kds-chat-open #kdsChatMessages{flex:1 1 0!important;min-height:0!important;height:0!important;max-height:none!important;overflow-y:auto!important;overscroll-behavior:contain!important;touch-action:pan-y!important}
-#chats.kds-chat-open .kds-chat-attachments{max-height:60px!important;overflow:auto!important}
-#chats.kds-chat-open .kds-chat-compose{padding:9px 10px calc(9px + env(safe-area-inset-bottom))!important}
-#chats.kds-chat-open .nav{display:none!important}
-@media(max-width:600px){#chats.page.active.kds-chat-open{top:0!important;bottom:0!important;padding:0!important}}
-</style>
 </body></html>
-<style id="kds-chat-open-fullscreen-v15-10-62">
-/* Open order chat uses the full app viewport; list mode retains the compact layout. */
-#chats.page.active.kds-chat-open{top:0!important;bottom:0!important;padding:0!important;height:100dvh!important;height:100vh!important;z-index:20!important;background:var(--bg)!important}
-#chats.kds-chat-open .kds-market-head,#chats.kds-chat-open #kdsChatList{display:none!important}
-#chats.kds-chat-open #kdsChatRoom{margin:0!important;border:0!important;border-radius:0!important;width:100%!important;height:100%!important;max-height:none!important;min-height:0!important;flex:1 1 auto!important}
-#chats.kds-chat-open .kds-chat-room-head{padding:calc(9px + env(safe-area-inset-top)) 10px 9px!important;min-height:56px!important;box-sizing:border-box!important}
-#chats.kds-chat-open #kdsChatMessages{flex:1 1 0!important;min-height:0!important;height:0!important;max-height:none!important;overflow-y:auto!important;overscroll-behavior:contain!important;touch-action:pan-y!important}
-#chats.kds-chat-open .kds-chat-attachments{max-height:60px!important;overflow:auto!important}
-#chats.kds-chat-open .kds-chat-compose{padding:9px 10px calc(9px + env(safe-area-inset-bottom))!important}
-#chats.kds-chat-open .nav{display:none!important}
-@media(max-width:600px){#chats.page.active.kds-chat-open{top:0!important;bottom:0!important;padding:0!important}}
-</style>
-
