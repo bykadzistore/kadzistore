@@ -582,8 +582,8 @@ async function openMarketplaceSupport(orderId){
 }
 async function sendMarketplaceSupportReply(){
  if(!marketAdminCurrentDispute)return;const o=marketAdminCurrentDispute.kds_marketplace_orders||{},input=document.getElementById("marketChatInput"),message=input.value.trim();if(!message)return;
- const btn=document.getElementById("marketChatSend");btn.disabled=true;
- try{await marketAdminApi("POST",{action:"send_message",order_id:o.id||marketAdminCurrentDispute.order_id,message_text:message,client_message_id:marketClientMessageId()});input.value="";await openMarketplaceSupport(o.id||marketAdminCurrentDispute.order_id);}catch(e){alert(e.message);}finally{btn.disabled=false;input.focus();}
+ const btn=document.getElementById("marketChatSend");if(btn.dataset.sending==="1")return;const original=btn.textContent;btn.dataset.sending="1";btn.disabled=true;btn.textContent="Отправка…";
+ try{await marketAdminApi("POST",{action:"send_message",order_id:o.id||marketAdminCurrentDispute.order_id,message_text:message,client_message_id:marketClientMessageId()});input.value="";await openMarketplaceSupport(o.id||marketAdminCurrentDispute.order_id);}catch(e){alert(e.message);}finally{btn.dataset.sending="0";btn.disabled=false;btn.textContent=original||"Отправить";input.focus();}
 }
 
 function marketClientMessageId(){if(window.crypto?.randomUUID)return window.crypto.randomUUID();return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return (c==='x'?r:(r&3|8)).toString(16);});}
