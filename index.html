@@ -1004,6 +1004,49 @@ const STANDOFF_META={
  oxide_services:{fields:[['oxide_service_type','Тип услуги',['Фарм','Прокачка','Прочее']]]},
  generic_boost:{fields:[['generic_service_access','Способ выполнения',['Без передачи доступа','Временный доступ (2FA включена)']]]}
 };
+
+const MOBILE_LEGENDS_META={
+ ml_accounts:{fields:[['ml_account_type','Тип аккаунта',['Продажа','Аренда']],['ml_account_rank','Ранг',['Воин','Элита','Мастер','Грандмастер','Эпик','Легенда','Мифический','Мифическая честь','Мифическая слава','Мифический Бессмертный','Без ранга']],['ml_level','Уровень',[],'number'],['ml_winrate','Процент побед',[],'number'],['ml_heroes','Герои',[],'number'],['ml_skins','Облики',[],'number']]},
+ ml_diamonds:{fields:[['ml_diamonds_amount','Номинал',['5+ алмазов','50+ алмазов','100+ алмазов','250+ алмазов','500+ алмазов','1000+ алмазов','1500+ алмазов','2500+ алмазов','3000+ алмазов','4000+ алмазов','5000+ алмазов','7500+ алмазов','10000+ алмазов']],['ml_region','Регион',['RU','Global','Прочее']],['ml_topup_method','Способ пополнения',['По ID','По коду']]]},
+ ml_donate:{fields:[['ml_donate_type','Подкатегория',['Сумеречный пропуск','Алмазный пропуск','Звездный участник','Подписка','Недельный элитный набор','Месячный эпический набор','Прочее']],['ml_region','Регион',['RU','Global','Прочее']]]},
+ ml_boost:{fields:[['ml_boost_format','Формат',['Solo','Duo','Trio']],['ml_boost_type','Тип',['Буст ранга','Буст статистики','Другое']]]},
+ ml_gifts:{fields:[['ml_gift_type','Тип подарка',['Облик','Герой','Предмет']]]},
+ ml_other:{fields:[['ml_other_type','Тип',['Прочее']]]}
+};
+const GENSHIN_META={
+ gi_accounts:{fields:[['gi_account_type','Тип аккаунта',['Стартовый','Нероленный','Прокачанный']],['gi_server','Сервер',['Европа','America','Asia','TW','HK','MO']],['gi_platform','Платформа',['Любая платформа','PS']],['gi_email_binding','Привязка почты',['Привязана','Не привязана','Можно сменить']],['gi_traveler','Главный герой',['Итэр','Люмин','Любой']],['gi_ar','AR',[],'number'],['gi_event','Ивент персонажи',[],'number'],['gi_standard','Стандарт персонажи',[],'number'],['gi_primogems','Примогемы',[],'number']]},
+ gi_crystals:{fields:[['gi_crystal_amount','Номинал',['60','300','980','1980','3280','6480','Другое количество']],['gi_topup_method','Способ пополнения',['По ID','По коду']]]},
+ gi_donate:{fields:[['gi_donate_type','Подкатегория',['Жемчужный гимн','Жемчужный хор','Благословение полой луны','Апгрейд','Скины']],['gi_topup_method','Способ пополнения',['По ID','По коду']]]},
+ gi_moon:{fields:[['gi_moon_days','Срок',['30 дней','60 дней','90 дней','120 дней','150 дней','180 дней']],['gi_topup_method','Способ пополнения',['По ID','По коду']]]},
+ gi_astral:{fields:[['gi_astral_type','Подкатегория',['Летопись сфер','Эпос сфер','Улучшение']],['gi_topup_method','Способ пополнения',['По ID','По коду']]]},
+ gi_time:{fields:[['gi_time_amount','Номинал',['60','300','980','1980','3280','6480','Другое количество']],['gi_topup_method','Способ пополнения',['По ID','По коду']]]},
+ gi_leveling:{fields:[['gi_leveling_type','Тип прокачки',['Прокачка ранга приключений (AR)','Прокачка боевого пропуска','Прокачка репутации','Прокачка персонажа','Прокачка оружия','Драйверинг','Уход за аккаунтом']]]},
+ gi_farm:{fields:[['gi_farm_type','Тип',['Примогемы','Материалы возвышения','Материалы для крафта','Рыбный промысел','Мора','Печати элементов','Прочее']]]},
+ gi_explore:{fields:[['gi_location_type','Тип локации',['Древняя священная гора','Натлан','Сумеру','Мондштадт','Море древности','Драконий хребет','Ли Юэ','Инадзума','Фонтейн','Энканомия','Разлом','Временная локация','Подземные шахты','Долины Чэньюй','Нод-Край','Храм пространства','Морозная Луна','Снежная']]]},
+ gi_bosses:{fields:[['gi_boss_type','Тип',['Мрачный натиск','Артерии земли','Подземелья','Мировые боссы','Еженедельные боссы','Витая бездна','Театр «Воображариум»','Горнило безысходности']]]},
+ gi_quests:{fields:[['gi_quest_type','Подкатегория',['Задания Архонтов','Задания легенд','Событие встречи','Задания мира','Секретные задания','Ивентовые события']]]},
+ gi_achievements:{fields:[['gi_achievement_type','Подкатегория',['Чудеса света','Воспоминания','Встреча в другом мире','Прочее']]]},
+ gi_other:{fields:[['gi_other_type','Тип',['Гайды','Карты','Совместный режим','Чайник Безмятежности','Прочее']]]}
+};
+const FREE_FIRE_META={
+ ff_accounts:{fields:[['ff_account_type','Тип аккаунта',['Продажа','Аренда']],['ff_platform','Платформа',['Android','iOS']],['ff_rank','Ранг',['Бронза','Серебро','Золото','Платина','Алмаз','Героический','Элитный героический','Мастер','Элитный мастер','Грандмастер']],['ff_level','Уровень',[],'number'],['ff_prime','Прайм',[],'number']]},
+ ff_diamonds:{fields:[['ff_diamonds_amount','Номинал',['100 алмазов','110 алмазов','231 алмаз','310 алмазов','520 алмазов','583 алмаза','1060 алмазов','1188 алмазов','2180 алмазов','2420 алмазов','5600 алмазов','Другое количество']],['ff_region','Регион',['Глобал','СНГ','Другой']],['ff_topup_method','Способ пополнения',['По ID','По коду']]]},
+ ff_donate:{fields:[['ff_donate_type','Подкатегория',['Ваучер','Пропуск прокачки','ЭВО - Пропуск','Прочее']],['ff_topup_method','Способ пополнения',['По ID','По коду']]]},
+ ff_boost:{fields:[['ff_boost_type','Подкатегория',['Booyah Pass','Миссии','Буст рангов']],['ff_platform','Платформа',['Android','iOS']]]},
+ ff_other:{fields:[['ff_platform','Платформа',['Android','iOS']],['ff_other_type','Тип',['Прочее']]]}
+};
+const COUNTER_FLAME_META={
+ cf_accounts:{fields:[['cf_account_type','Тип',['Продажа','Аренда']]]},
+ cf_currency:{fields:[['cf_currency_type','Валюта',['Золото','Кредиты']]]},
+ cf_donate:{fields:[['cf_donate_type','Тип доната',['Боевой пропуск','Наборы']]]},
+ cf_items:{fields:[['cf_item_type','Тип предмета',['Скины','Оружие','Предметы']]]},
+ cf_boost:{fields:[['cf_boost_type','Тип услуги',['Буст','Калибровка']]]},
+ cf_clans:{fields:[['cf_clan_type','Тип',['Вступление в клан','Развитие клана','Прочее']]]},
+ cf_other:{fields:[['cf_other_type','Тип',['Прочее']]]}
+};
+const GAME_META={...MOBILE_LEGENDS_META,...GENSHIN_META,...FREE_FIRE_META,...COUNTER_FLAME_META};
+Object.assign(STANDOFF_META,GAME_META);
+
 function isRapiraGame(game){return !!game&&(String(game.slug||'').toLowerCase().includes('rapira')||String(game.name||'').toLowerCase().includes('rapira'));}
 function isPubgGame(game){return !!game&&(String(game.slug||'').toLowerCase().includes('pubg')||String(game.name||'').toLowerCase().includes('pubg'));}
 function isOxideGame(game){return !!game&&(String(game.slug||'').toLowerCase().includes('oxide')||String(game.name||'').toLowerCase().includes('oxide'));}
@@ -1011,6 +1054,19 @@ function standoffKind(gameId,categoryId){
  const game=m.games.find(x=>x.id===gameId),cat=m.categories.find(x=>x.id===categoryId);
  if(!game||!cat)return '';
  const n=String(cat.category_name||'').toLocaleLowerCase('ru');
+ const slug=String(game.slug||'').toLowerCase();
+ if(slug==='mobile-legends'){
+  if(n.includes('аккаунт'))return 'ml_accounts';if(n.includes('алмаз'))return 'ml_diamonds';if(n.includes('донат'))return 'ml_donate';if(n.includes('буст'))return 'ml_boost';if(n.includes('подар'))return 'ml_gifts';if(n.includes('обуч'))return '';if(n.includes('прочее'))return 'ml_other';return '';
+ }
+ if(slug==='genshin-impact'){
+  if(n.includes('аккаунт'))return 'gi_accounts';if(n.includes('кристалл'))return 'gi_crystals';if(n==='донат'||n.startsWith('донат'))return 'gi_donate';if(n.includes('луна'))return 'gi_moon';if(n.includes('астраль'))return 'gi_astral';if(n.includes('гранул'))return 'gi_time';if(n.includes('прокач'))return 'gi_leveling';if(n.includes('фарм'))return 'gi_farm';if(n.includes('исследован'))return 'gi_explore';if(n.includes('босс')||n.includes('подземел'))return 'gi_bosses';if(n.includes('квест'))return 'gi_quests';if(n.includes('достижен'))return 'gi_achievements';if(n.includes('прочее'))return 'gi_other';return '';
+ }
+ if(slug==='free-fire'){
+  if(n.includes('аккаунт'))return 'ff_accounts';if(n.includes('алмаз'))return 'ff_diamonds';if(n.includes('донат'))return 'ff_donate';if(n.includes('буст'))return 'ff_boost';if(n.includes('прочее'))return 'ff_other';return '';
+ }
+ if(slug==='counter-flame'){
+  if(n.includes('аккаунт'))return 'cf_accounts';if(n.includes('валют'))return 'cf_currency';if(n.includes('донат'))return 'cf_donate';if(n.includes('скин')||n.includes('предмет'))return 'cf_items';if(n.includes('буст'))return 'cf_boost';if(n.includes('клан'))return 'cf_clans';if(n.includes('прочее'))return 'cf_other';return '';
+ }
  if(isOxideGame(game)){
   if(n.includes('монет'))return 'oxide_coins';
   if(n.includes('боевой пропуск'))return 'oxide_battlepass';
@@ -1051,8 +1107,8 @@ function autoMetaTitle(kind,meta){
  return '';
 }
 function metaFieldHtml(prefix,key,label,options,value=''){const id=prefix+'_'+key,chosen=value||options[0]||'';return `<label class="meta-field"><span>${esc(label)}</span><div class="meta-select"><button type="button" class="meta-trigger" data-meta-trigger="${id}"><span>${esc(chosen)}</span><b>⌄</b></button><div class="meta-pop" data-meta-pop="${id}" hidden>${options.map(v=>`<button type="button" class="meta-option ${v===chosen?'active':''}" data-meta-value="${esc(v)}" data-meta-id="${id}">${esc(v)}</button>`).join('')}</div><select class="meta-native" id="${id}">${options.map(v=>`<option ${v===chosen?'selected':''}>${esc(v)}</option>`).join('')}</select></div></label>`;}
-function renderMetaFields(container,kind,prefix,values={}){const box=$(container);if(!box)return;const cfg=STANDOFF_META[kind];box.dataset.kind=kind||'';box.innerHTML=cfg?cfg.fields.map(([key,label,opts])=>metaFieldHtml(prefix,key,label,opts,values[key]||'')).join(''):'';box.hidden=!cfg;}
-function readMetaFields(container){const box=$(container),out={};if(!box||box.hidden)return out;box.querySelectorAll('select.meta-native').forEach(x=>{if(x.value)out[x.id.replace(/^kds(?:Sell|Edit)Meta_/,'')]=x.value;});return out;}
+function renderMetaFields(container,kind,prefix,values={}){const box=$(container);if(!box)return;const cfg=STANDOFF_META[kind]||GAME_META[kind];box.dataset.kind=kind||'';box.innerHTML=cfg?cfg.fields.map(([key,label,opts,type])=>type==='number'?`<label class="meta-field"><span>${esc(label)}</span><input class="meta-number" id="${prefix}_${key}" type="number" min="0" step="any" value="${esc(values[key]??'')}" placeholder="Укажи ${esc(label.toLowerCase())}"></label>`:metaFieldHtml(prefix,key,label,opts,values[key]||'')).join(''):'';box.hidden=!cfg;}
+function readMetaFields(container){const box=$(container),out={};if(!box||box.hidden)return out;box.querySelectorAll('select.meta-native,input.meta-number').forEach(x=>{if(x.value!=='')out[x.id.replace(/^kds(?:Sell|Edit)Meta_/,'')]=x.type==='number'?Number(x.value):x.value;});return out;}
 function syncMetaTitle(){
  const kind=standoffKind($('kdsSellGame').value,$('kdsSellCategory').value);
  if(isAutoTitleKind(kind)){
@@ -1069,9 +1125,9 @@ function syncMetaTitle(){
  }else{$('kdsSellShortWrap').hidden=isGoldForm();$('kdsSellDescriptionWrap').hidden=isGoldForm();}
 }
 function updateStandoffSellerFields(){const kind=standoffKind($('kdsSellGame').value,$('kdsSellCategory').value),box=$('kdsStandoffSellerFields');if(box&&box.dataset.kind!==kind){const old=readMetaFields('kdsStandoffSellerFields');renderMetaFields('kdsStandoffSellerFields',kind,'kdsSellMeta',old);bindMetaDropdowns(box);box.querySelectorAll('select').forEach(x=>x.addEventListener('change',syncMetaTitle));}syncMetaTitle();}
-function updateStandoffBuyerFilters(){const box=$('kdsStandoffBuyerFilters');const kind=standoffKind(m.gameId,m.categoryId);if(!kind){box.hidden=true;box.innerHTML='';}else{const cfg=STANDOFF_META[kind];box.hidden=false;box.innerHTML=cfg.fields.map(([key,label,opts])=>metaFieldHtml('buyer',key,label,['Все',...opts],'Все')).join('');box.querySelectorAll('select').forEach(sel=>sel.addEventListener('change',()=>loadListings().catch(e=>toast(e.message))));}const autoWrap=$('kdsMarketAutoOnlyWrap');if(autoWrap)autoWrap.hidden=false;}
+function updateStandoffBuyerFilters(){const box=$('kdsStandoffBuyerFilters');const kind=standoffKind(m.gameId,m.categoryId);if(!kind){box.hidden=true;box.innerHTML='';}else{const cfg=STANDOFF_META[kind]||GAME_META[kind];box.hidden=false;box.innerHTML=cfg.fields.map(([key,label,opts,type])=>type==='number'?`<div class="meta-field"><span>${esc(label)} (от / до)</span><div class="kds-range-filter"><input type="number" data-range-min="${key}" placeholder="От"><input type="number" data-range-max="${key}" placeholder="До"></div></div>`:metaFieldHtml('buyer',key,label,['Все',...opts],'Все')).join('');box.querySelectorAll('select').forEach(sel=>sel.addEventListener('change',()=>loadListings().catch(e=>toast(e.message))));box.querySelectorAll('[data-range-min],[data-range-max]').forEach(inp=>inp.addEventListener('input',()=>renderLots()));}const autoWrap=$('kdsMarketAutoOnlyWrap');if(autoWrap)autoWrap.hidden=false;}
 function bindMetaDropdowns(root=document){root.querySelectorAll('[data-meta-trigger]').forEach(btn=>{if(btn.dataset.bound)return;btn.dataset.bound='1';btn.addEventListener('click',()=>{const id=btn.dataset.metaTrigger;root.querySelectorAll('[data-meta-pop]').forEach(pop=>{if(pop.dataset.metaPop===id)pop.hidden=!pop.hidden;else pop.hidden=true;});});});root.querySelectorAll('[data-meta-value]').forEach(btn=>{if(btn.dataset.bound)return;btn.dataset.bound='1';btn.addEventListener('click',()=>{const id=btn.dataset.metaId,sel=$(id);if(!sel)return;sel.value=btn.dataset.metaValue;sel.dispatchEvent(new Event('change',{bubbles:true}));const field=btn.closest('.meta-select');field.querySelector('.meta-trigger span').textContent=sel.value;field.querySelectorAll('.meta-option').forEach(x=>x.classList.toggle('active',x===btn));field.querySelector('.meta-pop').hidden=true;});});}
-function renderLots(){let rows=m.listings.slice();if($('kdsMarketOnlineOnly').checked)rows=rows.filter(x=>presenceOnline(x.seller));if($('kdsMarketAutoOnly')&&$('kdsMarketAutoOnly').checked)rows=rows.filter(x=>x.delivery_method==='automatic');const f=$('kdsStandoffBuyerFilters');if(f&&!f.hidden){const vals={};f.querySelectorAll('select').forEach(x=>{if(x.value&&x.value!=='Все')vals[x.id.replace(/^buyer_/,'')]=x.value;});rows=rows.filter(x=>Object.entries(vals).every(([k,v])=>String((x.characteristics||{})[k]||'')===v));}const sort=$('kdsMarketLotSort')?.value;if(sort==='cheap')rows.sort((a,b)=>Number(a.unit_price_rub)-Number(b.unit_price_rub));else if(sort==='expensive')rows.sort((a,b)=>Number(b.unit_price_rub)-Number(a.unit_price_rub));$('kdsMarketLotsTitle').textContent=m.categoryId?(m.categories.find(c=>c.id===m.categoryId)?.category_name||'Лоты'):'Все лоты';$('kdsMarketLotsCount').textContent=rows.length+' объявлений';$('kdsMarketLots').innerHTML=rows.length?rows.map(lotCard).join(''):'<div class="empty">По выбранным фильтрам лоты не найдены</div>'; }
+function renderLots(){let rows=m.listings.slice();if($('kdsMarketOnlineOnly').checked)rows=rows.filter(x=>presenceOnline(x.seller));if($('kdsMarketAutoOnly')&&$('kdsMarketAutoOnly').checked)rows=rows.filter(x=>x.delivery_method==='automatic');const f=$('kdsStandoffBuyerFilters');if(f&&!f.hidden){const vals={};f.querySelectorAll('select').forEach(x=>{if(x.value&&x.value!=='Все')vals[x.id.replace(/^buyer_/,'')]=x.value;});rows=rows.filter(x=>Object.entries(vals).every(([k,v])=>String((x.characteristics||{})[k]||'')===v));if(f){for(const inp of f.querySelectorAll('[data-range-min],[data-range-max]')){const key=inp.dataset.rangeMin||inp.dataset.rangeMax,raw=inp.value;if(raw==='')continue;const bound=Number(raw);rows=rows.filter(x=>{const value=Number((x.characteristics||{})[key]);if(!Number.isFinite(value))return false;return inp.dataset.rangeMin?value>=bound:value<=bound;});}}}const sort=$('kdsMarketLotSort')?.value;if(sort==='cheap')rows.sort((a,b)=>Number(a.unit_price_rub)-Number(b.unit_price_rub));else if(sort==='expensive')rows.sort((a,b)=>Number(b.unit_price_rub)-Number(a.unit_price_rub));$('kdsMarketLotsTitle').textContent=m.categoryId?(m.categories.find(c=>c.id===m.categoryId)?.category_name||'Лоты'):'Все лоты';$('kdsMarketLotsCount').textContent=rows.length+' объявлений';$('kdsMarketLots').innerHTML=rows.length?rows.map(lotCard).join(''):'<div class="empty">По выбранным фильтрам лоты не найдены</div>'; }
 function charsHtml(obj){if(!obj||typeof obj!=='object'||!Object.keys(obj).length)return '<p>Не указаны</p>';return '<ul>'+Object.entries(obj).map(([k,v])=>`<li><b>${esc(k)}:</b> ${esc(v)}</li>`).join('')+'</ul>';}
 function openLot(id){const currentView=document.querySelector('#market .kds-market-view.active');m.detailReturnView=currentView?.id==='kdsMarketPublicProfile'?'publicProfile':(currentView?.id==='kdsMarketProfile'?'profile':'game');const l=m.listings.find(x=>x.id===id)||m.mine.find(x=>x.id===id)||(m.publicListings||[]).find(x=>x.id===id);if(!l)return;m.lot=l;const gold=l.pricing_mode==='per_g';const imgs=(l.images||[]).filter(x=>x.image_url).map(x=>`<img src="${esc(x.image_url)}" alt="Фото товара">`).join('');const seller=l.seller?.seller_nickname||'Продавец';const rating=(Number(l.seller?.review_count||0)>0?`${marketRatingStars(l.seller.rating_average)} <span class="kds-market-rating-value">${Number(l.seller.rating_average||0).toFixed(2)}</span> (${l.seller.review_count} отзывов)`:'<span class="kds-market-rating-stars">★★★★★</span> Нет рейтинга · 0 отзывов');
  $('kdsMarketFullDetail').innerHTML=`<article class="kds-market-detail-card"><div class="eyebrow">${esc(l['kds_games']?.name||m.games.find(g=>g.id===l.game_id)?.name||'Игра')} · ${esc(l.kds_marketplace_categories?.category_name||m.categories.find(c=>c.id===l.category_id)?.category_name||'Категория')}</div><h3>${gold?`${Number(l.quantity_available||0).toLocaleString('ru-RU')} G`:esc(l.title)}</h3><div class="kds-market-detail-price">${gold?`${rub(l.unit_price_rub)} за 1 G`:`${rub(l.unit_price_rub)} за товар`}</div>${gold?'':`<section class="kds-detail-section"><h4>Описание</h4><p>${esc(l.description)}</p></section>`}${imgs?`<div class="kds-market-detail-images">${imgs}</div>`:''}<section class="kds-detail-section"><h4>Передача товара</h4><p>Срок передачи: до 24 часов<br>Минимальная сумма заказа: 10 ₽<br>${l.delivery_method==='automatic'?'Автоматическая выдача после оплаты':'Передача продавцом вручную'}</p></section><section class="kds-detail-section"><h4>Продавец</h4><p>${esc(seller)}<br>${rating}<br>${presenceLabel(l.seller)}</p><button class="subcat" type="button" data-open-public-profile="${l.seller?.user_id||l.seller_id}">Открыть профиль продавца</button></section><section class="kds-detail-section"><h4>Количество</h4><label class="kds-quantity-label">${gold?'Количество голды (G)':'Количество товаров'}<input id="kdsMarketQuantity" type="number" min="${l.min_quantity||1}" max="${l.quantity_available}" step="1" value="${l.min_quantity||1}"></label><div class="kds-market-total" id="kdsMarketTotal"></div><small class="kds-market-note" id="kdsMarketBuyHint"></small></section><div class="kds-market-detail-actions"><button type="button" class="primary" id="kdsMarketBuyNow">Оплатить заказ</button></div><div class="kds-market-note">Чат с продавцом откроется после оплаты заказа.</div></article>`;
@@ -1352,7 +1408,7 @@ if($('market')){const oldSubmit=$('kdsSellSubmit');if(oldSubmit){const freshSubm
 #kdsScrollIndicatorV1574.is-visible{opacity:1}
 @media(prefers-reduced-motion:reduce){#kdsScrollIndicatorV1574{transition:none}}
 
-</style>
+.kds-range-filter{display:grid;grid-template-columns:1fr 1fr;gap:8px}.kds-range-filter input,.meta-number{width:100%;min-width:0;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:11px;color:inherit;font:inherit;box-sizing:border-box}.meta-field .meta-number{margin-top:7px}</style>
 <script id="kds-scroll-indicator-v15-10-74">
 (()=>{
   if(window.__kdsScrollIndicatorV1574)return;
