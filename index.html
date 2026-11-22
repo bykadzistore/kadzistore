@@ -1263,5 +1263,64 @@ if($('market')){const oldSubmit=$('kdsSellSubmit');if(oldSubmit){const freshSubm
 #market .kds-market-profile-finance .kds-market-profile-total{grid-column:1/-1;border-color:rgba(255,113,140,.35);background:linear-gradient(145deg,#351923,#17151c)}
 #market .kds-market-profile-finance .kds-market-profile-total b{font-size:clamp(27px,7vw,34px)!important}
 @media(max-width:360px){#market .kds-market-wallet-breakdown{grid-template-columns:1fr}#chats .kds-chat-meta{max-width:80px}}
+/* V15.10.74: subtle adaptive scroll position indicator */
+#kdsScrollIndicatorV1574{position:fixed;z-index:99999;right:3px;top:0;width:3px;height:32px;border-radius:999px;background:rgba(235,239,246,.48);box-shadow:0 0 5px rgba(0,0,0,.24);pointer-events:none;opacity:0;transform:translateZ(0);transition:opacity .22s ease,background-color .22s ease;will-change:top,height,opacity}
+#kdsScrollIndicatorV1574.is-visible{opacity:1}
+@media(prefers-reduced-motion:reduce){#kdsScrollIndicatorV1574{transition:none}}
+
 </style>
+<script id="kds-scroll-indicator-v15-10-74">
+(()=>{
+  if(window.__kdsScrollIndicatorV1574)return;
+  window.__kdsScrollIndicatorV1574=true;
+  const thumb=document.createElement('div');
+  thumb.id='kdsScrollIndicatorV1574';
+  thumb.setAttribute('aria-hidden','true');
+  const mount=()=>{if(!thumb.isConnected&&document.body)document.body.appendChild(thumb)};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
+  let active=null,hideTimer=0,raf=0;
+  const isScrollable=el=>{
+    if(!el||el===document.body||el===document.documentElement)return false;
+    const st=getComputedStyle(el);
+    return /(auto|scroll|overlay)/.test(st.overflowY)&&el.scrollHeight>el.clientHeight+2&&el.clientHeight>24;
+  };
+  const getScroller=target=>{
+    let el=target&&target.nodeType===1?target:target&&target.parentElement;
+    while(el&&el!==document.body&&el!==document.documentElement){if(isScrollable(el))return el;el=el.parentElement}
+    return window;
+  };
+  const paint=()=>{
+    raf=0;mount();
+    if(!active){thumb.classList.remove('is-visible');return}
+    let top,visibleHeight,total,position,viewportHeight,right=3;
+    if(active===window){
+      const doc=document.documentElement;
+      total=Math.max(doc.scrollHeight,document.body?document.body.scrollHeight:0);
+      viewportHeight=window.innerHeight;
+      visibleHeight=Math.max(0,viewportHeight-8-(window.matchMedia('(max-width: 650px)').matches?82:0));
+      top=4;position=window.scrollY||doc.scrollTop||0;
+    }else{
+      const r=active.getBoundingClientRect();
+      viewportHeight=active.clientHeight;total=active.scrollHeight;visibleHeight=viewportHeight;
+      top=r.top+active.clientTop;position=active.scrollTop;right=Math.max(2,window.innerWidth-r.right+2);
+      if(r.bottom<0||r.top>window.innerHeight||r.right<0||r.left>window.innerWidth){thumb.classList.remove('is-visible');return}
+    }
+    if(!total||total<=viewportHeight+2||visibleHeight<=0){thumb.classList.remove('is-visible');return}
+    const thumbHeight=Math.max(24,Math.min(visibleHeight,visibleHeight*viewportHeight/total));
+    const maxTravel=Math.max(0,visibleHeight-thumbHeight);
+    const maxScroll=Math.max(1,total-viewportHeight);
+    const y=top+Math.max(0,Math.min(maxTravel,(position/maxScroll)*maxTravel));
+    thumb.style.top=Math.max(2,Math.min(window.innerHeight-4-thumbHeight,y))+'px';
+    thumb.style.height=thumbHeight+'px';thumb.style.right=right+'px';
+    thumb.classList.add('is-visible');
+  };
+  const schedule=()=>{if(!raf)raf=requestAnimationFrame(paint)};
+  const showFor=el=>{active=el;schedule();clearTimeout(hideTimer);hideTimer=setTimeout(()=>thumb.classList.remove('is-visible'),1150)};
+  document.addEventListener('scroll',e=>showFor(getScroller(e.target)),true);
+  window.addEventListener('scroll',()=>showFor(window),{passive:true});
+  window.addEventListener('resize',schedule,{passive:true});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)thumb.classList.remove('is-visible')});
+  mount();
+})();
+</script>
 </body></html>
