@@ -1036,12 +1036,13 @@ const FREE_FIRE_META={
  ff_other:{fields:[['ff_platform','Платформа',['Android','iOS']],['ff_other_type','Тип',['Прочее']]]}
 };
 const COUNTER_FLAME_META={
- cf_accounts:{fields:[['cf_account_type','Тип',['Продажа','Аренда']]]},
- cf_currency:{fields:[['cf_currency_type','Валюта',['Золото','Кредиты']]]},
- cf_donate:{fields:[['cf_donate_type','Тип доната',['Боевой пропуск','Наборы']]]},
- cf_items:{fields:[['cf_item_type','Тип предмета',['Скины','Оружие','Предметы']]]},
- cf_boost:{fields:[['cf_boost_type','Тип услуги',['Буст','Калибровка']]]},
- cf_clans:{fields:[['cf_clan_type','Тип',['Вступление в клан','Развитие клана','Прочее']]]},
+ cf_accounts:{fields:[['cf_account_type','Тип предложения',['Продажа','Аренда']]]},
+ cf_coins:{fields:[['cf_coin_nominal','Номинал коинов',['200 000 коинов','100 000 коинов','50 000 коинов','30 000 коинов','10 000 коинов','5 000 коинов','3 000 коинов','1 000 коинов']]]},
+ cf_wildfire:{fields:[['cf_wildfire_level','Уровень Wildfire',['Уровень 1','Уровень 2','Уровень 3','Уровень 4','Уровень 5']]]},
+ cf_arsenal:{fields:[['cf_arsenal_ticket','Билет Arsenal Pass',['Билет №1','Билет №2','Билет №3','Билет №4','Билет №5']]]},
+ cf_battlepass:{fields:[['cf_battlepass_product','Товар боевого пропуска',['Gold Pass','+1 уровень','+5 уровней','+10 уровней','+25 уровней']]]},
+ cf_skins:{fields:[['cf_skin_type','Тип скина',['Оружие','Ножи','Перчатки','Агенты','Кейсы','Наклейки','Брелоки','Граффити','Гранаты']]]},
+ cf_services:{fields:[['cf_service_type','Тип услуги',['Буст ранга','Буст статистики','Прокачка','Обучение','Прочее']]]},
  cf_other:{fields:[['cf_other_type','Тип',['Прочее']]]}
 };
 const GAME_META={...MOBILE_LEGENDS_META,...GENSHIN_META,...FREE_FIRE_META,...COUNTER_FLAME_META};
@@ -1065,7 +1066,15 @@ function standoffKind(gameId,categoryId){
   if(n.includes('аккаунт'))return 'ff_accounts';if(n.includes('алмаз'))return 'ff_diamonds';if(n.includes('донат'))return 'ff_donate';if(n.includes('буст'))return 'ff_boost';if(n.includes('прочее'))return 'ff_other';return '';
  }
  if(slug==='counter-flame'){
-  if(n.includes('аккаунт'))return 'cf_accounts';if(n.includes('валют'))return 'cf_currency';if(n.includes('донат'))return 'cf_donate';if(n.includes('скин')||n.includes('предмет'))return 'cf_items';if(n.includes('буст'))return 'cf_boost';if(n.includes('клан'))return 'cf_clans';if(n.includes('прочее'))return 'cf_other';return '';
+  if(n.includes('аккаунт'))return 'cf_accounts';
+  if(n.includes('коин'))return 'cf_coins';
+  if(n.includes('wildfire'))return 'cf_wildfire';
+  if(n.includes('arsenal'))return 'cf_arsenal';
+  if(n.includes('боевой пропуск'))return 'cf_battlepass';
+  if(n.includes('скин'))return 'cf_skins';
+  if(n.includes('услуг'))return 'cf_services';
+  if(n.includes('прочее'))return 'cf_other';
+  return '';
  }
  if(isOxideGame(game)){
   if(n.includes('монет'))return 'oxide_coins';
