@@ -58,6 +58,19 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
 
 #marketAdminChatOverlay{position:fixed;inset:0;z-index:100;background:#07060beF;backdrop-filter:blur(20px);display:flex;flex-direction:column;padding:12px;}
 #marketAdminChatOverlay.hide{display:none!important}.market-chat-head{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px;border-bottom:1px solid #ffffff20}.market-chat-title{font-weight:850;font-size:16px}.market-chat-sub{font-size:11px;color:var(--muted);margin-top:4px}.market-chat-feed{flex:1;min-height:0;overflow:auto;padding:12px 3px;display:flex;flex-direction:column;gap:8px}.market-chat-msg{max-width:min(88%,600px);align-self:flex-start;background:#1b1721;border:1px solid #ffffff16;padding:11px 13px;border-radius:15px 15px 15px 4px;white-space:pre-wrap;overflow-wrap:anywhere}.market-chat-msg.mine{align-self:flex-end;background:#35202a;border-color:#ff294733;border-radius:15px 15px 4px 15px}.market-chat-msg.system{align-self:center;max-width:96%;background:#ffffff0a;border-color:#ffffff20;text-align:center;font-size:12px}.market-chat-msg.delivery{border-color:#37c97855;background:#153126}.market-chat-msg small{display:block;color:#a99fac;font-size:10px;margin-top:7px}.market-chat-msg img{display:block;max-width:min(100%,280px);border-radius:10px;margin-top:8px}.market-chat-compose{display:flex;gap:8px;padding-top:10px;border-top:1px solid #ffffff20;align-items:flex-end}.market-chat-compose textarea{flex:1;min-width:0;max-height:120px;resize:vertical;border-radius:14px;padding:12px;background:#0c0911;border:1px solid #ffffff2b;color:white;font:inherit}.market-chat-compose button{min-height:45px}.market-admin-card .market-admin-actions button{min-width:0}
+
+
+/* Braisbot searchable selectors */
+.supplier-picker{position:relative;width:100%}
+.supplier-picker>input[type="search"]{width:100%;box-sizing:border-box;min-height:48px;padding:12px 42px 12px 14px;border-radius:13px;border:1px solid var(--border,#ffffff26);background:var(--input,#100d15);color:var(--text,#fff);font:inherit;font-size:14px;outline:none}
+.supplier-picker>input[type="search"]:focus{border-color:#ff365d;box-shadow:0 0 0 2px #ff365d22}
+.supplier-picker-list{display:none;position:absolute;z-index:50;top:calc(100% + 6px);left:0;right:0;max-height:260px;overflow:auto;background:#17131d;border:1px solid #ffffff24;border-radius:13px;box-shadow:0 14px 35px #0009;padding:5px}
+.supplier-picker.open .supplier-picker-list{display:block}
+.supplier-picker-option{display:block;width:100%;text-align:left;padding:11px 12px;border:0;border-radius:9px;background:transparent;color:#f7f4fa;font:inherit;font-size:13px;line-height:1.4;cursor:pointer}
+.supplier-picker-option:hover,.supplier-picker-option:focus{background:#ffffff12;outline:none}
+.supplier-picker-option small{display:block;color:#aaa1b1;font-size:11px;margin-top:3px}
+.supplier-picker-empty{padding:14px 12px;color:#aaa1b1;font-size:13px}
+#braisbotPlanSelected,#braisbotProductSelected{display:block;margin-top:6px;font-size:11px}
 </style></head>
 <body>
 <header><div><div class="logo"><b>KD</b>S ADMIN</div><div class="tag">Панель управления магазином</div></div><div class="actions" style="margin:0"><button id="backToStore">← В магазин</button><button id="reload">↻ Обновить</button></div></header>
@@ -222,8 +235,14 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
  </div>
  <div class="panel">
   <div class="number">Привязать тариф к товару поставщика</div>
-  <div class="field"><label>Тариф KADZI STORE</label><select id="braisbotPlan"><option value="">Загрузка тарифов…</option></select></div>
-  <div class="field"><label>Товар Braisbot</label><select id="braisbotProduct"><option value="">Загрузка каталога…</option></select></div>
+  <div class="field"><label for="braisbotPlanSearch">Тариф KADZI STORE</label>
+   <div class="supplier-picker" id="braisbotPlanPicker"><input id="braisbotPlanSearch" type="search" autocomplete="off" placeholder="Поиск тарифа по названию, игре или сроку…"><input type="hidden" id="braisbotPlan"><div class="supplier-picker-list" id="braisbotPlanOptions"></div></div>
+   <div class="muted" id="braisbotPlanSelected">Тариф не выбран</div>
+  </div>
+  <div class="field"><label for="braisbotProductSearch">Товар Braisbot</label>
+   <div class="supplier-picker" id="braisbotProductPicker"><input id="braisbotProductSearch" type="search" autocomplete="off" placeholder="Поиск товара по названию или ID…"><input type="hidden" id="braisbotProduct"><div class="supplier-picker-list" id="braisbotProductOptions"></div></div>
+   <div class="muted" id="braisbotProductSelected">Товар не выбран</div>
+  </div>
   <div class="actions"><button class="primary" id="braisbotSave">Сохранить привязку</button></div>
   <div class="muted">Проверь название, валюту и цену у поставщика перед включением автозакупки. Закупочная стоимость Braisbot в USD пока не конвертируется в себестоимость заказа в RUB.</div>
   <div id="braisbotMsg" class="muted"></div>
@@ -451,7 +470,38 @@ document.getElementById("clearInventory").onclick=()=>{document.getElementById("
 document.getElementById("inventoryProductsList").onclick=e=>{const b=e.target.closest("[data-stock]");if(!b)return;setDropdown("inventoryProduct",inventoryProducts.map(p=>({value:p.id,label:p.name})),b.dataset.stock);renderInventoryPlans();document.getElementById("inventoryLines").focus();};
 async function showInventoryForProduct(productId){showAdminSection("inventorySection");try{await loadInventory();setDropdown("inventoryProduct",inventoryProducts.map(p=>({value:p.id,label:p.name})),productId);renderInventoryPlans();document.getElementById("inventoryLines").focus();}catch(e){document.getElementById("inventoryMsg").textContent="Ошибка загрузки: "+e.message;}}
 
-let braisbotState={plans:[],products:[],mappings:[]};
+let braisbotState={plans:[],products:[],mappings:[]}; 
+function braisbotPlanLabel(p){
+ const prod=Array.isArray(p.kds_products)?p.kds_products[0]:p.kds_products;
+ return {title:[prod?.game_category,prod?.name,p.duration_label].filter(Boolean).join(" · ")||"Тариф",meta:(p.price_rub??"—")+" ₽ · ID "+p.id};
+}
+function braisbotProductLabel(p){
+ const id=p.product_id??p.id,name=[p.category?.name,p.position?.name,p.name].filter(Boolean).join(" / ")||"Товар";
+ return {id,title:name,meta:"#"+id+" · $"+(p.price_usd??"—")+" · Остаток: "+(p.stock??"—")};
+}
+function setupBraisbotPicker(kind,items,labelFn){
+ const picker=document.getElementById("braisbot"+kind+"Picker"),search=document.getElementById("braisbot"+kind+"Search"),hidden=document.getElementById("braisbot"+kind),list=document.getElementById("braisbot"+kind+"Options"),selected=document.getElementById("braisbot"+kind+"Selected");
+ const render=()=>{
+  const q=search.value.trim().toLocaleLowerCase("ru");
+  const matches=items.map(item=>({item,label:labelFn(item)})).filter(x=>(x.label.title+" "+x.label.meta).toLocaleLowerCase("ru").includes(q)).slice(0,100);
+  list.innerHTML=matches.length?matches.map(x=>'<button type="button" class="supplier-picker-option" data-value="'+esc(kind==="Plan"?x.item.id:x.label.id)+'">'+esc(x.label.title)+'<small>'+esc(x.label.meta)+'</small></button>').join(""):'<div class="supplier-picker-empty">Ничего не найдено. Измени запрос.</div>';
+  picker.classList.add("open");
+ };
+ search.onfocus=render;search.oninput=()=>{hidden.value="";selected.textContent=kind==="Plan"?"Тариф не выбран":"Товар не выбран";render();};
+ list.onclick=e=>{const b=e.target.closest("[data-value]");if(!b)return;hidden.value=b.dataset.value;const found=items.find(x=>String(kind==="Plan"?x.id:(x.product_id??x.id))===String(hidden.value));const label=labelFn(found);search.value=label.title;selected.textContent="Выбрано: "+label.title+" · "+label.meta;picker.classList.remove("open");};
+ if(!window.__braisbotPickerOutside){window.__braisbotPickerOutside=true;document.addEventListener("click",e=>document.querySelectorAll(".supplier-picker.open").forEach(p=>{if(!p.contains(e.target))p.classList.remove("open");}));}
+}
+function renderBraisbotPickers(){
+ setupBraisbotPicker("Plan",braisbotState.plans,braisbotPlanLabel);
+ setupBraisbotPicker("Product",braisbotState.products,braisbotProductLabel);
+ document.getElementById("braisbotPlanSearch").value="";
+ document.getElementById("braisbotProductSearch").value="";
+ document.getElementById("braisbotPlan").value="";
+ document.getElementById("braisbotProduct").value="";
+ document.getElementById("braisbotPlanSelected").textContent="Тариф не выбран";
+ document.getElementById("braisbotProductSelected").textContent="Товар не выбран";
+}
+
 async function loadBraisbot(){
  const status=document.getElementById("braisbotStatus"),account=document.getElementById("braisbotAccount"),msg=document.getElementById("braisbotMsg");
  status.textContent="Подключаюсь к Braisbot…";msg.textContent="";
@@ -462,15 +512,7 @@ async function loadBraisbot(){
   account.classList.remove("hide");
   account.innerHTML='<b>Аккаунт поставщика: '+esc(login)+'</b><p>Баланс: <strong>'+esc(bal)+' USD</strong></p><p>Товаров в каталоге: '+braisbotState.products.length+'</p>';
   status.textContent="Подключение успешно. Каталог и баланс получены.";
-  const planSel=document.getElementById("braisbotPlan"),productSel=document.getElementById("braisbotProduct");
-  planSel.innerHTML='<option value="">Выбери тариф KADZI STORE</option>'+braisbotState.plans.map(p=>{
-   const prod=Array.isArray(p.kds_products)?p.kds_products[0]:p.kds_products;
-   return '<option value="'+esc(p.id)+'">'+esc((prod?.game_category||"")+" · "+(prod?.name||"Товар")+" · "+(p.duration_label||"Тариф")+" · "+p.price_rub+" ₽")+'</option>';
-  }).join("");
-  productSel.innerHTML='<option value="">Выбери товар Braisbot</option>'+braisbotState.products.map(p=>{
-   const id=p.product_id??p.id,name=[p.category?.name,p.position?.name,p.name].filter(Boolean).join(" / ");
-   return '<option value="'+esc(id)+'">'+esc("#"+id+" · "+name+" · $"+(p.price_usd??"—")+" · остаток: "+(p.stock??"—"))+'</option>';
-  }).join("");
+  renderBraisbotPickers();
   renderBraisbotMappings();
  }catch(e){status.textContent="Ошибка подключения: "+e.message;account.classList.add("hide");document.getElementById("braisbotMappings").innerHTML='<div class="notice error">'+esc(e.message)+'</div>';}
 }
