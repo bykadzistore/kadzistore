@@ -228,7 +228,7 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
 <section id="supplierSection" class="hide">
  <div class="panel">
   <div class="number">Braisbot API</div>
-  <div class="muted">Braisbot является единственным источником товаров и ключей. Привяжи каждый продаваемый тариф к соответствующему товару поставщика.</div>
+  <div class="muted">Braisbot подключён только для софтов и ключей PUBG Mobile. UC, валюты, предметы и товары других игр через этого поставщика не закупаются.</div>
   <div class="actions"><button class="primary" id="braisbotReload">↻ Обновить каталог и баланс</button></div>
   <div id="braisbotStatus" class="muted">Загрузка…</div>
   <div id="braisbotAccount" class="market-admin-card hide"></div>
@@ -507,7 +507,7 @@ async function loadBraisbot(){
  status.textContent="Подключаюсь к Braisbot…";msg.textContent="";
  try{
   const d=await api("GET",null,"braisbot");
-  braisbotState={plans:d.plans||[],products:d.supplier_products||[],mappings:d.mappings||[]};
+  braisbotState={plans:(d.plans||[]).filter(p=>{const prod=Array.isArray(p.kds_products)?p.kds_products[0]:p.kds_products;return prod?.game_category==="PUBG Mobile"&&prod?.subcategory==="Ключи";}),products:d.supplier_products||[],mappings:(d.mappings||[]).filter(m=>(d.plans||[]).some(p=>p.id===m.plan_id&&((Array.isArray(p.kds_products)?p.kds_products[0]:p.kds_products)?.game_category==="PUBG Mobile")&&((Array.isArray(p.kds_products)?p.kds_products[0]:p.kds_products)?.subcategory==="Ключи")))};
   const bal=d.account?.balance_usd??"—",login=d.account?.login??"—";
   account.classList.remove("hide");
   account.innerHTML='<b>Аккаунт поставщика: '+esc(login)+'</b><p>Баланс: <strong>'+esc(bal)+' USD</strong></p><p>Товаров в каталоге: '+braisbotState.products.length+'</p>';
