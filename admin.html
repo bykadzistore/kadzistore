@@ -71,7 +71,7 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
 .supplier-picker-option small{display:block;color:#aaa1b1;font-size:11px;margin-top:3px}
 .supplier-picker-empty{padding:14px 12px;color:#aaa1b1;font-size:13px}
 #braisbotPlanSelected,#braisbotProductSelected{display:block;margin-top:6px;font-size:11px}
-</style></head>
+</style><style>#inventoryTab,#inventorySection,[data-admin-section='inventorySection']{display:none!important}</style></head>
 <body>
 <header><div><div class="logo"><b>KD</b>S ADMIN</div><div class="tag">Панель управления магазином</div></div><div class="actions" style="margin:0"><button id="backToStore">← В магазин</button><button id="reload">↻ Обновить</button></div></header>
 <main>
@@ -228,7 +228,7 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
 <section id="supplierSection" class="hide">
  <div class="panel">
   <div class="number">Braisbot API</div>
-  <div class="muted">Связывай тарифы KADZI STORE с товарами поставщика. Автозакупка выполняется только для привязанных тарифов и только если собственного ключа на складе нет.</div>
+  <div class="muted">Braisbot является единственным источником товаров и ключей. Привяжи каждый продаваемый тариф к соответствующему товару поставщика.</div>
   <div class="actions"><button class="primary" id="braisbotReload">↻ Обновить каталог и баланс</button></div>
   <div id="braisbotStatus" class="muted">Загрузка…</div>
   <div id="braisbotAccount" class="market-admin-card hide"></div>
@@ -383,7 +383,7 @@ async function loadProducts(){
    const plans=p.kds_product_plans||p.plans||[];
    return '<article class="product"><div class="product-head"><div><b>'+esc(p.name)+'</b><div class="muted">'+esc(p.description||"")+'</div><div class="muted">Игра: '+esc(p.game_category||"—")+' · Раздел: '+esc((p.catalog_section||p.subcategory||"—")+(p.subcategory&&p.subcategory!==(p.catalog_section||"")?" / "+p.subcategory:""))+' · Платформа: '+esc(p.platform||"—")+' · Сортировка: '+esc(p.sort_order??0)+'</div></div><span class="status">'+(p.is_active?'Активен':'Скрыт')+'</span></div>'+
    plans.map(x=>'<div class="planline">'+esc(x.duration_label||x.name||x.title||"Тариф")+' · '+esc(x.duration_days)+' дн. · <b>'+money(x.price_rub??x.price??0)+'</b> · '+(x.is_active?'Активен':'Выключен')+'</div>').join("")+
-   '<div class="meta">Остатки: '+plans.reduce((n,x)=>n+(x.kds_key_inventory||[]).filter(k=>k.status==='available').length,0)+' шт.</div><div class="actions"><button class="primary" data-edit="'+esc(p.id)+'">Изменить</button><button data-stock="'+esc(p.id)+'">Добавить содержимое</button><button class="warn" data-toggle="'+esc(p.id)+'" data-active="'+(p.is_active?'true':'false')+'">'+(p.is_active?'Скрыть':'Активировать')+'</button></div></article>';
+   '<div class="actions"><button class="primary" data-edit="'+esc(p.id)+'">Изменить</button><button class="warn" data-toggle="'+esc(p.id)+'" data-active="'+(p.is_active?'true':'false')+'">'+(p.is_active?'Скрыть':'Активировать')+'</button></div></article>';
   }).join("");
   el.querySelectorAll(".product").forEach((card,i)=>{const p=allProducts[i];if(!p)return;const head=card.querySelector(".product-head");if(head&&!head.querySelector("[data-product-select]")){const label=document.createElement("label");label.style.cssText="display:flex;gap:8px;align-items:center;margin-bottom:8px";label.innerHTML='<input class="bulk-check" type="checkbox" data-product-select="'+esc(p.id)+'" '+(selectedProductIds.has(p.id)?'checked':'')+'> <b>Выбрать товар</b>';head.prepend(label);if(p.notice_status){const badge=document.createElement("span");badge.className="notice-pill";badge.textContent=p.notice_status;head.appendChild(badge);}}});
  }catch(e){el.innerHTML='<div class="notice error">'+esc(e.message)+'</div>';}
@@ -838,8 +838,8 @@ document.getElementById("sanctionHistory").addEventListener("click",async e=>{
 </style>
 <script id="kds-admin-subnavigation">
 (function(){
- const sectionIds=['ordersSection','productsSection','inventorySection','announcementsSection','gamesSection','analyticsSection','auditSection','marketplaceSection','amlSection','sanctionsSection','supplierSection'];
- const tabIds=['ordersTab','productsTab','inventoryTab','announcementsTab','gamesTab','analyticsTab','auditTab','marketplaceTab','amlTab','sanctionsTab','supplierTab'];
+ const sectionIds=['ordersSection','productsSection','announcementsSection','gamesSection','analyticsSection','auditSection','marketplaceSection','amlSection','sanctionsSection','supplierSection'];
+ const tabIds=['ordersTab','productsTab','announcementsTab','gamesTab','analyticsTab','auditTab','marketplaceTab','amlTab','sanctionsTab','supplierTab'];
  const labels={ordersSection:'Заказы',productsSection:'Товары',inventorySection:'Склад',announcementsSection:'Объявления',gamesSection:'Игры',analyticsSection:'Аналитика',auditSection:'Журнал',marketplaceSection:'Маркетплейс',amlSection:'AML',sanctionsSection:'Наказания',supplierSection:'Поставщик'};
  const fallback={ordersSection:['Статистика','Поиск заказов','Баланс пользователей','Пользователи','История операций','Фильтр заказов','Статус загрузки','Список заказов'],productsSection:['Управление товарами','Редактор товара','Категории','Массовое управление','Список товаров'],inventorySection:['Управление складом','Список товаров и остатков'],announcementsSection:['Объявления','Редактор объявления','Список объявлений','История рассылок'],analyticsSection:['Параметры аналитики','Общие показатели','Маркетплейс — аналитика','Продажи и прибыль','Проверки','Продажи по товарам','Продажи по играм','Последние заказы'],gamesSection:['Игры каталога','Редактор игры','Список игр'],auditSection:['Журнал действий','Список записей'],marketplaceSection:['Обзор маркетплейса','Споры','Объявления','Аналитика','Сделки','Чат по заказу'],amlSection:['Центр AML-проверок','Заявки на вывод'],sanctionsSection:['Наказания пользователей','История наказаний'],supplierSection:['Braisbot API','Привязать тариф к товару поставщика','Активные привязки']};
  function getTitle(el,section,index){if(section==='ordersSection'){if(el.id==='orders')return 'Список заказов';if(el.id==='filters')return 'Фильтр заказов';if(el.id==='updated')return 'Статус загрузки';if(el.classList.contains('stats'))return 'Статистика';if(el.id==='orderSearchPanel')return 'Поиск заказов';if(el.id==='adminUsersPanel')return 'Пользователи';if(el.id==='adminWalletHistoryPanel')return 'История операций';if(el.classList.contains('order'))return 'Баланс пользователей';}const title=el.querySelector('.number,h1,h2,h3,h4,label');let text=title?.textContent?.trim().replace(/\s+/g,' ');if(!text){text=(fallback[section]||[])[index]||('Подраздел '+(index+1));}return text.slice(0,58);}
