@@ -209,14 +209,29 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
 <section id="sanctionsSection" class="hide">
  <div class="panel">
   <div class="number">Наказания пользователей</div>
-  <div class="muted">Выбирай конкретное ограничение или предупреждение. Срок можно задать от 1 часа до бессрочного.</div>
+  <div class="muted">Выбери нарушение. KADZI сам предложит тип наказания и срок. Ты можешь изменить рекомендацию и подтвердить решение. Невыдача товара сама по себе не наказывается.</div>
   <div class="field"><label>Telegram ID или username</label><div class="actions" style="margin-top:0"><input id="sanctionUserSearch" placeholder="Например, 123456789 или @username" style="flex:1;min-width:180px"><button class="primary" id="sanctionUserFind">Найти пользователя</button></div></div>
   <div id="sanctionUserResult" class="muted"></div>
   <div id="sanctionControls" class="hide">
-   <div class="field"><label>Тип наказания</label><select id="sanctionType"><option value="warning">Предупреждение</option><option value="block_buying">Запрет покупок</option><option value="block_selling">Запрет продаж</option><option value="block_marketplace">Блокировка маркетплейса</option><option value="block_chat">Блокировка чата</option><option value="block_financial">Блокировка финансовых операций</option><option value="block_all_operations">Полная блокировка операций</option></select></div>
+   <div class="panel" style="margin:12px 0;padding:12px">
+    <div class="number">KADZI Auto-Link Detection</div>
+    <div class="muted">KADZI автоматически ищет другие профили по совпадению подтверждённых идентификаторов. Результат — кандидаты для проверки, а не автоматическое признание одного владельца.</div>
+    <div class="actions"><button class="primary" id="linkedAutoDetect">Найти потенциально связанные профили</button></div>
+    <div id="linkedAutoDetectResult" class="muted" style="margin-top:8px">Нажми «Найти», чтобы запустить проверку.</div>
+    <div class="number" style="margin-top:14px">Подтверждённые связи</div>
+    <div id="sanctionLinkedAccounts" class="muted" style="margin-top:8px">Загрузка связанных профилей…</div>
+    <div class="field"><label>Telegram ID связанного профиля</label><input id="linkedTelegramId" inputmode="numeric" placeholder="Например, 987654321"></div>
+    <div class="field"><label>Основание подтверждения связи</label><textarea id="linkedVerificationNote" rows="2" maxlength="1000" placeholder="Укажи проверенные доказательства связи аккаунтов"></textarea></div>
+    <div class="actions"><button class="primary" id="linkedAccountAdd">Подтвердить связь профилей</button></div>
+    <div class="muted" id="linkedAccountMessage"></div>
+   </div>
+   <div class="field"><label for="sanctionViolation">Какое нарушение совершил пользователь?</label><select id="sanctionViolation"><option value="">Выбери нарушение…</option><option value="fraud">Мошенничество / обман покупателя</option><option value="account_recovery">Восстановление ранее проданного игрового аккаунта</option><option value="no_delivery">Не выдал оплаченный товар</option><option value="fake_delivery">Подмена товара / ложное подтверждение передачи</option><option value="threats_insults">Оскорбления или обычные угрозы</option><option value="severe_threats">Серьёзные угрозы / запугивание / травля</option><option value="ban_evasion">Обход блокировки через другой аккаунт</option><option value="prohibited_goods">Продажа запрещённого товара</option><option value="spam_listing">Спам или вводящее в заблуждение объявление</option><option value="other">Другое нарушение</option></select><div class="muted" id="sanctionRecommendation" style="margin-top:7px">После выбора нарушения здесь появится рекомендуемое наказание.</div></div>
+   <div class="field"><label>Тип наказания (можно изменить)</label><select id="sanctionType"><option value="warning">Предупреждение</option><option value="block_buying">Запрет покупок</option><option value="block_selling">Запрет продаж</option><option value="block_marketplace">Блокировка маркетплейса</option><option value="block_chat">Блокировка чата</option><option value="block_financial">Блокировка финансовых операций</option><option value="block_all_operations">Полная блокировка операций</option></select></div>
    <div class="field"><label>Срок наказания</label><select id="sanctionDuration"><option value="1">1 час</option><option value="24">24 часа</option><option value="72">3 дня</option><option value="168">7 дней</option><option value="720">30 дней</option><option value="0">Бессрочно</option></select></div>
-   <div class="field"><label>Причина наказания</label><textarea id="sanctionReason" rows="3" maxlength="500" placeholder="Укажи причину блокировки операций"></textarea></div>
-   <div class="actions"><button class="primary" id="sanctionApply">Применить наказание</button></div>
+   <label class="muted" id="holdLinkedWrap" style="display:none;align-items:flex-start;gap:8px"><input id="holdLinkedAccounts" type="checkbox" checked style="margin-top:3px"> При подтверждённом мошенничестве временно удержать доступный баланс на подтверждённых связанных профилях</label>
+   <div class="muted" id="sanctionOverrideHint">Тип наказания и срок заполняются автоматически. Их можно изменить вручную.</div>
+   <div class="field"><label>Причина наказания</label><textarea id="sanctionReason" rows="3" maxlength="500" placeholder="Укажи фактическую причину и обстоятельства нарушения"></textarea></div>
+   <div class="actions"><button class="primary" id="sanctionApply">Подтвердить наказание</button></div>
    <div id="sanctionMsg" class="muted"></div>
   </div>
  </div>
@@ -800,6 +815,57 @@ document.getElementById("amlWithdrawals").addEventListener("click",async e=>{
  catch(err){alert(err.message);b.disabled=false;}
 });
 
+async function loadLinkedAccounts(){
+ const out=document.getElementById("sanctionLinkedAccounts");
+ if(!sanctionSelectedUser){out.textContent="Сначала найди пользователя.";return;}
+ out.innerHTML='<div class="notice">Загрузка связанных профилей…</div>';
+ try{
+  const d=await api("POST",{action:"list_linked_accounts",telegram_user_id:sanctionSelectedUser.telegram_user_id});
+  const rows=d.linked_accounts||[];
+  out.innerHTML=rows.length?rows.map(x=>'<article class="market-admin-card"><b>'+esc(x.first_name||"Пользователь")+(x.username?' · @'+esc(x.username):'')+'</b><p>Telegram ID: '+esc(x.telegram_user_id)+'</p><p>Баланс: '+money(x.balance_rub)+' · Уже удержано: '+money(x.frozen_balance_rub)+'</p><p>Основание связи: '+esc(x.verification_note)+'</p></article>').join(""):'<div class="notice">Подтверждённых связанных профилей нет.</div>';
+ }catch(e){out.innerHTML='<div class="notice error">'+esc(e.message)+'</div>';}
+}
+async function detectLinkedAccounts(){
+ const out=document.getElementById("linkedAutoDetectResult"),btn=document.getElementById("linkedAutoDetect");
+ if(!sanctionSelectedUser)return;
+ btn.disabled=true;out.innerHTML='<div class="notice">KADZI проверяет подтверждённые идентификаторы…</div>';
+ try{
+  const d=await api("POST",{action:"detect_linked_accounts",telegram_user_id:sanctionSelectedUser.telegram_user_id});
+  const rows=d.candidates||[];
+  out.innerHTML=rows.length?rows.map(x=>{
+   const reasons=(x.match_reasons||[]).map(esc).join(" · ");
+   const strong=Number(x.strong_match_count||0);
+   const confidence=strong>=2?"Несколько сильных совпадений":strong===1?"Одно сильное совпадение":"Недостаточно подтверждений";
+   return '<article class="market-admin-card"><h3>'+esc(x.display_name||"Пользователь")+(x.username?' · @'+esc(x.username):'')+'</h3><p>KADZI ID: <b>'+esc(x.kadzi_id||"—")+'</b></p><p>Telegram ID: '+esc(x.telegram_user_id)+'</p><p>Совпадения: '+reasons+'</p><p>'+esc(confidence)+' · '+strong+' сильн. сигнал(ов)</p><p class="muted">Это рекомендация для проверки. Совпадение не связывает профили и не запускает удержание средств автоматически.</p><div class="market-admin-actions"><button class="primary" data-auto-link-user="'+esc(x.telegram_user_id)+'" data-auto-link-reasons="'+esc(reasons)+'">Проверить и подтвердить связь</button></div></article>';
+  }).join(""):'<div class="notice">Совпадений по доступным подтверждённым идентификаторам не найдено. Если у профилей пока нет общих проверенных сигналов, система не сможет их сопоставить.</div>';
+ }catch(e){out.innerHTML='<div class="notice error">Автопоиск недоступен: '+esc(e.message)+'. Проверь серверный обработчик detect_linked_accounts и миграцию V15.12.</div>';}
+ finally{btn.disabled=false;}
+}
+document.getElementById("linkedAutoDetect").onclick=detectLinkedAccounts;
+document.getElementById("linkedAutoDetectResult").addEventListener("click",async e=>{
+ const b=e.target.closest("[data-auto-link-user]");if(!b||!sanctionSelectedUser)return;
+ const linkedId=Number(b.dataset.autoLinkUser);
+ const note=prompt("KADZI нашла совпадение: "+(b.dataset.autoLinkReasons||"подтверждённые идентификаторы")+". Проверь доказательства и укажи основание подтверждения связи:");
+ if(note===null)return;
+ if(note.trim().length<3){alert("Нужно указать основание не менее 3 символов.");return;}
+ if(!confirm("Подтвердить связь профилей? Только после проверки доказательств. Это позволит учитывать связанный профиль при санкциях и удержании доступного баланса."))return;
+ b.disabled=true;
+ try{await api("POST",{action:"link_related_account",telegram_user_id:sanctionSelectedUser.telegram_user_id,linked_telegram_user_id:linkedId,verification_note:note.trim()});await loadLinkedAccounts();await detectLinkedAccounts();}
+ catch(err){alert("Не удалось подтвердить связь: "+err.message);b.disabled=false;}
+});
+document.getElementById("linkedAccountAdd").onclick=async()=>{
+ if(!sanctionSelectedUser)return;
+ const linkedId=Number(document.getElementById("linkedTelegramId").value.trim());
+ const note=document.getElementById("linkedVerificationNote").value.trim();
+ const msg=document.getElementById("linkedAccountMessage"),btn=document.getElementById("linkedAccountAdd");
+ if(!Number.isSafeInteger(linkedId)||linkedId<=0){msg.textContent="Введи корректный Telegram ID.";return;}
+ if(linkedId===Number(sanctionSelectedUser.telegram_user_id)){msg.textContent="Нельзя связать профиль с самим собой.";return;}
+ if(note.length<3){msg.textContent="Укажи проверенное основание связи.";return;}
+ if(!confirm("Подтвердить связь Telegram ID "+linkedId+" с профилем "+sanctionSelectedUser.telegram_user_id+"? Добавляй только при наличии доказательств."))return;
+ btn.disabled=true;msg.textContent="Сохраняю связь…";
+ try{await api("POST",{action:"link_related_account",telegram_user_id:sanctionSelectedUser.telegram_user_id,linked_telegram_user_id:linkedId,verification_note:note});msg.textContent="Связь подтверждена и сохранена.";document.getElementById("linkedTelegramId").value="";document.getElementById("linkedVerificationNote").value="";await loadLinkedAccounts();}
+ catch(e){msg.textContent="Ошибка: "+e.message;}finally{btn.disabled=false;}
+};
 document.getElementById("sanctionsTab").onclick=()=>showAdminSection("sanctionsSection");
 document.getElementById("supplierTab").onclick=()=>showAdminSection("supplierSection");
 document.getElementById("sanctionUserFind").onclick=async()=>{
@@ -809,22 +875,80 @@ document.getElementById("sanctionUserFind").onclick=async()=>{
  try{
   const d=await api("POST",{action:"search_user",query});sanctionSelectedUser=d.user;
   out.innerHTML='<article class="market-admin-card"><h3>'+esc(d.user.first_name||"Пользователь")+(d.user.username?' · @'+esc(d.user.username):'')+'</h3><p>Telegram ID: '+esc(d.user.telegram_user_id)+'</p><p>Баланс: '+money(d.user.balance_rub)+' · Заморожено: '+money(d.user.frozen_balance_rub||0)+'</p></article>';
-  document.getElementById("sanctionControls").classList.remove("hide");document.getElementById("sanctionMsg").textContent="";await loadSanctionHistory();
+  document.getElementById("sanctionControls").classList.remove("hide");document.getElementById("sanctionMsg").textContent="";document.getElementById("sanctionViolation").value="";document.getElementById("sanctionType").disabled=false;document.getElementById("sanctionDuration").disabled=false;document.getElementById("sanctionApply").disabled=false;document.getElementById("holdLinkedWrap").style.display="none";await Promise.all([loadSanctionHistory(),loadLinkedAccounts()]);
  }catch(e){sanctionSelectedUser=null;document.getElementById("sanctionControls").classList.add("hide");out.innerHTML='<span class="error">'+esc(e.message)+'</span>';document.getElementById("sanctionHistory").textContent="Пользователь не найден.";}
 };
+// Violation presets: recommendation is automatic, administrator retains final control.
+const sanctionViolationPresets={
+ fraud:{label:"Мошенничество / обман покупателя",type:"block_all_operations",hours:0,holdLinked:true,summary:"Бессрочная полная блокировка операций: магазин, маркетплейс, оплата и вывод средств. Доступные средства на подтверждённых связанных профилях временно удерживаются до проверки."},
+ account_recovery:{label:"Восстановление ранее проданного игрового аккаунта",type:"block_all_operations",hours:0,holdLinked:true,summary:"Бессрочная полная блокировка операций. При подтверждённой связи профилей временно удержать доступные средства на связанных аккаунтах."},
+ no_delivery:{label:"Не выдал оплаченный товар",noPenalty:true,summary:"Без наказания. Рассмотреть заказ через спор и при наличии оснований оформить возврат. Если выявлено отдельное мошенничество, выбери именно это нарушение."},
+ fake_delivery:{label:"Подмена товара / ложное подтверждение передачи",type:"block_marketplace",hours:168,summary:"Блокировка маркетплейса на 7 дней. При доказанном умышленном мошенничестве выбери «Мошенничество»."},
+ threats_insults:{label:"Оскорбления или обычные угрозы",type:"block_marketplace",hours:24,summary:"Блокировка маркетплейса на 1 день."},
+ severe_threats:{label:"Серьёзные угрозы / запугивание / травля",type:"block_marketplace",hours:168,summary:"Блокировка маркетплейса на 7 дней."},
+ ban_evasion:{label:"Обход блокировки через другой аккаунт",type:"block_all_operations",hours:0,summary:"Полная блокировка операций бессрочно после подтверждения связи аккаунтов."},
+ prohibited_goods:{label:"Продажа запрещённого товара",type:"block_selling",hours:168,summary:"Запрет продаж на 7 дней."},
+ spam_listing:{label:"Спам или вводящее в заблуждение объявление",type:"block_selling",hours:24,summary:"Запрет продаж на 24 часа."},
+ other:{label:"Другое нарушение",type:"warning",hours:0,summary:"Рекомендуется предупреждение. Администратор может вручную выбрать другую меру."}
+};
+const sanctionViolationSelect=document.getElementById("sanctionViolation");
+const sanctionRecommendation=document.getElementById("sanctionRecommendation");
+const sanctionDurationSelect=document.getElementById("sanctionDuration");
+const sanctionReasonInput=document.getElementById("sanctionReason");
+function syncLinkedHoldOption(){
+ const p=sanctionViolationPresets[sanctionViolationSelect.value];
+ const eligible=!!p?.holdLinked && document.getElementById("sanctionType").value==="block_all_operations" && Number(sanctionDurationSelect.value)===0;
+ document.getElementById("holdLinkedWrap").style.display=eligible?"flex":"none";
+ if(!eligible)document.getElementById("holdLinkedAccounts").checked=false;
+}
+document.getElementById("sanctionType").addEventListener("change",syncLinkedHoldOption);
+sanctionDurationSelect.addEventListener("change",syncLinkedHoldOption);
+sanctionViolationSelect.addEventListener("change",()=>{
+ const p=sanctionViolationPresets[sanctionViolationSelect.value];
+ const typeSelect=document.getElementById("sanctionType"),durationSelect=sanctionDurationSelect;
+ const applyButton=document.getElementById("sanctionApply"),holdWrap=document.getElementById("holdLinkedWrap");
+ if(!p){typeSelect.disabled=false;durationSelect.disabled=false;applyButton.disabled=false;holdWrap.style.display="none";sanctionRecommendation.textContent="После выбора нарушения здесь появится рекомендуемое наказание.";return;}
+ if(p.noPenalty){
+  typeSelect.disabled=true;durationSelect.disabled=true;applyButton.disabled=true;holdWrap.style.display="none";
+  sanctionRecommendation.textContent="Без наказания. Используй спор и возврат по правилам. Для отдельного доказанного мошенничества выбери другой пункт.";
+  sanctionReasonInput.value=p.label;
+  document.getElementById("sanctionMsg").textContent="По этому нарушению санкция не применяется.";
+  return;
+ }
+ typeSelect.disabled=false;durationSelect.disabled=false;applyButton.disabled=false;
+ typeSelect.value=p.type;durationSelect.value=String(p.hours);
+ document.getElementById("holdLinkedAccounts").checked=!!p.holdLinked;
+ syncLinkedHoldOption();
+ sanctionRecommendation.textContent="Рекомендация KADZI: "+p.summary+" Тип и срок можно изменить вручную.";
+ if(!sanctionReasonInput.value.trim()||Object.values(sanctionViolationPresets).some(x=>sanctionReasonInput.value===x.label))sanctionReasonInput.value=p.label;
+ document.getElementById("sanctionMsg").textContent="";
+});
 document.getElementById("sanctionApply").onclick=async()=>{
  if(!sanctionSelectedUser)return;
+ const violation=document.getElementById("sanctionViolation").value,p=sanctionViolationPresets[violation];
  const reason=document.getElementById("sanctionReason").value.trim(),duration_hours=Number(document.getElementById("sanctionDuration").value),sanction_type=document.getElementById("sanctionType").value,msg=document.getElementById("sanctionMsg"),btn=document.getElementById("sanctionApply");
+ if(!violation){msg.textContent="Сначала выбери нарушение.";return;}
+ if(p?.noPenalty){msg.textContent="Для невыдачи товара наказание не применяется. Используй спор и возврат.";return;}
  if(reason.length<3){msg.textContent="Укажи причину не короче 3 символов.";return;}
- const typeLabels={warning:"Предупреждение",block_buying:"запрет покупок",block_selling:"запрет продаж",block_marketplace:"блокировка маркетплейса",block_chat:"блокировка чата",block_financial:"блокировка финансовых операций",block_all_operations:"полная блокировка операций"},term=duration_hours===0?"бессрочно":duration_hours===1?"на 1 час":duration_hours===24?"на 24 часа":duration_hours===72?"на 3 дня":duration_hours===168?"на 7 дней":"на 30 дней";
- if(!confirm("Применить "+typeLabels[sanction_type]+" пользователю "+sanctionSelectedUser.telegram_user_id+" "+term+"?"))return;
+ const typeLabels={warning:"Предупреждение",block_buying:"Запрет покупок",block_selling:"Запрет продаж",block_marketplace:"Блокировка маркетплейса",block_chat:"Блокировка чата",block_financial:"Блокировка финансовых операций",block_all_operations:"Полная блокировка операций"},term=duration_hours===0?"бессрочно":duration_hours===1?"на 1 час":duration_hours===24?"на 24 часа":duration_hours===72?"на 3 дня":duration_hours===168?"на 7 дней":"на 30 дней";
+ const holdLinked=!!document.getElementById("holdLinkedAccounts")?.checked && !!p?.holdLinked && sanction_type==="block_all_operations" && duration_hours===0;
+ const confirmText="Нарушение: "+(p?.label||"Другое нарушение")+"\\nНаказание: "+typeLabels[sanction_type]+"\\nСрок: "+term+"\\nПользователь: "+sanctionSelectedUser.telegram_user_id+(holdLinked?"\\nТакже удержать доступный баланс на подтверждённых связанных профилях.":"")+"\\n\\nПодтвердить применение?";
+ if(!confirm(confirmText))return;
  btn.disabled=true;msg.textContent="Применяю наказание…";
- try{await api("POST",{action:"set_user_sanction",telegram_user_id:sanctionSelectedUser.telegram_user_id,reason,duration_hours,sanction_type});msg.textContent="Наказание применено.";document.getElementById("sanctionReason").value="";await loadSanctionHistory();}
- catch(e){msg.textContent="Ошибка: "+e.message;}finally{btn.disabled=false;}
+ try{
+  const result=await api("POST",{action:"set_user_sanction",telegram_user_id:sanctionSelectedUser.telegram_user_id,reason,duration_hours,sanction_type,hold_linked_accounts:holdLinked});
+  const holds=result.linked_holds||[];
+  msg.textContent="Наказание применено."+ (holds.length?" Удержание создано на "+holds.length+" связанных профилях.":"");
+  document.getElementById("sanctionReason").value="";document.getElementById("sanctionViolation").value="";
+  document.getElementById("sanctionRecommendation").textContent="После выбора нарушения здесь появится рекомендуемое наказание.";
+  document.getElementById("sanctionType").disabled=false;document.getElementById("sanctionDuration").disabled=false;document.getElementById("holdLinkedWrap").style.display="none";
+  await Promise.all([loadSanctionHistory(),loadLinkedAccounts()]);
+ }catch(e){msg.textContent="Ошибка: "+e.message;}finally{btn.disabled=false;}
 };
+
 document.getElementById("sanctionHistory").addEventListener("click",async e=>{
  const b=e.target.closest("[data-sanction-revoke]");if(!b)return;
- if(!confirm("Снять блокировку операций с этого пользователя?"))return;
+ if(!confirm("Снять это наказание и освободить удержания связанных профилей, созданные именно по этой санкции?"))return;
  b.disabled=true;try{await api("POST",{action:"revoke_user_sanction",sanction_id:b.dataset.sanctionRevoke});await loadSanctionHistory();}catch(x){alert(x.message);b.disabled=false;}
 });
 
