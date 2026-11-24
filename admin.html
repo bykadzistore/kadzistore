@@ -122,7 +122,7 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
   <div class="field"><label>Платформа</label><select id="pPlatform"><option value="Android">Android</option><option value="iOS">iOS</option><option value="PC">PC</option></select></div>
   <div class="field"><label>Ссылка на изображение (HTTPS)</label><input id="pImage" type="url" placeholder="https://..."></div>
   <div class="field"><label>Порядок сортировки</label><input id="pSort" type="text" inputmode="numeric" value="0"></div>
-  <div class="field"><label>Тарифы и цены продажи (Название | дни | цена ₽ | on/off)</label><input id="pPlans" type="text" placeholder="1 день | 1 | 250,5 | on; 7 дней | 7 | 1440 | on"></div><div class="field"><label>Закупочные цены (в том же порядке, через точку с запятой)</label><input id="pCosts" type="text" inputmode="decimal" placeholder="210,5; 1200; 2000,8"></div>
+  <div class="field"><label>Тарифы и цены продажи (Название | дни | цена ₽ | on/off)</label><input id="pPlans" type="text" placeholder="1 день | 1 | 250,5 | on; 7 дней | 7 | 1440 | on"></div><div class="field"><label>Закупочные цены в рублях ₽ (в том же порядке, через точку с запятой)</label><input id="pCosts" type="text" inputmode="decimal" placeholder="123,2; 410,7; 821,5"><div class="muted">USD пересчитан по курсу ЦБ РФ на 24.11.2026: 1 USD = 82,1488 ₽. При изменении курса суммы можно обновить.</div></div>
   <label style="display:flex;gap:8px;align-items:center"><input id="pActive" type="checkbox" checked style="width:auto"> Товар активен</label>
   <div class="actions"><button class="primary" id="saveProduct">Сохранить товар</button><button id="cancelProduct">Отмена</button></div>
   <div id="productMsg" class="muted"></div>
