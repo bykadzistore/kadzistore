@@ -612,6 +612,23 @@ header{background:linear-gradient(110deg,#0b0a11f5,#17101af2)!important}
 .kds-standoff-meta{display:grid;gap:10px;margin:10px 0;padding:12px;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(255,255,255,.035)}
 .kds-standoff-meta[hidden]{display:none!important}.kds-standoff-meta .meta-field{display:grid;gap:6px;min-width:0}.kds-standoff-meta .meta-field>span{font-size:13px;font-weight:750;color:#dce0e8}.kds-standoff-meta .meta-select{position:relative}.kds-standoff-meta .meta-trigger{width:100%;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid rgba(255,255,255,.15);border-radius:11px;background:#171a22;color:#fff;text-align:left;font:inherit}.kds-standoff-meta .meta-pop{position:absolute;z-index:60;top:calc(100% + 5px);left:0;right:0;max-height:220px;overflow:auto;padding:5px;border:1px solid rgba(255,255,255,.15);border-radius:11px;background:#171a22;box-shadow:0 12px 30px #0009}.kds-standoff-meta .meta-pop[hidden]{display:none}.kds-standoff-meta .meta-option{display:block;width:100%;padding:10px;border:0;border-radius:8px;background:transparent;color:#eee;text-align:left;font:inherit}.kds-standoff-meta .meta-option.active,.kds-standoff-meta .meta-option:active{background:rgba(255,255,255,.12)}.kds-standoff-meta .meta-native{display:none!important}.kds-standoff-meta.buyer-meta{grid-template-columns:repeat(2,minmax(0,1fr));margin:8px 0 12px}.kds-standoff-meta.buyer-meta .meta-field{min-width:0}@media(max-width:380px){.kds-standoff-meta.buyer-meta{grid-template-columns:1fr}}
 </style>
+
+<style id="kds-topup-methods-v15-12-12">
+.topup-modal .kds-topup-view[hidden]{display:none!important}
+.kds-topup-method-list{display:grid;gap:10px}
+.topup-modal .kds-topup-method{display:flex;align-items:center;gap:12px;text-align:left;min-height:72px;padding:13px 14px;background:linear-gradient(145deg,rgba(35,38,48,.96),rgba(20,22,29,.98));border:1px solid rgba(255,255,255,.12);box-shadow:0 5px 16px rgba(0,0,0,.16)}
+.kds-topup-method-icon{display:grid;place-items:center;flex:0 0 40px;height:40px;border-radius:12px;background:linear-gradient(145deg,rgba(214,174,75,.2),rgba(214,174,75,.07));border:1px solid rgba(214,174,75,.25);color:#e4c36e;font-size:20px;font-weight:900}
+.kds-topup-method-copy{display:grid;gap:4px;flex:1;min-width:0}.kds-topup-method-copy strong{font-size:14px}.kds-topup-method-copy small{font-size:11px;color:var(--muted,#aab0bb);font-weight:500}.kds-topup-method-arrow{font-size:25px;color:#d9bd72}
+.kds-topup-back{width:100%;text-align:left;margin:2px 0 8px;padding:10px 12px}
+.kds-topup-pending-icon{display:grid;place-items:center;width:52px;height:52px;border-radius:16px;margin:22px auto 12px;background:rgba(217,189,114,.1);border:1px solid rgba(217,189,114,.25);color:#e3c36e;font-size:28px}
+#topupPendingView{text-align:center;padding:4px 2px 16px}.kds-topup-soon{display:inline-block;margin-top:10px;padding:6px 12px;border-radius:20px;background:rgba(217,189,114,.12);border:1px solid rgba(217,189,114,.25);color:#e3c36e;font-size:10px;font-weight:900;letter-spacing:.12em}
+.kds-topup-field{position:relative;margin:10px 0 14px}.kds-topup-field>label,.kds-topup-view>label{display:block;font-size:12px;font-weight:700;margin-bottom:7px}
+.kds-topup-select{position:relative}.kds-topup-select-trigger{width:100%;min-height:46px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 13px;border:1px solid rgba(255,255,255,.16);border-radius:12px;background:linear-gradient(145deg,#20232c,#171a21);color:#f4f4f5;text-align:left;font:inherit;font-size:13px;box-shadow:inset 0 1px rgba(255,255,255,.04)}
+.kds-topup-select-chevron{color:#d9bd72;font-size:18px}.kds-topup-select-menu{position:absolute;z-index:80;top:calc(100% + 6px);left:0;right:0;padding:5px;border:1px solid rgba(255,255,255,.16);border-radius:12px;background:#191c24;box-shadow:0 14px 32px rgba(0,0,0,.48)}.kds-topup-select-menu[hidden]{display:none!important}
+.kds-topup-select-option{display:flex;width:100%;justify-content:space-between;align-items:center;padding:12px;border:0;border-radius:8px;background:transparent;color:#e9eaf0;text-align:left;font:inherit;font-size:13px}.kds-topup-select-option small{color:#d9bd72;font-weight:800}.kds-topup-select-option.active,.kds-topup-select-option:active{background:rgba(217,189,114,.14);color:#f5d985}
+.kds-topup-card-details{border:1px solid rgba(215,180,89,.34);background:linear-gradient(145deg,rgba(185,139,36,.12),#17191f);border-radius:14px;padding:13px;margin:13px 0}.kds-topup-card-caption{font-size:10px;letter-spacing:.1em;color:#d9bd72;font-weight:900;margin-bottom:7px}.kds-topup-bank{font-size:11px;color:var(--muted,#aaa)}.kds-topup-card-number{font-size:19px;font-weight:900;letter-spacing:.035em;margin:7px 0}.kds-topup-card-name{font-size:13px;margin-bottom:10px}.topup-modal .kds-topup-copy{width:100%;padding:10px 12px}.kds-topup-instructions{font-size:13px;line-height:1.55;margin:12px 0}.kds-topup-instructions ol{padding-left:20px;margin:7px 0}.kds-topup-instructions li{margin:5px 0}.kds-topup-instructions p{color:#b9c4c8;margin:8px 0}.kds-topup-fee{border-left:3px solid #d9bd72;padding-left:9px;margin-top:8px}.kds-topup-warning{border:1px solid rgba(224,173,77,.4);background:rgba(224,173,77,.07);border-radius:12px;padding:12px;margin:12px 0;font-size:12px;line-height:1.5}
+</style>
+
 </head>
 <body>
 <div id="kdsBoot" role="status" aria-live="polite">
@@ -754,29 +771,47 @@ header{background:linear-gradient(110deg,#0b0a11f5,#17101af2)!important}
 </section>
 <div class="modal-backdrop" id="productModal" hidden><div class="product-modal"><button class="modal-close" id="closeProduct">✕</button><div id="productDetail"></div></div></div><div class="modal-backdrop topup-modal-backdrop" id="topupModal" hidden><div class="product-modal topup-modal" role="dialog" aria-modal="true" aria-labelledby="topupModalTitle"><button type="button" class="modal-close" id="closeTopup" aria-label="Закрыть">✕</button><div class="order topup-form" id="topupForm" hidden>
   <div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><b id="topupModalTitle">Пополнение баланса</b></div>
-  <label for="topupCurrency" style="display:block;margin-top:12px">Валюта оплаты</label>
-  <select id="topupCurrency" style="width:100%;margin:7px 0 12px;padding:12px;border-radius:12px;border:1px solid var(--line,#444);background:var(--panel,#17191f);color:inherit;font:inherit">
-    <option value="RUB">Российские рубли (RUB)</option><option value="KGS">Кыргызские сомы (KGS)</option><option value="KZT">Казахстанские тенге (KZT)</option>
-  </select>
-  <label for="topupAmount">Сумма пополнения</label>
-  <input id="topupAmount" type="text" inputmode="decimal" placeholder="Укажи сумму" autocomplete="off">
-  <p class="muted" style="font-size:11px;margin:5px 0 12px">Оплата принимается вручную переводом на карту O!Bank. Автоматического списания или моментального зачисления нет.</p>
-  <div style="border:1px solid #d7b45b55;background:linear-gradient(145deg,#b98b2418,#17191f);border-radius:14px;padding:13px;margin:10px 0">
-    <div style="font-size:11px;letter-spacing:.08em;color:#d9bd72;font-weight:800;margin-bottom:7px">РЕКВИЗИТЫ ПОЛУЧАТЕЛЯ</div>
-    <div style="font-size:12px;color:var(--muted,#aaa)">O!Bank · Кыргызстан · Visa</div>
-    <div style="font-size:19px;font-weight:900;letter-spacing:.035em;margin:7px 0" id="topupCardNumber">4196 7200 6272 6517</div>
-    <div style="font-size:13px;margin-bottom:10px">Aziz Kadyrov</div>
-    <button type="button" class="pay-option" id="copyTopupCard" style="width:100%"><strong>Скопировать номер карты</strong></button>
-  </div>
-  <div id="topupPaymentInstructions" style="font-size:13px;line-height:1.55;margin:12px 0"></div>
-  <div style="border:1px solid #e0ad4d66;background:#e0ad4d12;border-radius:12px;padding:12px;margin:12px 0;font-size:12px;line-height:1.5">
-    <b>Важно: подтверждение оплаты</b><br>После перевода обязательно отправь чек в PDF или скриншот в чат поддержки. Баланс и товар не будут зачислены/выданы по одному скриншоту — сначала мы проверим фактическое поступление денег на счёт.
-  </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
-    <button type="button" class="pay-option" disabled style="opacity:.48;cursor:not-allowed"><strong>СБП</strong><span>Скоро · пока недоступно</span></button>
-    <button type="button" class="pay-option" disabled style="opacity:.48;cursor:not-allowed"><strong>Криптовалюта</strong><span>Скоро · пока недоступна</span></button>
-  </div>
-  <button type="button" class="primary" id="openTopupSupport" style="width:100%;margin-top:13px">Написать в поддержку и отправить чек</button>
+  <section id="topupMethodHome" class="kds-topup-view">
+    <p class="muted" style="font-size:12px;margin:10px 0 13px">Выбери удобный способ пополнения баланса</p>
+    <div class="kds-topup-method-list">
+      <button type="button" class="pay-option kds-topup-method" data-topup-method="sbp"><span class="kds-topup-method-icon">₽</span><span class="kds-topup-method-copy"><strong>СБП</strong><small>Перевод через Систему быстрых платежей</small></span><span class="kds-topup-method-arrow">›</span></button>
+      <button type="button" class="pay-option kds-topup-method" data-topup-method="crypto"><span class="kds-topup-method-icon">₿</span><span class="kds-topup-method-copy"><strong>Криптовалюта</strong><small>Оплата криптовалютой</small></span><span class="kds-topup-method-arrow">›</span></button>
+      <button type="button" class="pay-option kds-topup-method" data-topup-method="manual"><span class="kds-topup-method-icon">₸</span><span class="kds-topup-method-copy"><strong>Перевод в сомах / тенге</strong><small>Ручной перевод на карту O!Bank</small></span><span class="kds-topup-method-arrow">›</span></button>
+    </div>
+  </section>
+  <section id="topupPendingView" class="kds-topup-view" hidden>
+    <button type="button" class="subcat kds-topup-back" data-topup-back>← Назад к способам</button>
+    <div class="kds-topup-pending-icon">◷</div>
+    <h3 id="topupPendingTitle" style="margin:8px 0">Способ временно недоступен</h3>
+    <p id="topupPendingText" class="muted" style="font-size:13px;line-height:1.55">Интеграция пока находится в разработке. Мы сообщим, когда способ станет доступен.</p>
+    <span class="kds-topup-soon">СКОРО</span>
+  </section>
+  <section id="topupManualView" class="kds-topup-view" hidden>
+    <button type="button" class="subcat kds-topup-back" data-topup-back>← Назад к способам</button>
+    <h3 style="margin:12px 0 4px">Перевод в сомах / тенге</h3>
+    <p class="muted" style="font-size:12px;margin:0 0 12px">Выбери валюту, в которой будешь отправлять перевод.</p>
+    <div class="kds-topup-field"><label>Валюта перевода</label>
+      <div class="kds-topup-select" id="topupCurrencySelect">
+        <button type="button" class="kds-topup-select-trigger" id="topupCurrencyTrigger" aria-expanded="false"><span id="topupCurrencyLabel">Кыргызский сом (KGS)</span><span class="kds-topup-select-chevron">⌄</span></button>
+        <div class="kds-topup-select-menu" id="topupCurrencyMenu" hidden>
+          <button type="button" class="kds-topup-select-option active" data-currency="KGS">Кыргызский сом <small>KGS</small></button>
+          <button type="button" class="kds-topup-select-option" data-currency="KZT">Казахстанский тенге <small>KZT</small></button>
+        </div>
+      </div>
+    </div>
+    <label for="topupAmount">Сумма пополнения</label>
+    <input id="topupAmount" type="text" inputmode="decimal" placeholder="Например, 500" autocomplete="off">
+    <div class="kds-topup-card-details" id="topupCardDetails">
+      <div class="kds-topup-card-caption">РЕКВИЗИТЫ ПОЛУЧАТЕЛЯ</div>
+      <div class="kds-topup-bank">O!Bank · Кыргызстан · Visa</div>
+      <div class="kds-topup-card-number" id="topupCardNumber">4196 7200 6272 6517</div>
+      <div class="kds-topup-card-name">Aziz Kadyrov</div>
+      <button type="button" class="pay-option kds-topup-copy" id="copyTopupCard"><strong>Скопировать номер карты</strong></button>
+    </div>
+    <div id="topupPaymentInstructions" class="kds-topup-instructions"></div>
+    <div class="kds-topup-warning"><b>Важно: подтверждение оплаты</b><br>После перевода отправь чек в PDF или скриншот в чат поддержки. Зачисление баланса и выдача товара выполняются только после фактического поступления средств на счёт.</div>
+    <button type="button" class="primary" id="openTopupSupport" style="width:100%;margin-top:13px">Написать в поддержку</button>
+  </section>
 </div>
 <div class="order topup-success" id="topupSuccess" hidden>
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
@@ -1014,18 +1049,23 @@ async function toggleFavorite(id){try{const d=await api("POST",{action:"toggle_f
 document.addEventListener("click",e=>{const rate=e.target.closest("[data-rate]");if(rate&&activeProduct){const stars=Number(rate.dataset.rate),rateButtons=[...document.querySelectorAll("[data-rate]")];rateButtons.forEach(x=>x.disabled=true);api("POST",{action:"rate_product",product_id:activeProduct.id,stars}).then(d=>{activeProduct.my_rating=d.my_rating;activeProduct.rating_average=d.rating_average;activeProduct.rating_count=d.rating_count;activeProduct.can_rate=true;const row=state.products.find(x=>x.id===activeProduct.id);if(row)Object.assign(row,activeProduct);openProduct(activeProduct.id);renderProducts();toast("Оценка сохранена");}).catch(err=>{toast(err.message);rateButtons.forEach(x=>x.disabled=false);});return;}const fav=e.target.closest("[data-fav]");if(fav){e.stopPropagation();toggleFavorite(fav.dataset.fav);return}const g=e.target.closest("[data-go]");if(g){go(g.dataset.go);return}const game=e.target.closest("[data-game]");if(game){selectedGame=game.dataset.game;selectedSub="Все";selectedSubcategory="Все";selectedPlatform="Все";$("search").value="";renderProducts();window.scrollTo({top:0,behavior:"smooth"});return}const platform=e.target.closest("[data-platform]");if(platform){selectedPlatform=platform.dataset.platform;renderProducts();return}const subcat=e.target.closest("[data-subcategory]");if(subcat){selectedSubcategory=subcat.dataset.subcategory;renderProducts();return}const sub=e.target.closest("[data-sub]");if(sub){selectedSub=sub.dataset.sub;selectedSubcategory="Все";if(selectedSub==="Донат")selectedPlatform="Все";renderProducts();return}const card=e.target.closest("[data-product]");if(card){openProduct(card.dataset.product);return}const buy=e.target.closest("[data-modal-buy]");if(buy){buyPlan(buy.dataset.modalBuy,buy);return}});
 $("currencyToggle").onclick=toggleCurrency;$("closeProduct").onclick=()=>$("productModal").hidden=true;$("productModal").addEventListener("click",e=>{if(e.target===$("productModal"))$("productModal").hidden=true});
 $("backGames").onclick=()=>{selectedGame="Все игры";selectedSub="Все";selectedSubcategory="Все";selectedPlatform="Все";renderProducts();};$("search").addEventListener("input",renderProducts);$("miniBalance").onclick=()=>go("profile");
-function closeTopupModal(){$("topupModal").hidden=true;$("topupForm").hidden=false;$("topupSuccess").hidden=true;}
-$("topup").onclick=()=>{$("topupSuccess").hidden=true;$("topupForm").hidden=false;$("topupModal").hidden=false;updateManualTopupInstructions();};
+function closeTopupModal(){$("topupModal").hidden=true;$("topupForm").hidden=true;$("topupSuccess").hidden=true;}
+function showTopupView(view){["topupMethodHome","topupPendingView","topupManualView"].forEach(id=>$(id).hidden=id!==view);}
+function setTopupCurrency(currency){const isKZT=currency==="KZT";$("topupCurrencyLabel").textContent=isKZT?"Казахстанский тенге (KZT)":"Кыргызский сом (KGS)";$("topupAmount").placeholder=isKZT?"Например, 5000":"Например, 500";document.querySelectorAll("[data-currency]").forEach(b=>b.classList.toggle("active",b.dataset.currency===currency));$("topupCurrencyMenu").hidden=true;$("topupCurrencyTrigger").setAttribute("aria-expanded","false");$("topupManualView").dataset.currency=currency;updateManualTopupInstructions();}
+$("topup").onclick=()=>{$("topupSuccess").hidden=true;$("topupForm").hidden=false;$("topupModal").hidden=false;showTopupView("topupMethodHome");setTopupCurrency("KGS");};
 $("closeTopup").onclick=closeTopupModal;
 $("closeTopupSuccess").onclick=closeTopupModal;
 $("topupModal").addEventListener("click",e=>{if(e.target===$("topupModal"))closeTopupModal();});
+document.querySelectorAll("[data-topup-method]").forEach(btn=>btn.addEventListener("click",()=>{const method=btn.dataset.topupMethod;if(method==="manual"){showTopupView("topupManualView");setTopupCurrency("KGS");}else{const sbp=method==="sbp";$("topupPendingTitle").textContent=sbp?"СБП пока недоступна":"Криптовалюта пока недоступна";$("topupPendingText").textContent=sbp?"Подключение СБП ещё не завершено. Сейчас оплатить этим способом нельзя.":"Криптовалютные платежи пока не подключены. Сейчас оплатить этим способом нельзя.";showTopupView("topupPendingView");}}));
+document.querySelectorAll("[data-topup-back]").forEach(btn=>btn.addEventListener("click",()=>showTopupView("topupMethodHome")));
+$("topupCurrencyTrigger").onclick=()=>{const menu=$("topupCurrencyMenu");menu.hidden=!menu.hidden;$("topupCurrencyTrigger").setAttribute("aria-expanded",String(!menu.hidden));};
+document.querySelectorAll("[data-currency]").forEach(btn=>btn.addEventListener("click",()=>setTopupCurrency(btn.dataset.currency)));
+document.addEventListener("click",e=>{const wrap=$("topupCurrencySelect");if(wrap&&!wrap.contains(e.target)){$("topupCurrencyMenu").hidden=true;$("topupCurrencyTrigger").setAttribute("aria-expanded","false");}});
 function manualTopupAmount(){const raw=$("topupAmount").value.trim().replace(/\s/g,"").replace(",",".");return raw!==""&&Number.isFinite(Number(raw))?Number(raw):NaN;}
-function updateManualTopupInstructions(){const currency=$("topupCurrency").value,box=$("topupPaymentInstructions"),amount=manualTopupAmount();$("topupAmount").placeholder=currency==="RUB"?"Например, 100":currency==="KGS"?"Например, 500":"Например, 5000";if(currency==="KGS"){box.innerHTML='<b>Как оплатить из Кыргызстана (KGS)</b><ol style="padding-left:20px;margin:7px 0"><li>Открой приложение любого банка Кыргызстана: O!Bank, MBank, Бакай и другие.</li><li>Выбери перевод на карту и введи номер карты O!Bank, указанный выше.</li><li>Проверь реквизиты и отправь перевод в сомах.</li></ol><div style="color:#b9c4c8">Перевод принимается вручную. Комиссия, если она есть, зависит от банка отправителя.</div>';}else if(currency==="KZT"){box.innerHTML='<b>Как оплатить из Казахстана (KZT)</b><ol style="padding-left:20px;margin:7px 0"><li>В Kaspi.kz (или другом банке РК) открой «Переводы» → «Международные переводы» → «На карту другого банка».</li><li>Введи номер карты O!Bank выше. Страна должна определиться автоматически — Кыргызстан.</li><li>Если банк запросит данные получателя, укажи имя и фамилию латиницей: <b>Aziz Kadyrov</b>.</li><li>Проверь сумму и комиссию, затем отправь перевод.</li></ol><div style="border-left:3px solid #d9bd72;padding-left:9px;margin-top:8px"><b>Комиссия:</b> Kaspi взимает 0,95%, минимум 200 ₸. В других банках тариф может отличаться.</div>';}else{box.innerHTML='<b>Оплата в российских рублях (RUB)</b><p style="margin:7px 0">Ручной перевод принимается только на указанную карту O!Bank. Доступность перевода из конкретного российского банка и возможность отправки RUB необходимо предварительно подтвердить у поддержки.</p><b style="color:#f0c66c">Не отправляй RUB, пока поддержка не подтвердит маршрут и итоговую сумму к зачислению.</b>';}}
-$("topupCurrency").addEventListener("change",updateManualTopupInstructions);
+function updateManualTopupInstructions(){const currency=$("topupManualView").dataset.currency||"KGS",box=$("topupPaymentInstructions");if(currency==="KGS"){box.innerHTML='<b>Как оплатить из Кыргызстана (KGS)</b><ol><li>Открой приложение любого банка Кыргызстана: O!Bank, MBank, Бакай и другие.</li><li>Выбери перевод на карту и введи номер карты O!Bank, указанный выше.</li><li>Проверь реквизиты и отправь перевод в сомах.</li></ol><p>Комиссия, если она есть, зависит от банка отправителя.</p>';}else{box.innerHTML='<b>Как оплатить из Казахстана (KZT)</b><ol><li>В Kaspi.kz (или другом банке РК) открой «Переводы» → «Международные переводы» → «На карту другого банка».</li><li>Введи номер карты O!Bank выше. Страна должна определиться автоматически — Кыргызстан.</li><li>Если банк запросит данные получателя, укажи имя и фамилию латиницей: <b>Aziz Kadyrov</b>.</li><li>Проверь сумму и комиссию, затем отправь перевод.</li></ol><div class="kds-topup-fee"><b>Комиссия:</b> Kaspi — 0,95%, минимум 200 ₸. В других банках тариф может отличаться.</div>';}}
 $("topupAmount").addEventListener("input",updateManualTopupInstructions);
 $("copyTopupCard").onclick=async()=>{try{await navigator.clipboard.writeText("4196720062726517");toast("Номер карты скопирован");}catch(e){const t=document.createElement("textarea");t.value="4196720062726517";document.body.appendChild(t);t.select();try{document.execCommand("copy");toast("Номер карты скопирован");}catch(_){toast("Не удалось скопировать номер");}t.remove();}};
-$("openTopupSupport").onclick=()=>{const currency=$("topupCurrency").value,amount=manualTopupAmount();if(!Number.isFinite(amount)||amount<=0){toast("Укажи корректную сумму пополнения");return;}if(currency==="RUB"){toast("Сначала уточни у поддержки доступность перевода в RUB");}const message=`Здравствуйте! Хочу пополнить баланс KADZI STORE. Сумма: ${amount} ${currency}. Способ: ручной перевод на карту O!Bank. Подтвердите, пожалуйста, возможность перевода. После оплаты отправлю чек.`;const url="https://t.me/ByKadzi?text="+encodeURIComponent(message);if(tg?.openTelegramLink)tg.openTelegramLink(url);else window.open(url,"_blank");};
-updateManualTopupInstructions();
+$("openTopupSupport").onclick=()=>{const currency=$("topupManualView").dataset.currency||"KGS",amount=manualTopupAmount();if(!Number.isFinite(amount)||amount<=0){toast("Укажи корректную сумму пополнения");return;}const message=`Здравствуйте! Хочу пополнить баланс KADZI STORE. Сумма: ${amount} ${currency}. Способ: ручной перевод на карту O!Bank. Получатель: Aziz Kadyrov. После перевода отправлю чек в этот чат.`;const url="https://t.me/ByKadzi?text="+encodeURIComponent(message);if(tg?.openTelegramLink)tg.openTelegramLink(url);else window.open(url,"_blank");};
 $("notificationSettings").addEventListener("change",async()=>{const payload={action:"save_notification_settings",payment_confirmation:$("prefPayment").checked,order_status:$("prefStatus").checked,order_fulfilled:$("prefFulfilled").checked,announcements:$("prefAnnouncements").checked};$("notificationSettingsMsg").textContent="Сохраняю…";try{const d=await api("POST",payload);state.notification_settings=d.settings;$("notificationSettingsMsg").textContent="Настройки сохранены";}catch(e){$("notificationSettingsMsg").textContent="Ошибка: "+e.message;}});$("markNotificationsRead").onclick=async()=>{try{await api("POST",{action:"mark_notifications_read"});state.notifications=state.notifications.map(n=>({...n,read_at:n.read_at||new Date().toISOString()}));state.unread_count=0;renderNotifications();}catch(e){toast(e.message);}};
 $("notificationButton").onclick=()=>go("notifications");
 $("notificationList").addEventListener("click",async e=>{const row=e.target.closest("[data-notification-id]");if(!row)return;const id=row.dataset.notificationId;const item=state.notifications.find(n=>String(n.id)===String(id));if(!item||item.read_at)return;try{await api("POST",{action:"mark_notifications_read",id});item.read_at=new Date().toISOString();state.unread_count=Math.max(0,Number(state.unread_count||0)-1);renderNotifications();}catch(err){toast(err.message);}});
