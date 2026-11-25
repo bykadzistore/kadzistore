@@ -1427,7 +1427,7 @@ async function manageReview(id,operation,button){const o=m.orders.find(x=>x.id==
  $('kdsMarketSupportChat').onclick=()=>window.open('https://t.me/ByKadzi','_blank');
  document.querySelectorAll('[data-go="market"]').forEach(b=>b.addEventListener('click',()=>{bootstrap().catch(()=>{});showView('home');}));document.querySelectorAll('[data-go="chats"]').forEach(b=>b.addEventListener('click',()=>bootstrap().then(()=>loadOrders()).catch(e=>toast(e.message))));
 }
-if($('market')){const oldSubmit=$('kdsSellSubmit');if(oldSubmit){const freshSubmit=oldSubmit.cloneNode(true);freshSubmit.removeAttribute('data-kds-bound');oldSubmit.replaceWith(freshSubmit);freshSubmit.onclick=(event)=>{event.preventDefault();createListing();};}try{bind();}catch(initError){console.error('KADZI marketplace bind/init error:',initError);toast('Ошибка инициализации магазина. Перезагрузи страницу.');}}
+if($('market')){const oldSubmit=$('kdsSellSubmit');if(oldSubmit){const freshSubmit=oldSubmit.cloneNode(true);freshSubmit.removeAttribute('data-kds-bound');oldSubmit.replaceWith(freshSubmit);freshSubmit.onclick=(event)=>{event.preventDefault();createListing();};}try{bind();}catch(initError){console.error('KADZI marketplace bind/init error:',initError);toast('Ошибка инициализации магазина. Перезагрузи страницу.');}bootstrap().catch(()=>{});}
 })();</script>
 <style id="kds-v15-10-59-chat-fixed-and-finance-readable">
 /* Chats page stays fixed; only the chat list/messages can scroll internally. */
