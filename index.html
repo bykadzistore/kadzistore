@@ -629,6 +629,93 @@ header{background:linear-gradient(110deg,#0b0a11f5,#17101af2)!important}
 .kds-topup-card-details{border:1px solid rgba(215,180,89,.34);background:linear-gradient(145deg,rgba(185,139,36,.12),#17191f);border-radius:14px;padding:13px;margin:13px 0}.kds-topup-card-caption{font-size:10px;letter-spacing:.1em;color:#d9bd72;font-weight:900;margin-bottom:7px}.kds-topup-bank{font-size:11px;color:var(--muted,#aaa)}.kds-topup-card-number{font-size:19px;font-weight:900;letter-spacing:.035em;margin:7px 0}.kds-topup-card-name{font-size:13px;margin-bottom:10px}.topup-modal .kds-topup-copy{width:100%;padding:10px 12px}.kds-topup-instructions{font-size:13px;line-height:1.55;margin:12px 0}.kds-topup-instructions ol{padding-left:20px;margin:7px 0}.kds-topup-instructions li{margin:5px 0}.kds-topup-instructions p{color:#b9c4c8;margin:8px 0}.kds-topup-fee{border-left:3px solid #d9bd72;padding-left:9px;margin-top:8px}.kds-topup-warning{border:1px solid rgba(224,173,77,.4);background:rgba(224,173,77,.07);border-radius:12px;padding:12px;margin:12px 0;font-size:12px;line-height:1.5}
 </style>
 
+
+<style id="kds-topup-glass-gradient-v15-12-13">
+/* KADZI STORE identity: graphite glass, red highlights and emerald status accents. */
+.topup-modal{
+  background:
+    radial-gradient(ellipse at 8% 0%,rgba(243,61,82,.17),transparent 42%),
+    radial-gradient(ellipse at 100% 100%,rgba(73,232,170,.09),transparent 38%),
+    linear-gradient(145deg,rgba(27,30,40,.94),rgba(10,12,17,.97))!important;
+  border:1px solid rgba(255,255,255,.13)!important;
+  box-shadow:0 24px 80px rgba(0,0,0,.62),inset 0 1px 0 rgba(255,255,255,.08)!important;
+  -webkit-backdrop-filter:blur(24px) saturate(145%);
+  backdrop-filter:blur(24px) saturate(145%);
+}
+.topup-modal .topup-form{color:var(--txt,#f5f6fa)}
+.kds-topup-method{
+  position:relative;overflow:hidden;
+  background:linear-gradient(135deg,rgba(255,255,255,.095),rgba(255,255,255,.025))!important;
+  border:1px solid rgba(255,255,255,.13)!important;
+  border-radius:16px!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.075),0 9px 24px rgba(0,0,0,.2)!important;
+  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+  transition:transform .18s ease,border-color .18s ease,background .18s ease;
+}
+.kds-topup-method:before{
+  content:"";position:absolute;inset:0 auto 0 0;width:3px;
+  background:linear-gradient(180deg,var(--red,#f33d52),rgba(243,61,82,.12));
+  opacity:.9;
+}
+.kds-topup-method:active{transform:scale(.985);border-color:rgba(243,61,82,.48)!important}
+.kds-topup-method-icon{
+  display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;
+  border-radius:14px;
+  background:linear-gradient(145deg,rgba(243,61,82,.22),rgba(255,255,255,.055))!important;
+  border:1px solid rgba(243,61,82,.3)!important;color:#fff!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 5px 16px rgba(0,0,0,.2);
+}
+.kds-topup-method-icon svg,.kds-topup-pending-icon svg{
+  width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+.kds-topup-method-copy strong{color:#fff;letter-spacing:.01em}
+.kds-topup-method-copy small{color:rgba(226,231,240,.66)!important}
+.kds-topup-method-arrow{color:rgba(255,255,255,.72)!important}
+.kds-topup-back{
+  background:linear-gradient(135deg,rgba(255,255,255,.09),rgba(255,255,255,.025))!important;
+  border:1px solid rgba(255,255,255,.12)!important;border-radius:12px!important;
+  color:#f5f6fa!important;
+}
+.kds-topup-pending-icon{
+  background:linear-gradient(145deg,rgba(243,61,82,.18),rgba(255,255,255,.04))!important;
+  border:1px solid rgba(243,61,82,.28)!important;color:#ff7181!important;
+}
+.kds-topup-soon{
+  background:rgba(243,61,82,.12)!important;border:1px solid rgba(243,61,82,.28)!important;
+  color:#ff8794!important;
+}
+.kds-topup-select-trigger{
+  background:linear-gradient(135deg,rgba(255,255,255,.105),rgba(255,255,255,.035))!important;
+  border:1px solid rgba(255,255,255,.15)!important;border-radius:13px!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08)!important;
+}
+.kds-topup-select-chevron{color:#ff7181!important}
+.kds-topup-select-menu{
+  background:rgba(17,20,28,.96)!important;border:1px solid rgba(255,255,255,.15)!important;
+  border-radius:14px!important;box-shadow:0 18px 42px rgba(0,0,0,.55)!important;
+  -webkit-backdrop-filter:blur(22px);backdrop-filter:blur(22px);
+}
+.kds-topup-select-option{color:#f5f6fa!important}
+.kds-topup-select-option small{color:#ff8794!important}
+.kds-topup-select-option.active,.kds-topup-select-option:active{
+  background:linear-gradient(100deg,rgba(243,61,82,.2),rgba(255,255,255,.045))!important;
+  color:#fff!important;
+}
+.kds-topup-card-details{
+  background:linear-gradient(145deg,rgba(255,255,255,.095),rgba(255,255,255,.025))!important;
+  border:1px solid rgba(255,255,255,.16)!important;border-radius:16px!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08)!important;
+  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+}
+.kds-topup-card-caption{color:#ff8794!important}
+.kds-topup-fee{border-left-color:var(--red,#f33d52)!important}
+.kds-topup-warning{
+  background:rgba(243,61,82,.075)!important;border-color:rgba(243,61,82,.25)!important;
+}
+@media(hover:hover){.kds-topup-method:hover{border-color:rgba(243,61,82,.38)!important;background:linear-gradient(135deg,rgba(255,255,255,.13),rgba(255,255,255,.04))!important}}
+</style>
+
 </head>
 <body>
 <div id="kdsBoot" role="status" aria-live="polite">
@@ -774,14 +861,14 @@ header{background:linear-gradient(110deg,#0b0a11f5,#17101af2)!important}
   <section id="topupMethodHome" class="kds-topup-view">
     <p class="muted" style="font-size:12px;margin:10px 0 13px">Выбери удобный способ пополнения баланса</p>
     <div class="kds-topup-method-list">
-      <button type="button" class="pay-option kds-topup-method" data-topup-method="sbp"><span class="kds-topup-method-icon">₽</span><span class="kds-topup-method-copy"><strong>СБП</strong><small>Перевод через Систему быстрых платежей</small></span><span class="kds-topup-method-arrow">›</span></button>
-      <button type="button" class="pay-option kds-topup-method" data-topup-method="crypto"><span class="kds-topup-method-icon">₿</span><span class="kds-topup-method-copy"><strong>Криптовалюта</strong><small>Оплата криптовалютой</small></span><span class="kds-topup-method-arrow">›</span></button>
-      <button type="button" class="pay-option kds-topup-method" data-topup-method="manual"><span class="kds-topup-method-icon">₸</span><span class="kds-topup-method-copy"><strong>Перевод в сомах / тенге</strong><small>Ручной перевод на карту O!Bank</small></span><span class="kds-topup-method-arrow">›</span></button>
+      <button type="button" class="pay-option kds-topup-method" data-topup-method="sbp"><span class="kds-topup-method-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 8h13.5a3.5 3.5 0 0 1 0 7H8"/><path d="m11 11-3 4 3 4"/><path d="M20 5H6a3 3 0 0 0-3 3v8"/></svg></span><span class="kds-topup-method-copy"><strong>СБП</strong><small>Перевод через Систему быстрых платежей</small></span><span class="kds-topup-method-arrow">›</span></button>
+      <button type="button" class="pay-option kds-topup-method" data-topup-method="crypto"><span class="kds-topup-method-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 7.5h4.1a2.2 2.2 0 0 1 0 4.4H9zm0 4.4h4.8a2.3 2.3 0 0 1 0 4.6H9zM11 5.5v13M14 5.5v1.7M14 16.8v1.7"/></svg></span><span class="kds-topup-method-copy"><strong>Криптовалюта</strong><small>Оплата криптовалютой</small></span><span class="kds-topup-method-arrow">›</span></button>
+      <button type="button" class="pay-option kds-topup-method" data-topup-method="manual"><span class="kds-topup-method-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18M7 15h4"/></svg></span><span class="kds-topup-method-copy"><strong>Перевод в сомах / тенге</strong><small>Ручной перевод на карту O!Bank</small></span><span class="kds-topup-method-arrow">›</span></button>
     </div>
   </section>
   <section id="topupPendingView" class="kds-topup-view" hidden>
     <button type="button" class="subcat kds-topup-back" data-topup-back>← Назад к способам</button>
-    <div class="kds-topup-pending-icon">◷</div>
+    <div class="kds-topup-pending-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
     <h3 id="topupPendingTitle" style="margin:8px 0">Способ временно недоступен</h3>
     <p id="topupPendingText" class="muted" style="font-size:13px;line-height:1.55">Интеграция пока находится в разработке. Мы сообщим, когда способ станет доступен.</p>
     <span class="kds-topup-soon">СКОРО</span>
