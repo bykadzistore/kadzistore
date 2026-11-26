@@ -110,6 +110,13 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
   <div id="referralGlobalStats" class="stats" style="margin-top:12px"><div class="stat"><small>Регистрации по ссылкам</small><strong>—</strong></div><div class="stat"><small>Стали продавцами</small><strong>—</strong></div><div class="stat"><small>Ожидают публикации</small><strong>—</strong></div><div class="stat"><small>Конверсия</small><strong>—</strong></div></div>
  </div>
  <div class="panel">
+  <div class="number">Топ-10 приглашающих</div>
+  <div class="muted">Рейтинг по количеству успешных рефералов — приглашённых пользователей, впервые выставивших товар. В таблице также показано общее число регистраций.</div>
+  <div id="referralLeaderboard7d" style="margin-top:12px"><div class="notice">Загрузка рейтинга…</div></div>
+  <div id="referralLeaderboard30d" style="margin-top:14px"><div class="notice">Загрузка рейтинга…</div></div>
+  <div id="referralLeaderboardAll" style="margin-top:14px"><div class="notice">Загрузка рейтинга…</div></div>
+ </div>
+ <div class="panel">
   <div class="number">Поиск рефералов пользователя</div>
   <div class="muted">Введи постоянный Telegram ID приглашающего, чтобы увидеть его личную статистику и всю цепочку приглашений.</div>
   <div class="actions" style="align-items:center"><input id="referralAdminSearch" inputmode="numeric" placeholder="Telegram ID пользователя" style="flex:1;min-width:180px"><button class="primary" id="referralAdminFind">Найти</button></div>
@@ -638,6 +645,12 @@ document.getElementById("braisoxideMappings").addEventListener("click",async e=>
 function showAdminSection(which){for(const id of ["ordersSection","productsSection","inventorySection","announcementsSection","gamesSection","analyticsSection","auditSection","marketplaceSection","amlSection","withdrawalsSection","sanctionsSection","supplierSection","braisoxideSection","referralsSection"])document.getElementById(id).classList.toggle("hide",id!==which);for(const id of ["ordersTab","productsTab","inventoryTab","announcementsTab","gamesTab","analyticsTab","auditTab","marketplaceTab","amlTab","withdrawalsTab","sanctionsTab","supplierTab","braisoxideTab","referralsTab"])document.getElementById(id).classList.toggle("primary",id===(which+"Tab").replace("Section",""));if(which==="productsSection")loadProducts();if(which==="inventorySection")loadInventory();if(which==="announcementsSection"){loadAnnouncements();loadBroadcastHistory();}if(which==="gamesSection")loadGames();if(which==="analyticsSection")loadAnalytics();if(which==="auditSection")loadAudit();if(which==="marketplaceSection")loadMarketplaceAdmin();if(which==="amlSection")loadAmlAdmin();if(which==="withdrawalsSection")loadAdminWithdrawals();if(which==="supplierSection")loadBraisbot();if(which==="braisoxideSection")loadBraisoxide();if(which==="referralsSection")loadReferralAdmin();}
 
 function referralAdminStat(label,value){return '<div class="stat"><small>'+esc(label)+'</small><strong>'+esc(value)+'</strong></div>';}
+function renderReferralLeaderboard(targetId,title,rows){
+ const el=document.getElementById(targetId);if(!el)return;
+ const list=Array.isArray(rows)?rows:[];
+ const body=list.length?list.map((u,i)=>'<tr><td style="padding:8px 6px">'+(i+1)+'</td><td style="padding:8px 6px"><b>'+esc(u.first_name||'Пользователь')+'</b>'+(u.username?' <span class="muted">@'+esc(u.username)+'</span>':'')+'<div class="muted">ID: '+esc(u.telegram_user_id||'—')+'</div></td><td style="padding:8px 6px;text-align:center">'+esc(u.registrations??0)+'</td><td style="padding:8px 6px;text-align:center"><b>'+esc(u.sellers??0)+'</b></td></tr>').join(''):'<tr><td colspan="4" class="muted" style="padding:14px;text-align:center">Пока нет данных за этот период</td></tr>';
+ el.innerHTML='<div class="number">'+title+'</div><div style="overflow-x:auto;margin-top:8px"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="color:var(--muted);text-align:left;border-bottom:1px solid var(--line)"><th style="padding:7px 6px">№</th><th style="padding:7px 6px">Пользователь</th><th style="padding:7px 6px;text-align:center">Регистрации</th><th style="padding:7px 6px;text-align:center">Продавцы</th></tr></thead><tbody>'+body+'</tbody></table></div>';
+}
 function renderReferralAdmin(data){
  const global=data.global||{};
  document.getElementById('referralGlobalStats').innerHTML=[
@@ -646,6 +659,10 @@ function renderReferralAdmin(data){
   referralAdminStat('Ожидают публикации',global.waiting??'—'),
   referralAdminStat('Конверсия',(global.conversion_percent??0)+'%')
  ].join('');
+ const leaders=data.leaderboards||{};
+ renderReferralLeaderboard('referralLeaderboard7d','Топ-10 за 7 дней',leaders.days7||[]);
+ renderReferralLeaderboard('referralLeaderboard30d','Топ-10 за 30 дней',leaders.days30||[]);
+ renderReferralLeaderboard('referralLeaderboardAll','Топ-10 за всё время',leaders.allTime||[]);
  const out=document.getElementById('referralAdminResult');
  if(!data.target){out.innerHTML='<div class="notice">Введи Telegram ID приглашающего, чтобы открыть подробную статистику.</div>';return;}
  const t=data.target,st=data.stats||{},rows=data.referrals||[];
