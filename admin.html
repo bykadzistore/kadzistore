@@ -1,0 +1,1140 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KDS Admin · V14</title>
+<script src="https://telegram.org/js/telegram-web-app.js">
+</script>
+<style>
+:root{color-scheme:dark;--bg:#090909;--panel:#151515;--line:#292929;--red:#ef3434;--muted:#999;--green:#37c978;--yellow:#f3b544}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f5f5f5;font:14px Inter,system-ui,Arial,sans-serif}
+header{padding:18px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#090909;z-index:3}
+.logo{font-weight:900;letter-spacing:1px;font-size:20px}.logo b{color:var(--red)}.tag{font-size:11px;color:var(--muted)}
+main{max-width:900px;margin:auto;padding:16px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:16px}
+.stat,.order{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:13px}.stat small{color:var(--muted)}.stat strong{display:block;font-size:21px;margin-top:5px}
+.filters{display:flex;gap:7px;overflow:auto;padding:3px 0 12px}.filters button{white-space:nowrap}
+button{border:1px solid var(--line);background:#202020;color:white;border-radius:9px;padding:9px 12px;font-weight:650;cursor:pointer}
+button.primary{background:var(--red);border-color:var(--red)}button.good{background:#145d37;border-color:#145d37}button.warn{background:#684715;border-color:#684715}
+button:disabled{opacity:.5;cursor:wait}.order{margin:9px 0}.top{display:flex;justify-content:space-between;gap:10px}.number{font-weight:800;font-size:16px}.status{font-size:11px;border-radius:20px;padding:5px 8px;background:#333;white-space:nowrap}.status.awaiting_fulfillment{color:#f5f6fa;border:1px solid #ffffff38;background:#ffffff0b}.status.processing{color:var(--yellow);border:1px solid #f3b54455;background:#f3b54412}.status.in_delivery,.status.delivering,.status.shipping{color:#80baff;border:1px solid #80baff55;background:#80baff12}.status.fulfilled{color:var(--green);border:1px solid #37c97855;background:#37c97812}.status.refunded,.status.cancelled{color:#ff8585;border:1px solid #ff858555;background:#ff858512}
+.meta{color:var(--muted);font-size:12px;line-height:1.6;margin:9px 0}.price{font-weight:800;font-size:17px}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.empty,.notice{padding:24px;text-align:center;color:var(--muted);background:var(--panel);border-radius:12px}
+.error{color:#ff8585}.refresh{font-size:12px;color:var(--muted)}.hide{display:none}
+.tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 14px}.tabs button{min-width:0;white-space:normal}.tabs button.primary{background:linear-gradient(135deg,#f33d52,#c9233c)}.panel{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:14px;margin:10px 0}
+.field{display:grid;gap:6px;margin:10px 0}.field label{font-size:12px;color:var(--muted)}
+input:not([type="checkbox"]):not([type="hidden"]){width:100%;min-width:0;min-height:46px;background:#141418;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:11px 13px;color:#f5f5f5;font:inherit;outline:none;transition:border-color .2s,box-shadow .2s}
+input::placeholder{color:#777b86}input:focus{border-color:#d93668;box-shadow:0 0 0 3px #d9366825,0 0 18px #d9366818}
+input[type="checkbox"]{accent-color:#d93668}
+.dropdown{position:relative}.dropdown-menu{display:none;position:absolute;z-index:8;top:calc(100% + 6px);left:0;right:0;padding:5px;background:#17171c;border:1px solid rgba(255,255,255,.12);border-radius:12px;box-shadow:0 14px 35px #000b;max-height:220px;overflow:auto}.dropdown.open .dropdown-menu{display:block}.dropdown-option{display:block;width:100%;text-align:left;background:transparent;border:0;border-radius:8px;padding:10px;color:#eee}.dropdown-option:hover,.dropdown-option.active{background:#d9366822;color:#ff8aa9}.product{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:13px;margin:9px 0}
+.product-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.muted{color:var(--muted);font-size:12px;line-height:1.5}
+.planline{padding:7px 0;border-top:1px solid var(--line);font-size:12px}
+@media(max-width:480px){.stats{grid-template-columns:repeat(3,1fr)}.stat{padding:10px}.stat strong{font-size:17px}.order{padding:11px}}
+
+/* KADZI STORE V8 · Glass Hybrid admin */
+:root{--bg:#08070c;--panel:#151019;--line:#ffffff24;--red:#ff2947;--green:#ff5b72;--muted:#aaa2b0}
+body{background:radial-gradient(ellipse at 10% 0%,#e51e3c25,transparent 36%),linear-gradient(150deg,#08070c,#120a12 55%,#08070c);background-attachment:fixed}
+header{background:#0b080de0!important;border-bottom:1px solid #ffffff22!important;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
+.logo b{color:#ff2947!important}.tabs{background:#ffffff08;border:1px solid #ffffff1e;border-radius:17px;padding:6px;backdrop-filter:blur(18px)}
+button{border-radius:13px!important;transition:transform .2s,filter .2s,box-shadow .2s}button.primary{background:linear-gradient(110deg,#ff2947,#c70d30)!important;border-color:#ff6578!important;box-shadow:0 7px 20px #ff183a36,inset 0 1px #ffffff44}
+.panel,.order,.product,.stat{background:linear-gradient(145deg,#ffffff13,#ffffff05 60%,#ff233b0b)!important;border:1px solid #ffffff24!important;border-radius:19px!important;box-shadow:0 12px 30px #0006,inset 0 1px #ffffff18;backdrop-filter:blur(18px) saturate(135%);-webkit-backdrop-filter:blur(18px) saturate(135%)}
+input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!important;border-radius:12px!important;color:#fff!important}input:focus,textarea:focus,select:focus{outline:1px solid #ff4962;box-shadow:0 0 0 3px #ff29471c}
+.status{border:1px solid #ff52633a;background:#ff294714;color:#ff8292}.announcement-editor{border-color:#ff52636b!important}.announcement-button-fields{padding:13px;border:1px solid #ffffff20;border-radius:15px;background:#ffffff08;margin:14px 0}.announcement-button-fields>b{display:block;margin-bottom:5px}.ann-button-row{display:grid;grid-template-columns:70px 1fr;gap:7px;align-items:center;margin-top:10px}.ann-button-row span{font-size:11px;color:#ff8292;font-weight:850}.ann-button-row input:last-child{grid-column:2}.ann-preview{display:flex;gap:12px;align-items:flex-start}.ann-preview img{width:86px;height:70px;object-fit:cover;border-radius:11px;border:1px solid #ffffff2a}.ann-preview-content{flex:1;min-width:0}.ann-meta{font-size:10px;color:#ff8292;font-weight:900;letter-spacing:1px;margin:4px 0}.actions button{min-height:39px}
+@media(max-width:480px){.ann-button-row{grid-template-columns:1fr}.ann-button-row input:last-child{grid-column:1}.tabs{gap:5px}}
+
+.glass-dropdown .dropdown-menu{background:linear-gradient(145deg,#211723f2,#100d17f5);border:1px solid #ffffff35;backdrop-filter:blur(22px) saturate(150%);-webkit-backdrop-filter:blur(22px) saturate(150%);box-shadow:0 18px 45px #000b,inset 0 1px #ffffff20;border-radius:15px;padding:7px}.glass-dropdown .dropdown-option{border-radius:10px;padding:12px}.glass-dropdown .dropdown-option.active,.glass-dropdown .dropdown-option:hover{background:linear-gradient(110deg,#ff29472c,#b20f3020);color:#ff9aaa}.bulk-check{accent-color:#ff2947;width:18px;height:18px}.notice-pill{display:inline-flex;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:800;background:#f3b54420;color:#ffd17b;border:1px solid #f3b54455}.audit-row{padding:12px 0;border-bottom:1px solid #ffffff16}.file-pick{display:block;width:100%;padding:12px;border:1px dashed #ffffff44;border-radius:13px;background:#ffffff08;color:#ddd}.modal-backdrop{position:fixed;inset:0;background:#000b;z-index:20;display:flex;align-items:center;justify-content:center;padding:16px}.modal-card{width:min(100%,520px);max-height:90vh;overflow:auto;background:linear-gradient(145deg,#211723,#100d17);border:1px solid #ffffff30;border-radius:20px;padding:16px;box-shadow:0 20px 70px #000c}.hide{display:none!important}
+
+/* KADZI STORE ADMIN PERFORMANCE: preserve glass panels, reduce expensive blur on phones/tablets. */
+@media (pointer:coarse) and (max-width:900px){
+ header,.tabs,.panel,.order,.product,.stat,.glass-dropdown .dropdown-menu{
+  -webkit-backdrop-filter:blur(12px) saturate(135%) !important;
+  backdrop-filter:blur(12px) saturate(135%) !important;
+ }
+}
+
+.market-admin-card{border:1px solid var(--line);border-radius:14px;padding:13px;margin:10px 0;background:#141821}
+.market-admin-card h3{margin:0 0 7px;font-size:15px}.market-admin-card p{margin:5px 0;color:var(--muted);font-size:12px;overflow-wrap:anywhere}
+.market-admin-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.market-admin-actions button{min-width:110px}
+.market-admin-message{padding:9px 11px;border-radius:11px;background:#1a202a;margin:7px 0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}.market-admin-message.mine{background:#19372b;margin-left:18px}
+/* V15.10.22 support message types */ .market-admin-message.system{background:rgba(125,135,150,.13);border:1px solid rgba(160,170,185,.35)}.market-admin-message.delivery{background:rgba(40,150,110,.12);border:1px solid rgba(70,190,145,.35)}
+
+#marketAdminChatOverlay{position:fixed;inset:0;z-index:100;background:#07060beF;backdrop-filter:blur(20px);display:flex;flex-direction:column;padding:12px;}
+#marketAdminChatOverlay.hide{display:none!important}.market-chat-head{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px;border-bottom:1px solid #ffffff20}.market-chat-title{font-weight:850;font-size:16px}.market-chat-sub{font-size:11px;color:var(--muted);margin-top:4px}.market-chat-feed{flex:1;min-height:0;overflow:auto;padding:12px 3px;display:flex;flex-direction:column;gap:8px}.market-chat-msg{max-width:min(88%,600px);align-self:flex-start;background:#1b1721;border:1px solid #ffffff16;padding:11px 13px;border-radius:15px 15px 15px 4px;white-space:pre-wrap;overflow-wrap:anywhere}.market-chat-msg.mine{align-self:flex-end;background:#35202a;border-color:#ff294733;border-radius:15px 15px 4px 15px}.market-chat-msg.system{align-self:center;max-width:96%;background:#ffffff0a;border-color:#ffffff20;text-align:center;font-size:12px}.market-chat-msg.delivery{border-color:#37c97855;background:#153126}.market-chat-msg small{display:block;color:#a99fac;font-size:10px;margin-top:7px}.market-chat-msg img{display:block;max-width:min(100%,280px);border-radius:10px;margin-top:8px}.market-chat-compose{display:flex;gap:8px;padding-top:10px;border-top:1px solid #ffffff20;align-items:flex-end}.market-chat-compose textarea{flex:1;min-width:0;max-height:120px;resize:vertical;border-radius:14px;padding:12px;background:#0c0911;border:1px solid #ffffff2b;color:white;font:inherit}.market-chat-compose button{min-height:45px}.market-admin-card .market-admin-actions button{min-width:0}
+
+
+/* Braisbot searchable selectors */
+.supplier-picker{position:relative;width:100%}
+.supplier-picker>input[type="search"]{width:100%;box-sizing:border-box;min-height:48px;padding:12px 42px 12px 14px;border-radius:13px;border:1px solid var(--border,#ffffff26);background:var(--input,#100d15);color:var(--text,#fff);font:inherit;font-size:14px;outline:none}
+.supplier-picker>input[type="search"]:focus{border-color:#ff365d;box-shadow:0 0 0 2px #ff365d22}
+.supplier-picker-list{display:none;position:absolute;z-index:50;top:calc(100% + 6px);left:0;right:0;max-height:260px;overflow:auto;background:#17131d;border:1px solid #ffffff24;border-radius:13px;box-shadow:0 14px 35px #0009;padding:5px}
+.supplier-picker.open .supplier-picker-list{display:block}
+.supplier-picker-option{display:block;width:100%;text-align:left;padding:11px 12px;border:0;border-radius:9px;background:transparent;color:#f7f4fa;font:inherit;font-size:13px;line-height:1.4;cursor:pointer}
+.supplier-picker-option:hover,.supplier-picker-option:focus{background:#ffffff12;outline:none}
+.supplier-picker-option small{display:block;color:#aaa1b1;font-size:11px;margin-top:3px}
+.supplier-picker-empty{padding:14px 12px;color:#aaa1b1;font-size:13px}
+#braisbotPlanSelected,#braisbotProductSelected{display:block;margin-top:6px;font-size:11px}
+</style><style>#inventoryTab,#inventorySection,[data-admin-section='inventorySection']{display:none!important}</style></head>
+<body>
+<header><div><div class="logo"><b>KD</b>S ADMIN</div><div class="tag">Панель управления магазином</div></div><div class="actions" style="margin:0"><button id="backToStore">← В магазин</button><button id="reload">↻ Обновить</button></div></header>
+<main>
+<div class="tabs"><button id="ordersTab" class="primary">Заказы</button><button id="productsTab">Товары</button><button id="inventoryTab">Склад</button><button id="announcementsTab">Объявления</button><button id="gamesTab">Игры</button><button id="analyticsTab">Аналитика</button><button id="auditTab">Журнал</button><button id="marketplaceTab">Маркетплейс</button><button id="referralsTab">Рефералы</button><button id="amlTab">AML</button><button id="withdrawalsTab">Выводы</button><button id="sanctionsTab">Наказания</button><button id="supplierTab">Braisbot</button><button id="braisoxideTab">Braisoxide</button></div>
+<section id="ordersSection">
+<div class="stats"><div class="stat"><small>Новые</small><strong id="sNew">—</strong></div><div class="stat"><small>В работе</small><strong id="sWork">—</strong></div><div class="stat"><small>Выполнено</small><strong id="sDone">—</strong></div></div>
+<section class="panel" id="orderSearchPanel"><div class="number">Поиск заказов</div><div class="muted">Номер заказа, Telegram ID, username или название товара.</div><div class="actions" style="align-items:center"><input id="orderSearch" placeholder="Например, 1042 или @username" style="flex:1;min-width:180px"><button class="primary" id="orderSearchBtn">Найти</button><button id="orderSearchClear">Сбросить</button></div><div id="orderSearchResult" class="muted"></div></section>
+<section class="order" style="margin:0 0 16px">
+  <div class="number">Баланс пользователей</div>
+  <div class="meta">Поиск по Telegram ID, username или имени. Пользователь всегда определяется по постоянному Telegram ID.</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <input id="userSearch" placeholder="Telegram ID, @username или имя" style="flex:1;min-width:190px">
+    <button class="primary" id="userFind">Найти</button>
+  </div>
+  <div id="userResult" style="margin-top:12px"></div>
+</section>
+<section class="panel" id="adminUsersPanel">
+  <div class="number">Пользователи</div><div class="muted">Показывает зарегистрированные аккаунты, включая пользователей без username. Открывай профиль по постоянному Telegram ID.</div>
+  <div class="actions"><button id="loadNoUsernameUsers">Показать без username</button><button id="loadRecentUsers">Последние пользователи</button></div>
+  <div id="adminUsersResult" style="margin-top:10px"></div>
+</section>
+<section class="panel" id="adminWalletHistoryPanel">
+  <div class="number">История пополнений и списаний через админку</div><div class="muted">Все ручные операции сохраняются независимо от изменения username. Нажми «Открыть пользователя», чтобы перейти к его профилю и истории.</div>
+  <div class="actions"><button class="primary" id="reloadAdminWalletHistory">↻ Обновить историю</button></div>
+  <div id="adminWalletHistory" style="margin-top:10px"></div>
+</section>
+<div class="filters" id="filters">
+<button data-filter="all" class="primary">Все</button><button data-filter="awaiting_fulfillment">Оплачено</button><button data-filter="processing">В обработке</button><button data-filter="in_delivery">В доставке</button><button data-filter="fulfilled">Выполнены</button><button data-filter="refunded">Возвраты</button>
+</div>
+<div class="refresh" id="updated">Загрузка заказов…</div><div id="orders"></div>
+</section>
+<section id="referralsSection" class="hide">
+ <div class="panel">
+  <div class="number">Реферальная система KADZI MARKET</div>
+  <div class="muted">Учитываются только новые регистрации по первой реферальной ссылке. Успешный реферал — пользователь, который впервые опубликовал активный товар.</div>
+  <div id="referralGlobalStats" class="stats" style="margin-top:12px"><div class="stat"><small>Регистрации по ссылкам</small><strong>—</strong></div><div class="stat"><small>Стали продавцами</small><strong>—</strong></div><div class="stat"><small>Ожидают публикации</small><strong>—</strong></div><div class="stat"><small>Конверсия</small><strong>—</strong></div></div>
+ </div>
+ <div class="panel">
+  <div class="number">Топ-10 приглашающих</div>
+  <div class="muted">Рейтинг по количеству успешных рефералов — приглашённых пользователей, впервые выставивших товар. В таблице также показано общее число регистраций.</div>
+  <div id="referralLeaderboard7d" style="margin-top:12px"><div class="notice">Загрузка рейтинга…</div></div>
+  <div id="referralLeaderboard30d" style="margin-top:14px"><div class="notice">Загрузка рейтинга…</div></div>
+  <div id="referralLeaderboardAll" style="margin-top:14px"><div class="notice">Загрузка рейтинга…</div></div>
+ </div>
+ <div class="panel">
+  <div class="number">Поиск рефералов пользователя</div>
+  <div class="muted">Введи постоянный Telegram ID приглашающего, чтобы увидеть его личную статистику и всю цепочку приглашений.</div>
+  <div class="actions" style="align-items:center"><input id="referralAdminSearch" inputmode="numeric" placeholder="Telegram ID пользователя" style="flex:1;min-width:180px"><button class="primary" id="referralAdminFind">Найти</button></div>
+  <div id="referralAdminResult" style="margin-top:12px"></div>
+ </div>
+</section>
+<section id="productsSection" class="hide">
+ <div class="panel">
+  <div class="number">Управление товарами</div>
+  <div class="muted">Добавляй и редактируй товары, тарифы, цены и видимость в магазине.</div>
+  <div class="actions"><button class="primary" id="newProduct">＋ Добавить товар</button><button id="reloadProducts">↻ Обновить список</button></div>
+ </div>
+ <div id="productEditor" class="panel hide">
+  <div class="number" id="editorTitle">Новый товар</div>
+  <input type="hidden" id="pId">
+  <div class="field"><label>Название</label><input id="pName" placeholder="Например, MAGIC VIP"></div>
+   <div class="field"><label>Slug (латиницей, например magic-vip)</label><input id="pSlug" placeholder="magic-vip"></div>
+  <div class="field"><label>Краткое описание</label><input id="pSubtitle" type="text" placeholder="Короткий текст на карточке"></div>
+  <div class="field"><label>Полное описание</label><textarea id="pDescription" rows="4" placeholder="Подробное описание товара"></textarea></div>
+  <div class="field"><label>Особенности (разделяй точкой с запятой)</label><input id="pFeatures" type="text" placeholder="Функция 1; Функция 2"></div>
+  <div class="field"><label>Игра</label><select id="pGame"><option>Oxide Survival Island</option><option>PUBG Mobile</option><option>Standoff 2</option><option>Mobile Legends</option><option>Genshin Impact</option><option>Free Fire</option><option>Counter Flame</option></select></div>
+  <div class="field"><label>Раздел каталога</label><div class="dropdown glass-dropdown"><input id="pSection" type="text" readonly placeholder="Выбери раздел"><div class="dropdown-menu"></div></div></div><div class="field"><label>Подраздел</label><div class="dropdown glass-dropdown"><input id="pSubcategory" type="text" readonly placeholder="Выбери подраздел"><div class="dropdown-menu"></div></div></div>
+  <div class="field"><label>Платформа</label><select id="pPlatform"><option value="Android">Android</option><option value="iOS">iOS</option><option value="PC">PC</option></select></div>
+  <div class="field"><label>Ссылка на изображение (HTTPS)</label><input id="pImage" type="url" placeholder="https://..."></div>
+  <div class="field"><label>Порядок сортировки</label><input id="pSort" type="text" inputmode="numeric" value="0"></div>
+  <div class="field"><label>Тарифы и цены продажи (Название | дни | цена ₽ | on/off)</label><input id="pPlans" type="text" placeholder="1 день | 1 | 250,5 | on; 7 дней | 7 | 1440 | on"></div><div class="field"><label>Закупочные цены в рублях ₽ (в том же порядке, через точку с запятой)</label><input id="pCosts" type="text" inputmode="decimal" placeholder="123,2; 410,7; 821,5"><div class="muted">USD пересчитан по курсу ЦБ РФ на 24.11.2026: 1 USD = 82,1488 ₽. При изменении курса суммы можно обновить.</div></div>
+  <label style="display:flex;gap:8px;align-items:center"><input id="pActive" type="checkbox" checked style="width:auto"> Товар активен</label>
+  <div class="actions"><button class="primary" id="saveProduct">Сохранить товар</button><button id="cancelProduct">Отмена</button></div>
+  <div id="productMsg" class="muted"></div>
+ </div>
+ <div class="panel" id="categoryManager">
+  <div class="number">Категории по играм</div>
+  <div class="muted">Можно создавать разделы, подразделы и платформенные фильтры, редактировать, скрывать и удалять их. Удаление не затрагивает товары и ключи; используемые элементы сначала нужно перенести.</div>
+  <div class="field"><label>Игра для просмотра и управления</label><div class="dropdown glass-dropdown"><input id="categoryGame" type="text" readonly placeholder="Выбери игру"><div class="dropdown-menu"></div></div></div>
+  <label style="display:flex;gap:10px;align-items:center;margin:8px 0 14px"><input id="categoryAllGames" type="checkbox" style="width:auto"> Создать для всех игр, включая скрытые</label>
+  <div class="muted" style="margin-bottom:12px">Элементы каталога не привязаны к конкретному товару. Создай раздел или подраздел здесь, а затем используй его при добавлении любого товара. Название и значение можно вводить вручную.</div>
+  <div class="field"><label>Тип элемента</label><select id="categoryType"><option value="section">Раздел</option><option value="subcategory">Подраздел</option><option value="filter">Фильтр платформы</option></select></div>
+  <div class="field" id="categoryParentWrap"><label>Родительский раздел</label><div class="dropdown glass-dropdown"><input id="categoryParent" type="text" readonly placeholder="Выбери раздел"><div class="dropdown-menu"></div></div></div>
+  <div class="field"><label>Название</label><input id="newCategoryName" maxlength="80" placeholder="Например, Пополнение по ID"></div>
+  <div class="field"><label>Значение для товаров / фильтра</label><input id="newCategoryValue" maxlength="80" placeholder="Можно оставить пустым, тогда будет использовано название"></div>
+  <div class="field"><label>Порядок сортировки</label><input id="categorySort" type="number" min="0" value="100"></div>
+  <input type="hidden" id="categoryEditId">
+  <div class="actions"><button class="primary" id="addCategory">＋ Добавить элемент</button><button id="cancelCategoryEdit" class="hide">Отмена редактирования</button><button id="reloadCategories">↻ Обновить</button></div>
+  <div id="categoryList" class="muted">Загрузка категорий…</div><div id="categoryMsg" class="muted"></div>
+ </div>
+ <div class="panel" id="bulkTools"><div class="number">Массовое управление</div><div class="muted">Выбери товары, чтобы одновременно установить или снять уведомление.</div><div class="actions"><button id="selectAllProducts">Выбрать все</button><button id="clearProductSelection">Снять выбор</button></div><div class="field"><label>Статус уведомления</label><div class="dropdown glass-dropdown"><input id="bulkNoticeStatus" type="text" readonly placeholder="Без уведомления"><div class="dropdown-menu"></div></div></div><div class="field"><label>Текст для покупателей</label><textarea id="bulkNoticeText" rows="3" maxlength="500" placeholder="Игра обновилась. Ключ доступен к покупке и начнёт работать после выхода обновления."></textarea></div><div class="actions"><button class="primary" id="applyBulkNotice">Применить к выбранным</button></div><div id="bulkMsg" class="muted"></div></div><div id="productsList"><div class="notice">Загрузка товаров…</div></div>
+</section>
+<section id="inventorySection" class="hide">
+ <div class="panel">
+  <h2>Содержимое товаров</h2>
+  <p class="muted">Выбери товар и тариф, затем вставь содержимое. Каждая непустая строка будет сохранена как отдельная единица товара.</p>
+  <div class="field"><label>Товар</label><div class="dropdown" data-dropdown="inventoryProduct"><input id="inventoryProduct" type="text" readonly placeholder="Загрузка товаров…"><div class="dropdown-menu"></div></div></div>
+  <div class="field"><label>Тариф</label><div class="dropdown" data-dropdown="inventoryPlan"><input id="inventoryPlan" type="text" readonly placeholder="Сначала выбери товар"><div class="dropdown-menu"></div></div></div>
+  <div class="field"><label>Ключи (разделяй точкой с запятой)</label><input id="inventoryLines" type="text" placeholder="KEY-001-ABCDE; KEY-002-FGHIJ; KEY-003-KLMNO"></div>
+  <div class="meta">Пустые значения игнорируются. Повторяющиеся ключи не добавляются повторно.</div>
+  <div class="actions"><button class="primary" id="saveInventory">Добавить в остатки</button><button id="clearInventory">Очистить поле</button></div>
+  <div id="inventoryMsg" class="meta"></div>
+ </div>
+ <div id="inventoryProductsList"></div>
+</section>
+<section id="announcementsSection" class="hide">
+ <div class="panel"><div class="number">Объявления на главной</div><div class="muted">Создавай новости, редактируй текст и включай или выключай публикацию.</div><div class="actions"><button class="primary" id="newAnnouncement">＋ Новое объявление</button><button id="reloadAnnouncements">↻ Обновить</button></div></div>
+ <div id="announcementEditor" class="panel hide announcement-editor"><div class="number" id="announcementEditorTitle">Новое объявление</div><input type="hidden" id="aId"><div class="field"><label>Формат объявления</label><select id="aType"><option value="card">Компактная карточка</option><option value="banner">Большой баннер</option></select></div><div class="field"><label>Заголовок</label><input id="aTitle" maxlength="120" placeholder="Например, Новое поступление"></div><div class="field"><label>Текст объявления</label><textarea id="aBody" rows="4" maxlength="2000" placeholder="Текст для главной страницы"></textarea></div><div class="field"><label>Изображение (HTTPS, необязательно)</label><input id="aImage" type="url" maxlength="2000" placeholder="https://..."></div><div class="field"><label>Порядок показа (меньше = выше)</label><input id="aSort" type="number" min="0" max="99999" step="1" value="0"></div><div class="announcement-button-fields"><b>Кнопки и ссылки · необязательно</b><div class="muted">Можно добавить до четырёх кнопок. Например, переход в Telegram-канал.</div><div class="ann-button-row"><span>Кнопка 1</span><input id="aBtnLabel1" maxlength="40" placeholder="Текст кнопки"><input id="aBtnUrl1" type="url" maxlength="2000" placeholder="https://t.me/название_канала"></div><div class="ann-button-row"><span>Кнопка 2</span><input id="aBtnLabel2" maxlength="40" placeholder="Текст кнопки"><input id="aBtnUrl2" type="url" maxlength="2000" placeholder="https://t.me/название_канала"></div><div class="ann-button-row"><span>Кнопка 3</span><input id="aBtnLabel3" maxlength="40" placeholder="Текст кнопки"><input id="aBtnUrl3" type="url" maxlength="2000" placeholder="https://t.me/название_канала"></div><div class="ann-button-row"><span>Кнопка 4</span><input id="aBtnLabel4" maxlength="40" placeholder="Текст кнопки"><input id="aBtnUrl4" type="url" maxlength="2000" placeholder="https://t.me/название_канала"></div></div><div class="panel" style="margin-top:12px"><b>Оповещение пользователей</b><div class="muted">Можно отдельно сохранить объявление или сразу отправить уведомление выбранной аудитории.</div><label style="display:flex;gap:8px;align-items:center;margin:10px 0"><input id="broadcastInApp" type="checkbox" style="width:auto"> Уведомить в приложении</label><label style="display:flex;gap:8px;align-items:center;margin:10px 0"><input id="broadcastTelegram" type="checkbox" style="width:auto"> Отправить сообщение в Telegram-бот</label><div class="field"><label>Кому отправить</label><select id="broadcastAudience"><option value="app_users">Пользователям приложения</option><option value="bot_subscribers">Пользователям, открывавшим приложение (доступны в Telegram)</option><option value="selected">Выбранным Telegram ID</option></select></div><div class="field" id="broadcastIdsWrap" style="display:none"><label>Telegram ID через запятую</label><textarea id="broadcastIds" rows="2" placeholder="123456789, 987654321"></textarea></div></div><div class="actions"><button class="primary" id="saveAnnouncement">Сохранить объявление</button><button class="good" id="saveAndBroadcastAnnouncement">Сохранить и оповестить</button><button id="cancelAnnouncement">Отмена</button></div><div id="announcementMsg" class="muted"></div></div>
+ <div id="announcementsList"><div class="notice">Загрузка объявлений…</div></div><div class="panel"><div class="number">История рассылок</div><div id="broadcastHistory" class="muted">Загрузка…</div></div>
+</section>
+<section id="analyticsSection" class="hide">
+ <div class="panel"><div class="number">Подробная аналитика продаж</div><div class="muted">Магазин: цена продажи минус закупочная цена и комиссия оплаты 1%. Маркетплейс: комиссия KADZI по фактической разнице между суммой покупателя и выплатой продавцу, минус комиссия оплаты 1%. Общая чистая прибыль — сумма двух направлений.</div><div class="actions" style="align-items:center"><select id="analyticsRange"><option value="today">Сегодня</option><option value="7">7 дней</option><option value="30">30 дней</option><option value="90">90 дней</option><option value="360">360 дней</option><option value="all">За всё время</option></select><button class="primary" id="reloadAnalytics">Обновить</button></div></div>
+ <div class="panel"><div class="number">Общие показатели магазина</div><div class="muted">Суммарные показатели основного магазина и маркетплейса за выбранный период.</div><div class="stats" style="grid-template-columns:repeat(2,minmax(0,1fr))"><div class="stat"><small>Общий оборот</small><strong id="anCombinedTurnover">—</strong></div><div class="stat"><small>Всего заказов</small><strong id="anCombinedOrders">—</strong></div><div class="stat"><small>Завершённые сделки</small><strong id="anCombinedDone">—</strong></div><div class="stat"><small>Отмены / возвраты</small><strong id="anCombinedCancelled">—</strong></div></div></div>
+ <div class="panel"><div class="number">Маркетплейс — аналитика за период</div><div class="stats" style="grid-template-columns:repeat(2,minmax(0,1fr))"><div class="stat"><small>Оборот маркетплейса</small><strong id="anMarketTurnover">—</strong></div><div class="stat"><small>Заказы маркетплейса</small><strong id="anMarketOrders">—</strong></div><div class="stat"><small>Завершено</small><strong id="anMarketDone">—</strong></div><div class="stat"><small>Отменено / возвращено</small><strong id="anMarketCancelled">—</strong></div><div class="stat"><small>Активные объявления</small><strong id="anMarketListings">—</strong></div><div class="stat"><small>Продавцы маркетплейса</small><strong id="anMarketSellers">—</strong></div></div><div class="muted">Доход маркетплейса считается по фактической комиссии KADZI (сумма сделки минус выплата продавцу); из оборота сделки вычитается комиссия оплаты 1%.</div></div>
+ <div class="panel"><div class="number">Прибыль по направлениям</div><div class="stats" style="grid-template-columns:repeat(2,minmax(0,1fr))"><div class="stat"><small>Прибыль магазина после закупки и комиссии</small><strong id="anShopNetProfit">—</strong></div><div class="stat"><small>Комиссия KADZI с маркетплейса</small><strong id="anMarketCommission">—</strong></div><div class="stat"><small>Комиссия оплаты маркетплейса (1%)</small><strong id="anMarketPaymentFee">—</strong></div><div class="stat"><small>Чистая прибыль маркетплейса</small><strong id="anMarketNetProfit">—</strong></div><div class="stat"><small>ОБЩАЯ ЧИСТАЯ ПРИБЫЛЬ</small><strong id="anCombinedNetProfit">—</strong></div></div><div class="muted">Расчёт маркетплейса использует фактическую сумму выплаты продавцу из сделки, а не предполагаемые 10%, чтобы учитывать округления и индивидуальные условия.</div></div>
+ <div class="stats" style="grid-template-columns:repeat(2,minmax(0,1fr))"><div class="stat"><small>Выручка</small><strong id="anRevenue">—</strong></div><div class="stat"><small>Валовая прибыль</small><strong id="anProfit">—</strong></div><div class="stat"><small>Себестоимость</small><strong id="anCost">—</strong></div><div class="stat"><small>Заказов в расчёте</small><strong id="anCount">—</strong></div><div class="stat"><small>Средний чек</small><strong id="anAverage">—</strong></div><div class="stat"><small>Возвраты / отмены</small><strong id="anRefunds">—</strong></div><div class="stat"><small>Чистая прибыль</small><strong id="anNetProfit">—</strong></div><div class="stat"><small>Чистая маржа</small><strong id="anNetMargin">—</strong></div><div class="stat"><small>Без себестоимости</small><strong id="anMissingCost">—</strong></div></div>
+ <div class="panel"><div class="number">Проверки безопасности и учёта</div><div class="muted">Проверки заказов, журнала баланса, выдач и оценок. Ненулевое значение требует проверки.</div><div id="analyticsAudit" class="muted">Загрузка проверок…</div></div><div class="panel"><div class="number">Продажи по товарам</div><div id="analyticsProducts" class="muted">Загрузка…</div></div>
+ <div class="panel"><div class="number">Продажи по играм</div><div id="analyticsGames" class="muted">Загрузка…</div></div>
+ <div class="panel"><div class="number">Последние заказы в выбранном периоде</div><div id="analyticsRecent" class="muted">Загрузка…</div></div>
+</section>
+<section id="gamesSection" class="hide">
+ <div class="panel"><div class="number">Игры каталога</div><div class="muted">Добавляй игры, меняй название и обложку. Игру с товарами удалить нельзя — сначала перенеси товары.</div><div class="actions"><button class="primary" id="newGame">＋ Добавить игру</button><button id="reloadGames">↻ Обновить</button></div></div>
+ <div id="gameEditor" class="panel hide"><input type="hidden" id="gId"><div class="field"><label>Название игры</label><input id="gName" placeholder="Название"></div><div class="field"><label>Slug</label><input id="gSlug" placeholder="game-name"></div><div class="field"><label>URL обложки HTTPS</label><input id="gImage" placeholder="https://..."></div><div class="field"><label>Порядок</label><input id="gSort" type="number" min="0" value="0"></div><label><input id="gActive" type="checkbox" checked style="width:auto"> Активна</label><div class="actions"><button class="primary" id="saveGame">Сохранить</button><button id="cancelGame">Отмена</button></div><div id="gameMsg" class="muted"></div></div>
+ <div id="gamesList"></div>
+</section>
+<section id="auditSection" class="hide"><div class="panel"><div class="number">Журнал действий</div><div class="muted">Изменения товаров, цен, склада, заказов и уведомлений.</div><button class="primary" id="reloadAudit">↻ Обновить журнал</button></div><div id="auditList"><div class="notice">Загрузка журнала…</div></div></section>
+
+<section id="marketplaceSection" class="hide">
+ <div class="panel">
+  <div class="number">Маркетплейс KADZI</div>
+  <div class="muted">Модерация объявлений, контроль сделок и рассмотрение споров. Все действия выполняются через сервер Supabase.</div>
+  <div class="actions"><button class="primary" id="reloadMarketplace">↻ Обновить данные</button></div>
+ </div>
+ <section class="panel"><div class="number">Споры</div><div class="muted">При открытом споре переписка покупателя и продавца разделяется. Ответы отправляются каждой стороне отдельно.</div><div id="marketplaceDisputes"><div class="notice">Нажми «Обновить данные».</div></div></section>
+ <section class="panel"><div class="number">Объявления</div><div class="filters" id="marketListingFilters"><button class="primary" data-market-filter="active">Активные</button><button data-market-filter="paused">Приостановлены</button><button data-market-filter="under_review">На проверке</button><button data-market-filter="sold">Проданы</button><button data-market-filter="removed">Сняты</button><button data-market-filter="all">Все</button></div><div id="marketplaceListings"><div class="notice">Загрузка после открытия раздела.</div></div></section>
+ <section class="panel"><div class="number">Аналитика маркетплейса</div><div class="muted">Статистика по последним 200 сделкам, возвращаемым сервером.</div><div class="stats" style="grid-template-columns:repeat(2,minmax(0,1fr))"><div class="stat"><small>Оборот покупок</small><strong id="marketStatTurnover">—</strong></div><div class="stat"><small>Расчётный доход KADZI*</small><strong id="marketStatIncome">—</strong></div><div class="stat"><small>Заказов</small><strong id="marketStatCount">—</strong></div><div class="stat"><small>Доставлено / завершено</small><strong id="marketStatDone">—</strong></div></div><div class="muted">*Оценка по 10% наценке. Точная прибыль появится после получения сервером суммы выплаты продавцу; оценка не является финансовым отчётом.</div></section><section class="panel"><div class="number">Сделки</div><div class="filters" id="marketOrderFilters"><button class="primary" data-market-order-filter="all">Все</button><button data-market-order-filter="active">В процессе</button><button data-market-order-filter="delivered">Доставлены</button><button data-market-order-filter="completed">Завершены</button><button data-market-order-filter="cancelled">Отменены</button></div><div id="marketplaceOrders"><div class="notice">Загрузка после открытия раздела.</div></div></section>
+ <section class="panel hide" id="marketplaceSupportPanel"><div class="number" id="marketplaceSupportTitle">Чат по заказу</div><div id="marketplaceSupportMessages"></div><div class="actions"><button id="replyChat">Ответить в общий чат</button><button id="closeMarketplaceSupport">Закрыть переписку</button></div></section>
+</section>
+<section id="amlSection" class="hide">
+ <div class="panel">
+  <div class="number">Центр AML-проверок</div>
+  <div class="muted">Подозрительная активность требует проверки. Риск-балл сам по себе не доказывает нарушение и не означает автоматическую блокировку аккаунта.</div>
+  <div class="actions"><button class="primary" id="amlRefresh">↻ Обновить данные</button><span class="muted" id="amlUpdated"></span></div>
+  <div class="stats" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-top:12px">
+   <div class="stat"><small>Открытые AML-кейсы</small><strong id="amlOpenCount">—</strong></div>
+   <div class="stat"><small>Заявки на вывод</small><strong id="amlWithdrawCount">—</strong></div>
+  </div>
+  <div id="amlCases"><div class="notice">Открой раздел и нажми «Обновить данные».</div></div>
+ </div>
+</section>
+<section id="withdrawalsSection" class="hide">
+ <div class="panel">
+  <div class="number">Управление выводами средств</div>
+  <div class="muted">Отмечай «Успешно» только после фактической выплаты. При отмене укажи причину.</div>
+  <div class="actions"><button class="primary" id="withdrawalsRefresh">↻ Обновить заявки</button><span class="muted" id="withdrawalsUpdated"></span></div>
+  <div class="stats" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-top:12px">
+   <div class="stat"><small>Всего заявок</small><strong id="withdrawalsTotal">—</strong></div>
+   <div class="stat"><small>В процессе</small><strong id="withdrawalsPending">—</strong></div>
+   <div class="stat"><small>Завершено</small><strong id="withdrawalsClosed">—</strong></div>
+  </div>
+  <div class="filters" id="withdrawalsFilters"><button class="primary" data-withdraw-filter="all">Все</button><button data-withdraw-filter="pending">В процессе</button><button data-withdraw-filter="paid">Успешно</button><button data-withdraw-filter="rejected">Отмена</button></div>
+  <div id="withdrawalsList"><div class="notice">Открой раздел для загрузки заявок.</div></div>
+ </div>
+</section>
+<section id="sanctionsSection" class="hide">
+ <div class="panel">
+  <div class="number">Наказания пользователей</div>
+  <div class="muted">Выбери нарушение. KADZI сам предложит тип наказания и срок. Ты можешь изменить рекомендацию и подтвердить решение. Невыдача товара сама по себе не наказывается.</div>
+  <div class="field"><label>Telegram ID или username</label><div class="actions" style="margin-top:0"><input id="sanctionUserSearch" placeholder="Например, 123456789 или @username" style="flex:1;min-width:180px"><button class="primary" id="sanctionUserFind">Найти пользователя</button></div></div>
+  <div id="sanctionUserResult" class="muted"></div>
+  <div id="sanctionControls" class="hide">
+   <div class="panel" style="margin:12px 0;padding:12px">
+    <div class="number">KADZI Auto-Link Detection</div>
+    <div class="muted">KADZI автоматически ищет другие профили по совпадению подтверждённых идентификаторов. Результат — кандидаты для проверки, а не автоматическое признание одного владельца.</div>
+    <div class="actions"><button class="primary" id="linkedAutoDetect">Найти потенциально связанные профили</button></div>
+    <div id="linkedAutoDetectResult" class="muted" style="margin-top:8px">Нажми «Найти», чтобы запустить проверку.</div>
+    <div class="number" style="margin-top:14px">Подтверждённые связи</div>
+    <div id="sanctionLinkedAccounts" class="muted" style="margin-top:8px">Загрузка связанных профилей…</div>
+    <div class="field"><label>Telegram ID связанного профиля</label><input id="linkedTelegramId" inputmode="numeric" placeholder="Например, 987654321"></div>
+    <div class="field"><label>Основание подтверждения связи</label><textarea id="linkedVerificationNote" rows="2" maxlength="1000" placeholder="Укажи проверенные доказательства связи аккаунтов"></textarea></div>
+    <div class="actions"><button class="primary" id="linkedAccountAdd">Подтвердить связь профилей</button></div>
+    <div class="muted" id="linkedAccountMessage"></div>
+   </div>
+   <div class="field"><label for="sanctionViolation">Какое нарушение совершил пользователь?</label><select id="sanctionViolation"><option value="">Выбери нарушение…</option><option value="fraud">Мошенничество / обман покупателя</option><option value="account_recovery">Восстановление ранее проданного игрового аккаунта</option><option value="no_delivery">Не выдал оплаченный товар</option><option value="fake_delivery">Подмена товара / ложное подтверждение передачи</option><option value="threats_insults">Оскорбления или обычные угрозы</option><option value="severe_threats">Серьёзные угрозы / запугивание / травля</option><option value="ban_evasion">Обход блокировки через другой аккаунт</option><option value="prohibited_goods">Продажа запрещённого товара</option><option value="spam_listing">Спам или вводящее в заблуждение объявление</option><option value="other">Другое нарушение</option></select><div class="muted" id="sanctionRecommendation" style="margin-top:7px">После выбора нарушения здесь появится рекомендуемое наказание.</div></div>
+   <div class="field"><label>Тип наказания (можно изменить)</label><select id="sanctionType"><option value="warning">Предупреждение</option><option value="block_buying">Запрет покупок</option><option value="block_selling">Запрет продаж</option><option value="block_marketplace">Блокировка маркетплейса</option><option value="block_chat">Блокировка чата</option><option value="block_financial">Блокировка финансовых операций</option><option value="block_all_operations">Полная блокировка операций</option></select></div>
+   <div class="field"><label>Срок наказания</label><select id="sanctionDuration"><option value="1">1 час</option><option value="24">24 часа</option><option value="72">3 дня</option><option value="168">7 дней</option><option value="720">30 дней</option><option value="0">Бессрочно</option></select></div>
+   <label class="muted" id="holdLinkedWrap" style="display:none;align-items:flex-start;gap:8px"><input id="holdLinkedAccounts" type="checkbox" checked style="margin-top:3px"> При подтверждённом мошенничестве временно удержать доступный баланс на подтверждённых связанных профилях</label>
+   <div class="muted" id="sanctionOverrideHint">Тип наказания и срок заполняются автоматически. Их можно изменить вручную.</div>
+   <div class="field"><label>Причина наказания</label><textarea id="sanctionReason" rows="3" maxlength="500" placeholder="Укажи фактическую причину и обстоятельства нарушения"></textarea></div>
+   <div class="actions"><button class="primary" id="sanctionApply">Подтвердить наказание</button></div>
+   <div id="sanctionMsg" class="muted"></div>
+  </div>
+ </div>
+ <div class="panel"><div class="number">История наказаний выбранного пользователя</div><div id="sanctionHistory" class="muted">Найди пользователя, чтобы увидеть историю.</div></div>
+</section>
+</main>
+<div id="marketAdminChatOverlay" class="hide"><div class="market-chat-head"><div><div class="market-chat-title" id="marketChatModalTitle">Чат заказа</div><div class="market-chat-sub">Администратор · общий чат сделки</div></div><button id="marketChatClose">Закрыть</button></div><div class="market-chat-feed" id="marketChatModalMessages"><div class="notice">Загрузка переписки…</div></div><form class="market-chat-compose" id="marketChatCompose"><textarea id="marketChatInput" rows="2" maxlength="4000" placeholder="Написать сообщение…"></textarea><button class="primary" id="marketChatSend" type="submit">Отправить</button></form></div>
+
+<section id="supplierSection" class="hide">
+ <div class="panel">
+  <div class="number">Braisbot API</div>
+  <div class="muted">Braisbot подключён только для софтов и ключей PUBG Mobile. UC, валюты, предметы и товары других игр через этого поставщика не закупаются.</div>
+  <div class="actions"><button class="primary" id="braisbotReload">↻ Обновить каталог и баланс</button></div>
+  <div id="braisbotStatus" class="muted">Загрузка…</div>
+  <div id="braisbotAccount" class="market-admin-card hide"></div>
+ </div>
+ <div class="panel">
+  <div class="number">Привязать тариф к товару поставщика</div>
+  <div class="field"><label for="braisbotPlanSearch">Тариф KADZI STORE</label>
+   <div class="supplier-picker" id="braisbotPlanPicker"><input id="braisbotPlanSearch" type="search" autocomplete="off" placeholder="Поиск тарифа по названию, игре или сроку…"><input type="hidden" id="braisbotPlan"><div class="supplier-picker-list" id="braisbotPlanOptions"></div></div>
+   <div class="muted" id="braisbotPlanSelected">Тариф не выбран</div>
+  </div>
+  <div class="field"><label for="braisbotProductSearch">Товар Braisbot</label>
+   <div class="supplier-picker" id="braisbotProductPicker"><input id="braisbotProductSearch" type="search" autocomplete="off" placeholder="Поиск товара по названию или ID…"><input type="hidden" id="braisbotProduct"><div class="supplier-picker-list" id="braisbotProductOptions"></div></div>
+   <div class="muted" id="braisbotProductSelected">Товар не выбран</div>
+  </div>
+  <div class="actions"><button class="primary" id="braisbotSave">Сохранить привязку</button></div>
+  <div class="muted">Проверь название, валюту и цену у поставщика перед включением автозакупки. Закупочная стоимость Braisbot в USD пока не конвертируется в себестоимость заказа в RUB.</div>
+  <div id="braisbotMsg" class="muted"></div>
+ </div>
+ <div class="panel">
+  <div class="number">Активные привязки</div>
+  <div id="braisbotMappings"><div class="notice">Загружаю…</div></div>
+ </div>
+</section>
+
+<section id="braisoxideSection" class="hide">
+ <div class="panel">
+  <div class="number">Braisoxide API</div>
+  <div class="muted">Второй поставщик. Здесь отображаются баланс, каталог и привязки тарифов KADZI STORE.</div>
+  <div class="actions"><button class="primary" id="braisoxideReload">↻ Обновить каталог и баланс</button></div>
+  <div id="braisoxideStatus" class="muted">Нажми обновить для загрузки данных.</div>
+  <div id="braisoxideAccount" class="market-admin-card hide"></div>
+ </div>
+ <div class="panel">
+  <div class="number">Привязать тариф к товару Braisoxide</div>
+  <div class="field"><label for="braisoxidePlanSearch">Тариф KADZI STORE</label><div class="supplier-picker" id="braisoxidePlanPicker"><input id="braisoxidePlanSearch" type="search" autocomplete="off" placeholder="Поиск тарифа…"><input type="hidden" id="braisoxidePlan"><div class="supplier-picker-list" id="braisoxidePlanOptions"></div></div><div class="muted" id="braisoxidePlanSelected">Тариф не выбран</div></div>
+  <div class="field"><label for="braisoxideProductSearch">Товар Braisoxide</label><div class="supplier-picker" id="braisoxideProductPicker"><input id="braisoxideProductSearch" type="search" autocomplete="off" placeholder="Поиск товара…"><input type="hidden" id="braisoxideProduct"><div class="supplier-picker-list" id="braisoxideProductOptions"></div></div><div class="muted" id="braisoxideProductSelected">Товар не выбран</div></div>
+  <div class="actions"><button class="primary" id="braisoxideSave">Сохранить привязку</button></div><div id="braisoxideMsg" class="muted"></div>
+ </div>
+ <div class="panel"><div class="number">Активные привязки</div><div id="braisoxideMappings"><div class="notice">Загрузи каталог.</div></div></div>
+</section>
+
+<script>
+const tg=window.Telegram?.WebApp; tg?.ready(); tg?.expand();
+const initData=tg?.initData||"";
+let allOrders=[], filter="all", allProducts=[], selectedProductIds=new Set();
+const labels={awaiting_fulfillment:"Оплачено",processing:"В обработке",in_delivery:"В доставке",delivering:"В доставке",shipping:"В доставке",fulfilled:"Выполнено",refunded:"Возврат",cancelled:"Отменено"};
+const money=v=>new Intl.NumberFormat("ru-RU",{minimumFractionDigits:0,maximumFractionDigits:1}).format(Number(v||0))+" ₽";
+function parseRubInput(v){const raw=String(v??"").trim().replace(/\s/g,"").replace(",", ".");if(!/^\d+(?:\.\d)?$/.test(raw))return NaN;return Number(raw);}
+function validRubAmount(v,allowZero=false){return Number.isFinite(v)&&(allowZero?v>=0:v>0)&&v<=100000000&&Math.abs(v*10-Math.round(v*10))<1e-7;}
+async function api(method="GET",body,section){
+ const url="https://vpuaihznkswrpsqxgcvm.supabase.co/functions/v1/kds-admin?api=1"+(section?"&section="+encodeURIComponent(section):"");
+ const r=await fetch(url,{method,headers:{"Content-Type":"application/json","X-Telegram-Init-Data":initData},body:body?JSON.stringify(body):undefined});
+ const d=await r.json(); if(!r.ok)throw new Error(d.error||"Ошибка запроса"); return d;
+}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function setDropdown(id,options,value){const input=document.getElementById(id),wrap=input.closest(".dropdown"),menu=wrap.querySelector(".dropdown-menu");const selected=options.find(x=>String(x.value)===String(value));input.value=selected?selected.label:"";input.dataset.value=selected?selected.value:"";menu.innerHTML=options.map(x=>'<button type="button" class="dropdown-option '+(selected&&String(selected.value)===String(x.value)?'active':'')+'" data-option-value="'+esc(x.value)+'">'+esc(x.label)+'</button>').join("")||'<div class="muted" style="padding:10px">Нет вариантов</div>';}
+document.addEventListener("click",e=>{const option=e.target.closest("[data-option-value]");if(option){const wrap=option.closest(".dropdown"),input=wrap.querySelector("input"),id=input.id;input.dataset.value=option.dataset.optionValue;input.value=option.textContent.trim();wrap.classList.remove("open");wrap.dispatchEvent(new CustomEvent("dropdown-change",{bubbles:true}));if(id==="inventoryProduct")renderInventoryPlans();return;}const wrap=e.target.closest(".dropdown");document.querySelectorAll(".dropdown.open").forEach(x=>{if(x!==wrap)x.classList.remove("open")});if(wrap){wrap.classList.toggle("open");}});
+function render(){
+ const rows=allOrders.filter(o=>filter==="all"||o.status===filter);
+ document.getElementById("orders").innerHTML=rows.length?rows.map(o=>{
+ const u=o.kds_users||{}, who=[u.first_name,u.username?"@"+u.username:null].filter(Boolean).join(" · ")||"Покупатель";
+ let acts="";
+ if(o.status==="awaiting_fulfillment")acts='<button class="primary" data-act="start" data-id="'+o.id+'">Взять в работу</button><button class="warn" data-act="refund" data-id="'+o.id+'">Отменить и вернуть</button>';
+ if(o.status==="processing")acts='<button class="primary" data-act="dispatch" data-id="'+o.id+'">Передать в доставку</button><button class="warn" data-act="refund" data-id="'+o.id+'">Отменить и вернуть</button>';
+ if(o.status==="in_delivery")acts='<button class="good" data-act="fulfill" data-id="'+o.id+'">Выдать товар</button><button class="warn" data-act="refund" data-id="'+o.id+'">Отменить и вернуть</button>';
+ return '<section class="order"><div class="top"><div><div class="number">Заказ #'+esc(o.order_number)+'</div><div class="meta">'+esc(who)+'<br>Telegram ID: '+esc(u.telegram_user_id||"—")+'</div></div><span class="status '+esc(o.status)+'">'+esc(labels[o.status]||o.status)+'</span></div><div><b>'+esc(o.product_name)+'</b> · '+esc(o.duration_label)+'</div><div class="top" style="margin-top:9px"><span class="meta">'+new Date(o.created_at).toLocaleString("ru-RU")+'</span><span class="price">'+money(o.amount_rub)+'</span></div>'+(o.cancellation_reason?'<div class="meta">Причина: '+esc(o.cancellation_reason)+'</div>':"")+'<div class="actions">'+acts+'</div></section>';
+ }).join(""):'<div class="empty">Заказов в этом разделе пока нет</div>';
+ document.getElementById("sNew").textContent=allOrders.filter(o=>o.status==="awaiting_fulfillment").length;
+ document.getElementById("sWork").textContent=allOrders.filter(o=>["processing","in_delivery"].includes(o.status)).length;
+ document.getElementById("sDone").textContent=allOrders.filter(o=>o.status==="fulfilled").length;
+}
+async function load(){
+ const el=document.getElementById("orders");el.innerHTML='<div class="notice">Загружаю…</div>';
+ try{const d=await api();allOrders=d.orders||[];render();document.getElementById("updated").textContent="Обновлено: "+new Date().toLocaleTimeString("ru-RU");}
+ catch(e){el.innerHTML='<div class="notice error">'+esc(e.message)+'</div>';document.getElementById("updated").textContent="Не удалось загрузить данные";}
+}
+const analyticsResetAt=new Date("2026-11-24T15:31:17.174040Z");let analyticsOrders=[],analyticsAudit={},analyticsMarketOrders=[],analyticsMarketListings=[];
+function renderAnalytics(){
+ const range=document.getElementById("analyticsRange").value,now=new Date();let start=null;
+ if(range!=="all"){start=new Date(now);if(range==="today")start.setHours(0,0,0,0);else start.setDate(start.getDate()-Number(range));}
+ const rows=analyticsOrders.filter(o=>new Date(o.created_at)>=analyticsResetAt&&(!start||new Date(o.created_at)>=start));
+ const valid=rows.filter(o=>!["cancelled","refunded"].includes(o.status));
+ const refunded=rows.filter(o=>["cancelled","refunded"].includes(o.status));
+ const marketRows=analyticsMarketOrders.filter(o=>new Date(o.created_at)>=analyticsResetAt&&(!start||new Date(o.created_at)>=start));
+ const marketValid=marketRows.filter(o=>!['cancelled','refunded'].includes(String(o.status||'').toLowerCase()));
+ const marketCancelled=marketRows.filter(o=>['cancelled','refunded'].includes(String(o.status||'').toLowerCase()));
+ const marketDone=marketRows.filter(o=>['delivered','completed','confirmed','fulfilled'].includes(String(o.status||'').toLowerCase()));
+ const marketTurnover=marketValid.reduce((n,o)=>n+Number(o.total_rub||0),0);
+ // KADZI marketplace commission is the actual difference between buyer total and seller payout.
+ const marketCommission=marketValid.reduce((n,o)=>n+Math.max(0,Number(o.total_rub||0)-Number(o.seller_total_rub||0)),0);
+ const marketPaymentFee=marketValid.reduce((n,o)=>n+Number(o.total_rub||0)*0.01,0);
+ const marketNetProfit=marketCommission-marketPaymentFee;
+ const put=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=value;};
+ const revenue=valid.reduce((n,o)=>n+Number(o.amount_rub||0),0);
+ const combinedTurnover=revenue+marketTurnover,combinedOrders=valid.length+marketValid.length;
+ const combinedDone=valid.filter(o=>['completed','fulfilled','delivered','confirmed'].includes(String(o.status||'').toLowerCase())).length+marketDone.length;
+ const combinedCancelled=refunded.length+marketCancelled.length;
+ put('anCombinedTurnover',money(combinedTurnover));put('anCombinedOrders',combinedOrders);put('anCombinedDone',combinedDone);put('anCombinedCancelled',combinedCancelled);
+ put('anMarketTurnover',money(marketTurnover));put('anMarketOrders',marketValid.length);put('anMarketDone',marketDone.length);put('anMarketCancelled',marketCancelled.length);
+ put('anMarketListings',analyticsMarketListings.filter(x=>String(x.status||'').toLowerCase()==='active').length);
+ const sellers=new Set(analyticsMarketListings.map(x=>x.seller_id||x.user_id||x.telegram_user_id).filter(Boolean));put('anMarketSellers',sellers.size||'—');
+ const known=valid.filter(o=>o.cost_rub!==null&&o.cost_rub!==undefined);
+ const cost=known.reduce((n,o)=>n+Number(o.cost_rub||0),0);
+ const knownRevenue=known.reduce((n,o)=>n+Number(o.amount_rub||0),0);
+ const shopPaymentFee=knownRevenue*.01;
+ const netProfit=knownRevenue-cost-shopPaymentFee,netMargin=knownRevenue?netProfit/knownRevenue*100:0;
+ const combinedNetProfit=netProfit+marketNetProfit;
+ put('anShopNetProfit',money(Math.round(netProfit*10)/10));
+ put('anMarketCommission',money(Math.round(marketCommission*10)/10));
+ put('anMarketPaymentFee',money(Math.round(marketPaymentFee*10)/10));
+ put('anMarketNetProfit',money(Math.round(marketNetProfit*10)/10));
+ put('anCombinedNetProfit',money(Math.round(combinedNetProfit*10)/10));
+ document.getElementById("anRevenue").textContent=money(Math.round(revenue*10)/10);
+ document.getElementById("anProfit").textContent=money(Math.round((knownRevenue-cost)*10)/10);
+ document.getElementById("anCost").textContent=money(Math.round(cost*10)/10);
+ document.getElementById("anCount").textContent=valid.length;
+ document.getElementById("anAverage").textContent=money(valid.length?Math.round(revenue/valid.length*10)/10:0);
+ document.getElementById("anRefunds").textContent=refunded.length;
+ document.getElementById("anNetProfit").textContent=known.length?money(Math.round(netProfit*10)/10):"—";
+ document.getElementById("anNetMargin").textContent=known.length?netMargin.toFixed(2)+"%":"—";
+ document.getElementById("anMissingCost").textContent=valid.length-known.length;
+ const byProduct=new Map(),byGame=new Map();
+ for(const o of valid){const amount=Number(o.amount_rub||0),c=o.cost_rub==null?null:Number(o.cost_rub),profit=c==null?null:amount-c-amount*.01,name=o.product_name||"Без названия",game=o.kds_product_plans?.kds_products?.game_category||"Не указана";for(const [map,key] of [[byProduct,name],[byGame,game]]){const x=map.get(key)||{count:0,revenue:0,profit:0,known:0};x.count++;x.revenue+=amount;if(profit!==null){x.profit+=profit;x.known++;}map.set(key,x);}}
+ const listHtml=map=>[...map.entries()].sort((a,b)=>b[1].revenue-a[1].revenue).map(([name,x])=>'<div class="planline" style="display:flex;justify-content:space-between;gap:10px"><span><b>'+esc(name)+'</b><br><small class="muted">'+x.count+' заказов · себестоимость известна: '+x.known+'</small></span><span style="text-align:right">'+money(Math.round(x.revenue*10)/10)+'<br><small class="muted">чистая прибыль '+(x.known?money(Math.round(x.profit*10)/10):'—')+'</small></span></div>').join("")||'<div class="empty">Нет продаж за период</div>';
+ document.getElementById("analyticsProducts").innerHTML=listHtml(byProduct);
+ document.getElementById("analyticsGames").innerHTML=listHtml(byGame);
+ document.getElementById("analyticsRecent").innerHTML=rows.slice(0,20).map(o=>'<div class="planline"><b>#'+esc(o.order_number)+'</b> · '+esc(o.product_name)+' · '+money(o.amount_rub)+' · закупка '+(o.cost_rub==null?'<span class="error">не зафиксирована</span>':money(o.cost_rub))+' · '+esc(labels[o.status]||o.status)+'<br><small class="muted">'+new Date(o.created_at).toLocaleString("ru-RU")+'</small></div>').join("")||'<div class="empty">Заказов нет</div>';
+ const checks=[['Выполненные заказы без выдачи',analyticsAudit.fulfilled_without_delivery],['Заказы без корректной записи списания',analyticsAudit.purchase_journal_mismatch],['Возвраты без корректной записи журнала',analyticsAudit.refund_journal_mismatch],['Несовпадения баланса с журналом',analyticsAudit.balance_mismatches],['Оценки без выполненной покупки',analyticsAudit.ratings_without_purchase],['Заказы без зафиксированной себестоимости',analyticsAudit.missing_cost]];
+ document.getElementById("analyticsAudit").innerHTML=checks.map(([label,count])=>'<div class="planline" style="display:flex;justify-content:space-between;gap:10px"><span>'+label+'</span><b style="color:'+(Number(count||0)===0?'#37c978':'#ff8292')+'">'+Number(count||0)+'</b></div>').join("")+'<div class="meta">Комиссия оплаты в расчёте: 1%. Магазин: цена продажи − закупка − комиссия оплаты. Маркетплейс: фактическая комиссия KADZI (сумма покупателя − выплата продавцу) − 1% комиссии оплаты. Общая прибыль — сумма чистой прибыли магазина и маркетплейса. Заказы без закупочной цены не включаются в точную прибыль магазина.</div>';
+}
+async function loadAnalytics(){const el=document.getElementById("analyticsRecent");el.textContent="Загрузка…";try{const [d,mo,ml]=await Promise.all([api("GET",null,"analytics"),marketAdminApi("GET",null,"admin_orders"),marketAdminApi("GET",null,"admin_listings")]);analyticsOrders=d.orders||[];analyticsAudit=d.audit||{};analyticsMarketOrders=mo.orders||[];analyticsMarketListings=ml.listings||[];renderAnalytics();}catch(e){el.textContent="Ошибка: "+e.message;}}
+async function loadBroadcastHistory(){const el=document.getElementById("broadcastHistory");if(!el)return;try{const d=await api("GET",null,"broadcasts");el.innerHTML=(d.broadcasts||[]).map(x=>'<div class="planline">'+new Date(x.created_at).toLocaleString("ru-RU")+' · '+esc(x.audience)+' · Telegram: '+x.telegram_sent+'/'+x.recipients+' · Ошибок: '+x.telegram_failed+'</div>').join("")||'<div class="empty">Рассылок пока нет</div>';}catch(e){el.textContent=e.message;}}
+async function loadAnnouncements(){const el=document.getElementById("announcementsList");el.innerHTML='<div class="notice">Загрузка…</div>';try{const d=await api("GET",null,"announcements");const rows=d.announcements||[];el.innerHTML=rows.length?rows.map(a=>'<article class="product"><div class="ann-preview">'+(a.image_url?'<img src="'+esc(a.image_url)+'" alt="">':'')+'<div class="ann-preview-content"><div class="ann-meta">'+(a.display_type==="banner"?'БАННЕР':'КАРТОЧКА')+' · ПОРЯДОК '+esc(a.sort_order??0)+'</div><div class="product-head"><b>'+esc(a.title)+'</b><span class="status">'+(a.is_active?'Опубликовано':'Скрыто')+'</span></div><div class="muted">'+esc(a.body)+'</div><div class="muted">Кнопок: '+(Array.isArray(a.buttons)?a.buttons.length:0)+'</div></div></div><div class="actions"><button class="primary" data-ann-edit="'+esc(a.id)+'">Изменить</button><button data-ann-toggle="'+esc(a.id)+'" data-active="'+(a.is_active?'true':'false')+'">'+(a.is_active?'Скрыть':'Опубликовать')+'</button><button class="warn" data-ann-delete="'+esc(a.id)+'">Удалить</button></div></article>').join(''):'<div class="empty">Объявлений пока нет</div>';window.kdsAnnouncements=rows;}catch(e){el.innerHTML='<div class="notice error">'+esc(e.message)+'</div>';}}
+function openAnnouncement(a){a=a||{};document.getElementById("announcementEditorTitle").textContent=a.id?"Редактирование объявления":"Новое объявление";document.getElementById("aId").value=a.id||"";document.getElementById("aType").value=a.display_type||"card";document.getElementById("aTitle").value=a.title||"";document.getElementById("aBody").value=a.body||"";document.getElementById("aImage").value=a.image_url||"";document.getElementById("aSort").value=a.sort_order??0;const buttons=Array.isArray(a.buttons)?a.buttons:[];for(let i=1;i<=4;i++){const b=buttons[i-1]||{};document.getElementById("aBtnLabel"+i).value=b.label||"";document.getElementById("aBtnUrl"+i).value=b.url||"";}document.getElementById("announcementMsg").textContent="";document.getElementById("broadcastInApp").checked=false;document.getElementById("broadcastTelegram").checked=false;document.getElementById("broadcastAudience").value="app_users";document.getElementById("broadcastIds").value="";document.getElementById("broadcastIdsWrap").style.display="none";document.getElementById("announcementEditor").classList.remove("hide");document.getElementById("announcementEditor").scrollIntoView({behavior:"smooth",block:"start"});}
+document.getElementById("newAnnouncement").onclick=()=>openAnnouncement();document.getElementById("cancelAnnouncement").onclick=()=>document.getElementById("announcementEditor").classList.add("hide");document.getElementById("reloadAnnouncements").onclick=loadAnnouncements;
+async function saveAnnouncementRecord(){
+ const msg=document.getElementById("announcementMsg"),title=document.getElementById("aTitle").value.trim(),body=document.getElementById("aBody").value.trim(),image=document.getElementById("aImage").value.trim(),sort=Number(document.getElementById("aSort").value);
+ if(!title||!body)throw new Error("Заполни заголовок и текст");
+ if(!Number.isSafeInteger(sort)||sort<0||sort>99999)throw new Error("Порядок должен быть целым числом от 0 до 99999");
+ if(image&&!/^https:\/\//i.test(image))throw new Error("Ссылка на изображение должна начинаться с https://");
+ const buttons=[];
+ for(let i=1;i<=4;i++){const label=document.getElementById("aBtnLabel"+i).value.trim(),url=document.getElementById("aBtnUrl"+i).value.trim();if(!label&&!url)continue;if(!label||!url)throw new Error("Для каждой кнопки заполни и текст, и ссылку");if(!/^https:\/\//i.test(url))throw new Error("Ссылки кнопок должны начинаться с https://");buttons.push({label,url});}
+ const result=await api("POST",{action:"save_announcement",id:document.getElementById("aId").value||undefined,title,body,display_type:document.getElementById("aType").value,image_url:image||null,buttons,sort_order:sort});
+ document.getElementById("aId").value=result.id;
+ await loadAnnouncements();
+ return result.id;
+}
+document.getElementById("saveAnnouncement").onclick=async()=>{const btn=document.getElementById("saveAnnouncement"),msg=document.getElementById("announcementMsg");btn.disabled=true;try{await saveAnnouncementRecord();document.getElementById("announcementEditor").classList.add("hide");msg.textContent="Объявление сохранено";}catch(e){msg.textContent=e.message;}finally{btn.disabled=false;}};
+document.getElementById("broadcastAudience").onchange=()=>{document.getElementById("broadcastIdsWrap").style.display=document.getElementById("broadcastAudience").value==="selected"?"block":"none";};
+document.getElementById("saveAndBroadcastAnnouncement").onclick=async()=>{
+ const btn=document.getElementById("saveAndBroadcastAnnouncement"),msg=document.getElementById("announcementMsg");
+ const send_in_app=document.getElementById("broadcastInApp").checked,send_telegram=document.getElementById("broadcastTelegram").checked,audience=document.getElementById("broadcastAudience").value;
+ if(!send_in_app&&!send_telegram){msg.textContent="Выбери хотя бы один канал уведомления";return;}
+ let telegram_ids=[];
+ if(audience==="selected"){telegram_ids=document.getElementById("broadcastIds").value.split(/[\s,;]+/).map(x=>Number(x.trim())).filter(x=>Number.isSafeInteger(x)&&x>0);if(!telegram_ids.length){msg.textContent="Укажи Telegram ID получателей";return;}}
+ btn.disabled=true;
+ try{
+  const announcement_id=await saveAnnouncementRecord();
+  const result=await api("POST",{action:"broadcast_announcement",announcement_id,audience,send_in_app,send_telegram,telegram_ids});
+  msg.textContent="Объявление сохранено. Уведомления в приложении: "+result.in_app_created+" · Telegram отправлено: "+result.telegram_sent+" · Ошибок Telegram: "+result.telegram_failed;
+  await loadBroadcastHistory();
+ }catch(e){msg.textContent="Ошибка: "+e.message;}
+ finally{btn.disabled=false;}
+};
+document.getElementById("announcementsList").onclick=async e=>{const edit=e.target.closest("[data-ann-edit]"),toggle=e.target.closest("[data-ann-toggle]"),del=e.target.closest("[data-ann-delete]");const rows=window.kdsAnnouncements||[];if(edit){openAnnouncement(rows.find(x=>x.id===edit.dataset.annEdit));return;}try{if(toggle)await api("POST",{action:"toggle_announcement",id:toggle.dataset.annToggle,is_active:toggle.dataset.active!=="true"});if(del){if(!confirm("Удалить объявление без возможности восстановления?"))return;await api("POST",{action:"delete_announcement",id:del.dataset.annDelete});}if(toggle||del)await loadAnnouncements();}catch(err){alert(err.message);}};
+let categoryRows=[];
+function categoriesForGame(gameName){const g=allGames.find(x=>x.name===gameName);return categoryRows.filter(c=>c.game_id===g?.id);}
+function categoryById(id){return categoryRows.find(c=>c.id===id);}
+function syncCategoryParent(){const type=document.getElementById("categoryType").value,gameId=document.getElementById("categoryGame").dataset.value||"",sections=categoryRows.filter(c=>c.game_id===gameId&&c.node_type==="section");document.getElementById("categoryParentWrap").classList.toggle("hide",type!=="subcategory");setDropdown("categoryParent",sections.map(c=>({value:c.id,label:c.display_name})),document.getElementById("categoryParent").dataset.value||sections[0]?.id||"");}
+function renderCategoryList(){const gameId=document.getElementById("categoryGame").dataset.value||"",rows=categoryRows.filter(c=>c.game_id===gameId),el=document.getElementById("categoryList");if(!rows.length){el.innerHTML='<div class="empty">Для этой игры пока нет элементов каталога.</div>';return;}const sections=rows.filter(c=>c.node_type==="section"),children=rows.filter(c=>c.node_type!=="section");const line=c=>{const parent=categoryById(c.parent_id);const typeLabel=c.node_type==="section"?"Раздел":c.node_type==="subcategory"?"Подраздел":"Фильтр";return '<div class="planline" style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><span><b>'+esc(c.display_name)+'</b><br><small class="muted">'+typeLabel+(parent?' · '+esc(parent.display_name):'')+' · Значение: '+esc(c.category_value)+'</small></span><div class="actions"><button data-category-edit="'+esc(c.id)+'">Изменить</button><button data-category-toggle="'+esc(c.id)+'" data-active="'+(c.is_active?'true':'false')+'">'+(c.is_active?'Скрыть':'Включить')+'</button><button class="warn" data-category-delete="'+esc(c.id)+'">Удалить</button></div></div>';};el.innerHTML=sections.map(c=>line(c)+children.filter(x=>x.parent_id===c.id).map(x=>'<div style="margin-left:16px">'+line(x)+'</div>').join("")).join("")+children.filter(x=>!x.parent_id).map(line).join("");}
+async function loadCategories(){const d=await api("GET",null,"categories");categoryRows=d.categories||[];renderCategoryList();syncProductSubcategories();syncProductPlatforms();syncCategoryParent();}
+function syncProductSections(preferred){const game=document.getElementById("pGame").value,rows=categoriesForGame(game).filter(c=>c.node_type==="section"&&c.is_active),current=preferred??document.getElementById("pSection").dataset.value??"",opts=rows.map(c=>({value:c.category_value,label:c.display_name})),chosen=opts.some(x=>x.value===current)?current:(opts.find(x=>x.value==="Донат")?.value||opts[0]?.value||"");setDropdown("pSection",opts,chosen);syncProductSubcategories();}
+function syncProductSubcategories(preferred){const game=document.getElementById("pGame").value,section=document.getElementById("pSection").dataset.value||"",parent=categoriesForGame(game).find(c=>c.node_type==="section"&&c.category_value===section),rows=categoriesForGame(game).filter(c=>c.node_type==="subcategory"&&c.parent_id===parent?.id&&c.is_active),current=preferred??document.getElementById("pSubcategory").dataset.value??"";const opts=[{value:section,label:"Без подраздела"},...rows.map(c=>({value:c.category_value,label:c.display_name}))],chosen=opts.some(x=>x.value===current)?current:(opts[0]?.value||"");setDropdown("pSubcategory",opts,chosen);}
+function syncProductPlatforms(preferred){const game=document.getElementById("pGame").value,filters=categoriesForGame(game).filter(c=>c.node_type==="filter"&&c.is_active),select=document.getElementById("pPlatform"),current=preferred??select.value;const choices=filters.length?filters:[{category_value:"Android",display_name:"ANDROID"},{category_value:"iOS",display_name:"iOS"},{category_value:"PC",display_name:"PC"}];select.innerHTML=choices.map(c=>'<option value="'+esc(c.category_value)+'">'+esc(c.display_name)+'</option>').join("");if(choices.some(c=>c.category_value===current))select.value=current;else if(choices.length)select.value=choices[0].category_value;}
+async function loadProducts(){
+ const el=document.getElementById("productsList");el.innerHTML='<div class="notice">Загружаю товары…</div>';
+ try{
+  const d=await api("GET",null,"products");allProducts=d.products||[];const gd=await api("GET",null,"games");allGames=gd.games||[];const gameSelect=document.getElementById("pGame"),currentGame=gameSelect.value;gameSelect.innerHTML=allGames.map(g=>`<option>${esc(g.name)}</option>`).join("");if(allGames.some(g=>g.name===currentGame))gameSelect.value=currentGame;await loadCategories();setDropdown("categoryGame",allGames.map(g=>({value:g.id,label:g.name})),document.getElementById("categoryGame").dataset.value||allGames[0]?.id||"");renderCategoryList();syncCategoryParent();
+  if(!allProducts.length){el.innerHTML='<div class="empty">Товаров пока нет</div>';return;}
+  el.innerHTML=allProducts.map(p=>{
+   const plans=p.kds_product_plans||p.plans||[];
+   return '<article class="product"><div class="product-head"><div><b>'+esc(p.name)+'</b><div class="muted">'+esc(p.description||"")+'</div><div class="muted">Игра: '+esc(p.game_category||"—")+' · Раздел: '+esc((p.catalog_section||p.subcategory||"—")+(p.subcategory&&p.subcategory!==(p.catalog_section||"")?" / "+p.subcategory:""))+' · Платформа: '+esc(p.platform||"—")+' · Сортировка: '+esc(p.sort_order??0)+'</div></div><span class="status">'+(p.is_active?'Активен':'Скрыт')+'</span></div>'+
+   plans.map(x=>'<div class="planline">'+esc(x.duration_label||x.name||x.title||"Тариф")+' · '+esc(x.duration_days)+' дн. · <b>'+money(x.price_rub??x.price??0)+'</b> · '+(x.is_active?'Активен':'Выключен')+'</div>').join("")+
+   '<div class="actions"><button class="primary" data-edit="'+esc(p.id)+'">Изменить</button><button class="warn" data-toggle="'+esc(p.id)+'" data-active="'+(p.is_active?'true':'false')+'">'+(p.is_active?'Скрыть':'Активировать')+'</button></div></article>';
+  }).join("");
+  el.querySelectorAll(".product").forEach((card,i)=>{const p=allProducts[i];if(!p)return;const head=card.querySelector(".product-head");if(head&&!head.querySelector("[data-product-select]")){const label=document.createElement("label");label.style.cssText="display:flex;gap:8px;align-items:center;margin-bottom:8px";label.innerHTML='<input class="bulk-check" type="checkbox" data-product-select="'+esc(p.id)+'" '+(selectedProductIds.has(p.id)?'checked':'')+'> <b>Выбрать товар</b>';head.prepend(label);if(p.notice_status){const badge=document.createElement("span");badge.className="notice-pill";badge.textContent=p.notice_status;head.appendChild(badge);}}});
+ }catch(e){el.innerHTML='<div class="notice error">'+esc(e.message)+'</div>';}
+}
+function openEditor(p){
+ p=p||{};document.getElementById("productEditor").classList.remove("hide");
+ document.getElementById("editorTitle").textContent=p.id?"Редактирование товара":"Новый товар";
+ document.getElementById("pId").value=p.id||"";document.getElementById("pName").value=p.name||"";document.getElementById("pSlug").value=p.slug||"";
+ document.getElementById("pSubtitle").value=p.subtitle||"";document.getElementById("pDescription").value=p.description||"";document.getElementById("pGame").value=p.game_category||"Oxide Survival Island";syncProductSections(p.catalog_section||(p.subcategory==="Софт"?"Ключи":p.subcategory)||"Донат");syncProductSubcategories(p.subcategory==="Софт"?"Ключи":(p.subcategory||p.catalog_section||""));syncProductPlatforms(p.platform==="Android NROOT"?"Android":(p.platform||"Android"));document.getElementById("pImage").value=p.image_url||"";
+ document.getElementById("pFeatures").value=Array.isArray(p.features)?p.features.join("; "):(p.features||"");
+ document.getElementById("pSort").value=p.sort_order??0;
+ document.getElementById("pActive").checked=p.is_active!==false;
+ const plans=p.kds_product_plans||p.plans||[];
+ document.getElementById("pPlans").value=plans.map(x=>(x.duration_label||x.name||x.title||"Тариф")+" | "+(x.duration_days||30)+" | "+(x.price_rub??x.price??0)+" | "+(x.is_active===false?"off":"on")).join("; ");document.getElementById("pCosts").value=plans.map(x=>x.purchase_price_rub??"").join("; ");
+ document.getElementById("productMsg").textContent="";
+ document.getElementById("productEditor").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+document.getElementById("pGame").addEventListener("change",()=>{syncProductSections();syncProductPlatforms();});
+document.getElementById("pSection").addEventListener("dropdown-change",()=>syncProductSubcategories());
+document.getElementById("categoryGame").addEventListener("dropdown-change",()=>{renderCategoryList();syncCategoryParent();});
+document.getElementById("categoryType").onchange=syncCategoryParent;
+document.getElementById("addCategory").onclick=async()=>{
+ const gameId=document.getElementById("categoryGame").dataset.value||"",type=document.getElementById("categoryType").value,name=document.getElementById("newCategoryName").value.trim(),value=document.getElementById("newCategoryValue").value.trim()||name,parentId=type==="subcategory"?(document.getElementById("categoryParent").dataset.value||null):null,msg=document.getElementById("categoryMsg"),id=document.getElementById("categoryEditId").value||undefined,applyAll=document.getElementById("categoryAllGames").checked&&!id;
+ if(!gameId||!name||!value){msg.textContent="Выбери игру и укажи название элемента.";return;}
+ if(type==="subcategory"&&!parentId){msg.textContent="Для подраздела выбери родительский раздел.";return;}
+ try{
+  const baseParent=parentId?categoryById(parentId):null;
+  const gamesToSave=applyAll?allGames:allGames.filter(g=>g.id===gameId);
+  let saved=0,skipped=0;
+  for(const game of gamesToSave){
+   let targetParent=null;
+   if(type==="subcategory"){
+    const parent=categoryRows.find(c=>c.game_id===game.id&&c.node_type==="section"&&c.category_value===(baseParent?.category_value||""));
+    if(!parent){skipped++;continue;}
+    targetParent=parent.id;
+   }
+   await api("POST",{action:"save_category",id:id&&!applyAll?id:undefined,game_id:game.id,parent_id:targetParent,node_type:type,category_value:value,display_name:name,sort_order:Number(document.getElementById("categorySort").value)||0});
+   saved++;
+  }
+  if(!saved)throw new Error("Не найден родительский раздел в выбранных играх.");
+  document.getElementById("newCategoryName").value="";document.getElementById("newCategoryValue").value="";document.getElementById("categoryEditId").value="";document.getElementById("categoryAllGames").disabled=false;document.getElementById("categoryAllGames").checked=false;document.getElementById("categoryType").disabled=false;document.getElementById("categoryParent").disabled=false;document.getElementById("addCategory").textContent="＋ Добавить элемент";document.getElementById("cancelCategoryEdit").classList.add("hide");document.getElementById("categoryAllGames").checked=false;
+  msg.textContent=skipped?`Добавлено для ${saved} игр, пропущено ${skipped}: нет такого родительского раздела.`:`Сохранено для ${saved} ${saved===1?"игры":"игр"}.`;
+  await loadCategories();
+ }catch(e){msg.textContent="Ошибка: "+e.message;}
+};
+document.getElementById("cancelCategoryEdit").onclick=()=>{document.getElementById("categoryEditId").value="";document.getElementById("categoryAllGames").disabled=false;document.getElementById("categoryAllGames").checked=false;document.getElementById("categoryType").disabled=false;document.getElementById("categoryParent").disabled=false;document.getElementById("newCategoryName").value="";document.getElementById("newCategoryValue").value="";document.getElementById("addCategory").textContent="＋ Добавить элемент";document.getElementById("cancelCategoryEdit").classList.add("hide");};
+document.getElementById("reloadCategories").onclick=loadCategories;
+document.getElementById("categoryList").onclick=async e=>{const edit=e.target.closest("[data-category-edit]"),toggle=e.target.closest("[data-category-toggle]"),del=e.target.closest("[data-category-delete]");const msg=document.getElementById("categoryMsg");try{if(edit){const c=categoryById(edit.dataset.categoryEdit);if(!c)return;document.getElementById("categoryEditId").value=c.id;document.getElementById("categoryAllGames").checked=false;document.getElementById("categoryAllGames").disabled=true;document.getElementById("categoryType").value=c.node_type;document.getElementById("categoryType").disabled=true;document.getElementById("categoryParent").disabled=true;document.getElementById("newCategoryName").value=c.display_name;document.getElementById("newCategoryValue").value=c.category_value;document.getElementById("categorySort").value=c.sort_order;syncCategoryParent();if(c.parent_id)setDropdown("categoryParent",categoryRows.filter(x=>x.game_id===c.game_id&&x.node_type==="section").map(x=>({value:x.id,label:x.display_name})),c.parent_id);document.getElementById("addCategory").textContent="Сохранить изменения";document.getElementById("cancelCategoryEdit").classList.remove("hide");return;}if(toggle){await api("POST",{action:"toggle_category",category_id:toggle.dataset.categoryToggle,is_active:toggle.dataset.active!=="true"});await loadCategories();}if(del){if(!confirm("Удалить этот элемент каталога? Товары и ключи не удаляются. Если элемент используется товарами, сначала перенеси их или скрой элемент."))return;await api("POST",{action:"delete_category",category_id:del.dataset.categoryDelete});await loadCategories();}}catch(err){msg.textContent="Ошибка: "+err.message;}};
+document.getElementById("saveProduct").onclick=async()=>{
+ const msg=document.getElementById("productMsg"),btn=document.getElementById("saveProduct");
+ const plans=document.getElementById("pPlans").value.split(";").map(x=>x.trim()).filter(Boolean).map(line=>{
+  const a=line.split("|").map(x=>x.trim());return {duration_label:a[0],duration_days:Number(a[1]),price_rub:parseRubInput(a[2]),is_active:(a[3]||"on").toLowerCase()!=="off"};
+ });
+ if(!document.getElementById("pName").value.trim()){msg.textContent="Укажи название товара";return;}
+  if(!document.getElementById("pDescription").value.trim()){msg.textContent="Укажи описание товара";return;}
+  if(!/^[a-z0-9][a-z0-9-]{1,63}$/.test(document.getElementById("pSlug").value.trim().toLowerCase())){msg.textContent="Укажи корректный slug латиницей";return;}
+ const costs=document.getElementById("pCosts").value.split(";").map(x=>x.trim());if(!plans.length||costs.length!==plans.length||plans.some((p,i)=>!p.duration_label||!Number.isInteger(p.duration_days)||p.duration_days<=0||!validRubAmount(p.price_rub)||costs[i]===""||!validRubAmount(parseRubInput(costs[i]),true))){msg.textContent="Укажи закупочную цену для каждого тарифа в том же порядке.";return;}plans.forEach((p,i)=>p.purchase_price_rub=parseRubInput(costs[i]));
+ btn.disabled=true;msg.textContent="Сохраняю…";
+ try{
+  const body={action:"save_product",id:document.getElementById("pId").value||undefined,slug:document.getElementById("pSlug").value.trim().toLowerCase(),name:document.getElementById("pName").value.trim(),description:document.getElementById("pDescription").value.trim(),subtitle:document.getElementById("pSubtitle").value.trim(),game_category:document.getElementById("pGame").value,catalog_section:document.getElementById("pSection").dataset.value||"",subcategory:document.getElementById("pSubcategory").dataset.value||document.getElementById("pSection").dataset.value||"",image_url:document.getElementById("pImage").value.trim(),features:document.getElementById("pFeatures").value.split(";").map(x=>x.trim()).filter(Boolean),platform:document.getElementById("pPlatform").value,sort_order:Number(document.getElementById("pSort").value)||0,is_active:document.getElementById("pActive").checked,plans};
+  await api("POST",body);msg.textContent="Сохранено";document.getElementById("productEditor").classList.add("hide");await loadProducts();
+ }catch(e){msg.textContent="Ошибка: "+e.message;}finally{btn.disabled=false;}
+};
+document.getElementById("productsList").onclick=async e=>{
+ const edit=e.target.closest("[data-edit]"),toggle=e.target.closest("[data-toggle]"),stock=e.target.closest("[data-stock]");
+ if(stock){await showInventoryForProduct(stock.dataset.stock);return;}
+ if(edit){const p=allProducts.find(x=>String(x.id)===edit.dataset.edit);openEditor(p);return;}
+ if(toggle){toggle.disabled=true;try{await api("POST",{action:"toggle_product",product_id:toggle.dataset.toggle,is_active:toggle.dataset.active!=="true"});await loadProducts();}catch(err){alert(err.message);toggle.disabled=false;}}
+};
+document.getElementById("newProduct").onclick=()=>openEditor();
+document.getElementById("cancelProduct").onclick=()=>document.getElementById("productEditor").classList.add("hide");
+document.getElementById("reloadProducts").onclick=loadProducts;
+let inventoryProducts=[];
+async function loadInventory(){
+ const d=await api("GET",null,"products");inventoryProducts=d.products||[];
+ setDropdown("inventoryProduct",inventoryProducts.map(p=>({value:p.id,label:p.name})),"");
+ renderInventoryPlans();
+ document.getElementById("inventoryProductsList").innerHTML=inventoryProducts.map(p=>{const plans=p.kds_product_plans||p.plans||[];return '<article class="product"><b>'+esc(p.name)+'</b>'+plans.map(x=>{const inv=x.kds_key_inventory||[];const available=inv.filter(k=>k.status==="available").length;const used=inv.filter(k=>k.status!=="available").length;return '<div class="planline">'+esc(x.duration_label)+' · В наличии: <b>'+available+'</b> · Использовано: '+used+'</div>';}).join("")+'</article>';}).join("");
+}
+function renderInventoryPlans(){const pid=document.getElementById("inventoryProduct").dataset.value||"";const p=inventoryProducts.find(x=>String(x.id)===String(pid));const plans=p?.kds_product_plans||p?.plans||[];setDropdown("inventoryPlan",plans.map(x=>({value:x.id,label:x.duration_label+" · "+x.duration_days+" дн."})),"");}
+document.getElementById("saveInventory").onclick=async()=>{const msg=document.getElementById("inventoryMsg"),plan_id=document.getElementById("inventoryPlan").dataset.value||"",keys=document.getElementById("inventoryLines").value.split(";").map(x=>x.trim()).filter(Boolean);if(!plan_id){msg.textContent="Выбери тариф";return;}if(!keys.length){msg.textContent="Добавь хотя бы одну строку";return;}if(keys.length>500){msg.textContent="За один раз можно добавить максимум 500 строк";return;}const btn=document.getElementById("saveInventory");btn.disabled=true;msg.textContent="Сохраняю…";try{const d=await api("POST",{action:"add_keys",plan_id,keys});msg.textContent="Добавлено: "+d.added+" из "+d.submitted;document.getElementById("inventoryLines").value="";await loadInventory();}catch(e){msg.textContent="Ошибка: "+e.message;}finally{btn.disabled=false;}};
+document.getElementById("clearInventory").onclick=()=>{document.getElementById("inventoryLines").value="";document.getElementById("inventoryMsg").textContent="";};
+document.getElementById("inventoryProductsList").onclick=e=>{const b=e.target.closest("[data-stock]");if(!b)return;setDropdown("inventoryProduct",inventoryProducts.map(p=>({value:p.id,label:p.name})),b.dataset.stock);renderInventoryPlans();document.getElementById("inventoryLines").focus();};
+async function showInventoryForProduct(productId){showAdminSection("inventorySection");try{await loadInventory();setDropdown("inventoryProduct",inventoryProducts.map(p=>({value:p.id,label:p.name})),productId);renderInventoryPlans();document.getElementById("inventoryLines").focus();}catch(e){document.getElementById("inventoryMsg").textContent="Ошибка загрузки: "+e.message;}}
+
+let braisbotState={plans:[],products:[],mappings:[]}; 
+function braisbotPlanLabel(p){
+ const prod=Array.isArray(p.kds_products)?p.kds_products[0]:p.kds_products;
+ return {title:[prod?.game_category,prod?.name,p.duration_label].filter(Boolean).join(" · ")||"Тариф",meta:(p.price_rub??"—")+" ₽ · ID "+p.id};
+}
+function braisbotProductLabel(p){
+ const id=p.product_id??p.id,name=[p.category?.name,p.position?.name,p.name].filter(Boolean).join(" / ")||"Товар";
+ return {id,title:name,meta:"#"+id+" · $"+(p.price_usd??"—")+" · Остаток: "+(p.stock??"—")};
+}
+function setupBraisbotPicker(kind,items,labelFn){
+ const picker=document.getElementById("braisbot"+kind+"Picker"),search=document.getElementById("braisbot"+kind+"Search"),hidden=document.getElementById("braisbot"+kind),list=document.getElementById("braisbot"+kind+"Options"),selected=document.getElementById("braisbot"+kind+"Selected");
+ const render=()=>{
+  const q=search.value.trim().toLocaleLowerCase("ru");
+  const matches=items.map(item=>({item,label:labelFn(item)})).filter(x=>(x.label.title+" "+x.label.meta).toLocaleLowerCase("ru").includes(q)).slice(0,100);
+  list.innerHTML=matches.length?matches.map(x=>'<button type="button" class="supplier-picker-option" data-value="'+esc(kind==="Plan"?x.item.id:x.label.id)+'">'+esc(x.label.title)+'<small>'+esc(x.label.meta)+'</small></button>').join(""):'<div class="supplier-picker-empty">Ничего не найдено. Измени запрос.</div>';
+  picker.classList.add("open");
+ };
+ search.onfocus=render;search.oninput=()=>{hidden.value="";selected.textContent=kind==="Plan"?"Тариф не выбран":"Товар не выбран";render();};
+ list.onclick=e=>{const b=e.target.closest("[data-value]");if(!b)return;hidden.value=b.dataset.value;const found=items.find(x=>String(kind==="Plan"?x.id:(x.product_id??x.id))===String(hidden.value));const label=labelFn(found);search.value=label.title;selected.textContent="Выбрано: "+label.title+" · "+label.meta;picker.classList.remove("open");};
+ if(!window.__braisbotPickerOutside){window.__braisbotPickerOutside=true;document.addEventListener("click",e=>document.querySelectorAll(".supplier-picker.open").forEach(p=>{if(!p.contains(e.target))p.classList.remove("open");}));}
+}
+function renderBraisbotPickers(){
+ setupBraisbotPicker("Plan",braisbotState.plans,braisbotPlanLabel);
+ setupBraisbotPicker("Product",braisbotState.products,braisbotProductLabel);
+ document.getElementById("braisbotPlanSearch").value="";
+ document.getElementById("braisbotProductSearch").value="";
+ document.getElementById("braisbotPlan").value="";
+ document.getElementById("braisbotProduct").value="";
+ document.getElementById("braisbotPlanSelected").textContent="Тариф не выбран";
+ document.getElementById("braisbotProductSelected").textContent="Товар не выбран";
+}
+
+async function loadBraisbot(){
+ const status=document.getElementById("braisbotStatus"),account=document.getElementById("braisbotAccount"),msg=document.getElementById("braisbotMsg");
+ status.textContent="Подключаюсь к Braisbot…";msg.textContent="";
+ try{
+  const d=await api("GET",null,"braisbot");
+  braisbotState={plans:(d.plans||[]).filter(p=>{const prod=Array.isArray(p.kds_products)?p.kds_products[0]:p.kds_products;return prod?.game_category==="PUBG Mobile"&&prod?.subcategory==="Ключи";}),products:d.supplier_products||[],mappings:(d.mappings||[]).filter(m=>(d.plans||[]).some(p=>p.id===m.plan_id&&((Array.isArray(p.kds_products)?p.kds_products[0]:p.kds_products)?.game_category==="PUBG Mobile")&&((Array.isArray(p.kds_products)?p.kds_products[0]:p.kds_products)?.subcategory==="Ключи")))};
+  const bal=d.account?.balance_usd??"—",login=d.account?.login??"—";
+  account.classList.remove("hide");
+  account.innerHTML='<b>Аккаунт поставщика: '+esc(login)+'</b><p>Баланс: <strong>'+esc(bal)+' USD</strong></p><p>Товаров в каталоге: '+braisbotState.products.length+'</p>';
+  status.textContent="Подключение успешно. Каталог и баланс получены.";
+  renderBraisbotPickers();
+  renderBraisbotMappings();
+ }catch(e){status.textContent="Ошибка подключения: "+e.message;account.classList.add("hide");document.getElementById("braisbotMappings").innerHTML='<div class="notice error">'+esc(e.message)+'</div>';}
+}
+function renderBraisbotMappings(){
+ const el=document.getElementById("braisbotMappings"),plans=braisbotState.plans,products=braisbotState.products;
+ if(!braisbotState.mappings.length){el.innerHTML='<div class="empty">Привязок пока нет. Автозакупка не включена ни для одного тарифа.</div>';return;}
+ el.innerHTML=braisbotState.mappings.map(m=>{
+  const plan=plans.find(p=>p.id===m.plan_id),prod=Array.isArray(plan?.kds_products)?plan.kds_products[0]:plan?.kds_products;
+  const supplier=products.find(p=>Number(p.product_id??p.id)===Number(m.supplier_product_id));
+  return '<article class="market-admin-card"><h3>'+esc(prod?.name||"Тариф")+' · '+esc(plan?.duration_label||"")+'</h3><p>Поставщик: #'+esc(m.supplier_product_id)+' · '+esc(m.supplier_product_name||supplier?.name||supplier?.position?.name||"Товар")+'</p><div class="market-admin-actions"><button class="warn" data-braisbot-delete="'+esc(m.plan_id)+'">Удалить привязку</button></div></article>';
+ }).join("");
+}
+document.getElementById("braisbotReload").onclick=loadBraisbot;
+document.getElementById("braisbotSave").onclick=async()=>{
+ const plan_id=document.getElementById("braisbotPlan").value,supplier_product_id=Number(document.getElementById("braisbotProduct").value),msg=document.getElementById("braisbotMsg"),btn=document.getElementById("braisbotSave");
+ if(!plan_id||!Number.isSafeInteger(supplier_product_id)||supplier_product_id<=0){msg.textContent="Выбери тариф магазина и товар поставщика.";return;}
+ btn.disabled=true;msg.textContent="Проверяю товар у поставщика и сохраняю…";
+ try{await api("POST",{action:"save_braisbot_mapping",plan_id,supplier_product_id});msg.textContent="Привязка сохранена. Автозакупка включена для этого тарифа.";await loadBraisbot();}
+ catch(e){msg.textContent="Ошибка: "+e.message;}
+ finally{btn.disabled=false;}
+};
+document.getElementById("braisbotMappings").addEventListener("click",async e=>{
+ const b=e.target.closest("[data-braisbot-delete]");if(!b)return;
+ if(!confirm("Удалить привязку? Новые заказы по этому тарифу больше не будут покупать товар у Braisbot."))return;
+ b.disabled=true;try{await api("POST",{action:"delete_braisbot_mapping",plan_id:b.dataset.braisbotDelete});await loadBraisbot();}catch(e){alert(e.message);b.disabled=false;}
+});
+
+let braisoxideState={plans:[],products:[],mappings:[]};
+function boPlanLabel(p){const prod=Array.isArray(p.kds_products)?p.kds_products[0]:p.kds_products;return {title:[prod?.game_category,prod?.name,p.duration_label].filter(Boolean).join(" · ")||"Тариф",meta:(p.price_rub??"—")+" ₽ · ID "+p.id};}
+function boProductLabel(p){const id=p.product_id??p.id;const name=[p.category?.name,p.position?.name,p.name].filter(Boolean).join(" / ")||"Товар";return {id,title:name,meta:"#"+id+" · $"+(p.price_usd??"—")+" · Остаток: "+(p.stock??"—")};}
+function setupBOPicker(kind,items,labelFn){
+ const picker=document.getElementById("braisoxide"+kind+"Picker"),search=document.getElementById("braisoxide"+kind+"Search"),hidden=document.getElementById("braisoxide"+kind),list=document.getElementById("braisoxide"+kind+"Options"),selected=document.getElementById("braisoxide"+kind+"Selected");
+ const render=()=>{const q=search.value.trim().toLocaleLowerCase("ru");const matches=items.map(item=>({item,label:labelFn(item)})).filter(x=>(x.label.title+" "+x.label.meta).toLocaleLowerCase("ru").includes(q)).slice(0,100);list.innerHTML=matches.length?matches.map(x=>'<button type="button" class="supplier-picker-option" data-value="'+esc(kind==="Plan"?x.item.id:x.label.id)+'">'+esc(x.label.title)+'<small>'+esc(x.label.meta)+'</small></button>').join(""):'<div class="supplier-picker-empty">Ничего не найдено.</div>';picker.classList.add("open");};
+ search.onfocus=render;search.oninput=()=>{hidden.value="";selected.textContent=kind==="Plan"?"Тариф не выбран":"Товар не выбран";render();};
+ list.onclick=e=>{const b=e.target.closest("[data-value]");if(!b)return;hidden.value=b.dataset.value;const found=items.find(x=>String(kind==="Plan"?x.id:(x.product_id??x.id))===String(hidden.value));const label=labelFn(found);search.value=label.title;selected.textContent="Выбрано: "+label.title+" · "+label.meta;picker.classList.remove("open");};
+}
+function renderBraisoxidePickers(){setupBOPicker("Plan",braisoxideState.plans,boPlanLabel);setupBOPicker("Product",braisoxideState.products,boProductLabel);}
+function renderBraisoxideMappings(){
+ const el=document.getElementById("braisoxideMappings"),plans=braisoxideState.plans,products=braisoxideState.products;
+ if(!braisoxideState.mappings.length){el.innerHTML='<div class="notice">Привязок пока нет.</div>';return;}
+ el.innerHTML=braisoxideState.mappings.map(m=>{const plan=plans.find(p=>p.id===m.plan_id),prod=products.find(p=>String(p.product_id??p.id)===String(m.supplier_product_id));return '<article class="market-admin-card"><h3>'+esc((plan?.kds_products?.name)||plan?.name||("Тариф "+m.plan_id))+'</h3><p>Товар поставщика: '+esc(prod?.name||prod?.position?.name||("#"+m.supplier_product_id))+'</p><div class="market-admin-actions"><button class="warn" data-braisoxide-delete="'+esc(m.plan_id)+'">Удалить привязку</button></div></article>';}).join("");
+}
+async function loadBraisoxide(){
+ const status=document.getElementById("braisoxideStatus"),account=document.getElementById("braisoxideAccount"),msg=document.getElementById("braisoxideMsg");status.textContent="Подключаюсь к Braisoxide…";msg.textContent="";
+ try{
+  const d=await api("GET",null,"braisoxide");
+  braisoxideState={plans:d.plans||[],products:d.supplier_products||d.products||[],mappings:d.mappings||[]};
+  const bal=d.account?.balance_usd??"—",login=d.account?.login??"—";account.classList.remove("hide");
+  account.innerHTML='<b>Аккаунт поставщика: '+esc(login)+'</b><p>Баланс: <strong>'+esc(bal)+' USD</strong></p><p>Товаров в каталоге: '+braisoxideState.products.length+'</p>';
+  status.textContent="Подключение успешно. Каталог и баланс получены.";renderBraisoxidePickers();renderBraisoxideMappings();
+ }catch(e){status.textContent="Ошибка подключения: "+e.message;account.classList.add("hide");document.getElementById("braisoxideMappings").innerHTML='<div class="notice error">'+esc(e.message)+'</div>';}
+}
+document.getElementById("braisoxideReload").onclick=loadBraisoxide;
+document.getElementById("braisoxideSave").onclick=async()=>{const plan_id=document.getElementById("braisoxidePlan").value,supplier_product_id=Number(document.getElementById("braisoxideProduct").value),msg=document.getElementById("braisoxideMsg"),btn=document.getElementById("braisoxideSave");if(!plan_id||!Number.isSafeInteger(supplier_product_id)||supplier_product_id<=0){msg.textContent="Выбери тариф и товар поставщика.";return;}btn.disabled=true;msg.textContent="Проверяю товар и сохраняю привязку…";try{await api("POST",{action:"save_braisoxide_mapping",plan_id,supplier_product_id});msg.textContent="Привязка сохранена.";await loadBraisoxide();}catch(e){msg.textContent="Ошибка: "+e.message;}finally{btn.disabled=false;}};
+document.getElementById("braisoxideMappings").addEventListener("click",async e=>{const b=e.target.closest("[data-braisoxide-delete]");if(!b)return;if(!confirm("Удалить привязку Braisoxide?"))return;b.disabled=true;try{await api("POST",{action:"delete_braisoxide_mapping",plan_id:b.dataset.braisoxideDelete});await loadBraisoxide();}catch(e){alert(e.message);b.disabled=false;}});
+function showAdminSection(which){for(const id of ["ordersSection","productsSection","inventorySection","announcementsSection","gamesSection","analyticsSection","auditSection","marketplaceSection","amlSection","withdrawalsSection","sanctionsSection","supplierSection","braisoxideSection","referralsSection"])document.getElementById(id).classList.toggle("hide",id!==which);for(const id of ["ordersTab","productsTab","inventoryTab","announcementsTab","gamesTab","analyticsTab","auditTab","marketplaceTab","amlTab","withdrawalsTab","sanctionsTab","supplierTab","braisoxideTab","referralsTab"])document.getElementById(id).classList.toggle("primary",id===(which+"Tab").replace("Section",""));if(which==="productsSection")loadProducts();if(which==="inventorySection")loadInventory();if(which==="announcementsSection"){loadAnnouncements();loadBroadcastHistory();}if(which==="gamesSection")loadGames();if(which==="analyticsSection")loadAnalytics();if(which==="auditSection")loadAudit();if(which==="marketplaceSection")loadMarketplaceAdmin();if(which==="amlSection")loadAmlAdmin();if(which==="withdrawalsSection")loadAdminWithdrawals();if(which==="supplierSection")loadBraisbot();if(which==="braisoxideSection")loadBraisoxide();if(which==="referralsSection")loadReferralAdmin();}
+
+function referralAdminStat(label,value){return '<div class="stat"><small>'+esc(label)+'</small><strong>'+esc(value)+'</strong></div>';}
+function renderReferralLeaderboard(targetId,title,rows){
+ const el=document.getElementById(targetId);if(!el)return;
+ const list=Array.isArray(rows)?rows:[];
+ const body=list.length?list.map((u,i)=>'<tr><td style="padding:8px 6px">'+(i+1)+'</td><td style="padding:8px 6px"><b>'+esc(u.first_name||'Пользователь')+'</b>'+(u.username?' <span class="muted">@'+esc(u.username)+'</span>':'')+'<div class="muted">ID: '+esc(u.telegram_user_id||'—')+'</div></td><td style="padding:8px 6px;text-align:center">'+esc(u.registrations??0)+'</td><td style="padding:8px 6px;text-align:center"><b>'+esc(u.sellers??0)+'</b></td></tr>').join(''):'<tr><td colspan="4" class="muted" style="padding:14px;text-align:center">Пока нет данных за этот период</td></tr>';
+ el.innerHTML='<div class="number">'+title+'</div><div style="overflow-x:auto;margin-top:8px"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="color:var(--muted);text-align:left;border-bottom:1px solid var(--line)"><th style="padding:7px 6px">№</th><th style="padding:7px 6px">Пользователь</th><th style="padding:7px 6px;text-align:center">Регистрации</th><th style="padding:7px 6px;text-align:center">Продавцы</th></tr></thead><tbody>'+body+'</tbody></table></div>';
+}
+function renderReferralAdmin(data){
+ const global=data.global||{};
+ document.getElementById('referralGlobalStats').innerHTML=[
+  referralAdminStat('Регистрации по ссылкам',global.registrations??'—'),
+  referralAdminStat('Стали продавцами',global.sellers??'—'),
+  referralAdminStat('Ожидают публикации',global.waiting??'—'),
+  referralAdminStat('Конверсия',(global.conversion_percent??0)+'%')
+ ].join('');
+ const leaders=data.leaderboards||{};
+ renderReferralLeaderboard('referralLeaderboard7d','Топ-10 за 7 дней',leaders.days7||[]);
+ renderReferralLeaderboard('referralLeaderboard30d','Топ-10 за 30 дней',leaders.days30||[]);
+ renderReferralLeaderboard('referralLeaderboardAll','Топ-10 за всё время',leaders.allTime||[]);
+ const out=document.getElementById('referralAdminResult');
+ if(!data.target){out.innerHTML='<div class="notice">Введи Telegram ID приглашающего, чтобы открыть подробную статистику.</div>';return;}
+ const t=data.target,st=data.stats||{},rows=data.referrals||[];
+ const userTitle=(u)=>esc(u.first_name||'Пользователь')+(u.username?' · @'+esc(u.username):'');
+ const cards=[
+  referralAdminStat('Прямые регистрации',st.direct_registrations??0),
+  referralAdminStat('Стали продавцами',st.direct_sellers??0),
+  referralAdminStat('Ожидают публикации',st.direct_waiting??0),
+  referralAdminStat('Конверсия',String(st.direct_conversion_percent??0)+'%'),
+  referralAdminStat('Вся цепочка приглашений',st.total_descendants??0),
+  referralAdminStat('Продавцы во всей цепочке',st.total_sellers??0),
+  referralAdminStat('Всего объявлений',st.total_listings??0),
+  referralAdminStat('Активных объявлений',st.active_listings??0)
+ ].join('');
+ const list=rows.length?rows.map(u=>{
+  const ls=u.listing_stats||{};
+  const status=u.referral_first_listing_at?'<span class="status fulfilled">Продавец</span>':'<span class="status">Ожидает товар</span>';
+  return '<article class="market-admin-card" style="margin-top:9px"><div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start"><div><b>'+userTitle(u)+'</b><div class="muted">Telegram ID: '+esc(u.telegram_user_id)+' · Уровень: '+esc(u.depth)+' · Регистрация: '+(u.created_at?new Date(u.created_at).toLocaleString('ru-RU'):'—')+'</div><div class="muted">Объявлений: '+esc(ls.total??0)+' · Активных: '+esc(ls.active??0)+' · Продано: '+esc(ls.sold??0)+' · Снято: '+esc(ls.removed??0)+'</div><div class="muted">Первая публикация: '+(u.referral_first_listing_at?new Date(u.referral_first_listing_at).toLocaleString('ru-RU'):'ещё не было')+'</div></div>'+status+'</div><div class="actions"><button data-admin-openuser="'+esc(u.telegram_user_id)+'">Открыть пользователя</button></div></article>';
+ }).join(''):'<div class="notice">Пока никто не зарегистрировался по этой реферальной ссылке.</div>';
+ out.innerHTML='<div class="market-admin-card"><h3>'+userTitle(t)+'</h3><p>Telegram ID: '+esc(t.telegram_user_id)+'</p><p>Регистрация: '+(t.created_at?new Date(t.created_at).toLocaleString('ru-RU'):'—')+'</p><p>Постоянный код: '+esc(t.referral_code||'—')+'</p><p>Ссылка: https://t.me/kadzistore_bot?startapp='+encodeURIComponent(t.referral_code||'')+'</p></div><div class="stats" style="margin-top:10px">'+cards+'</div><div class="number" style="margin-top:18px">Все приглашённые и их цепочка</div>'+list;
+}
+async function loadReferralAdmin(telegramUserId=''){
+ const out=document.getElementById('referralAdminResult');if(!out)return;
+ out.innerHTML='<div class="notice">Загружаю реферальную статистику…</div>';
+ try{const data=await api('POST',{action:'referral_admin_lookup',telegram_user_id:telegramUserId});renderReferralAdmin(data);}
+ catch(e){out.innerHTML='<div class="notice error">'+esc(e.message||'Не удалось загрузить рефералов')+'</div>';}
+}
+document.getElementById('referralAdminFind').onclick=()=>loadReferralAdmin(document.getElementById('referralAdminSearch').value.trim());
+document.getElementById('referralAdminSearch').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('referralAdminFind').click();});
+document.getElementById("ordersTab").onclick=()=>showAdminSection("ordersSection");
+document.getElementById("productsTab").onclick=()=>showAdminSection("productsSection");
+document.getElementById("inventoryTab").onclick=()=>showAdminSection("inventorySection");
+document.getElementById("announcementsTab").onclick=()=>showAdminSection("announcementsSection");
+document.getElementById("gamesTab").onclick=()=>showAdminSection("gamesSection");document.getElementById("auditTab").onclick=()=>showAdminSection("auditSection");document.getElementById("analyticsTab").onclick=()=>showAdminSection("analyticsSection");document.getElementById("reloadAnalytics").onclick=loadAnalytics;document.getElementById("analyticsRange").onchange=renderAnalytics;
+let allGames=[];
+async function loadGames(){const el=document.getElementById("gamesList");el.innerHTML='<div class="notice">Загрузка…</div>';try{const d=await api("GET",null,"games");allGames=d.games||[];el.innerHTML=allGames.map(g=>'<article class="product"><div class="product-head"><div><b>'+esc(g.name)+'</b><div class="muted">'+esc(g.slug)+' · Порядок '+esc(g.sort_order)+'</div>'+(g.image_url?'<img src="'+esc(g.image_url)+'" alt="" style="width:100%;max-height:120px;object-fit:cover;border-radius:10px;margin-top:8px">':'')+'</div><span class="status">'+(g.is_active?'Активна':'Скрыта')+'</span></div><div class="actions"><button class="primary" data-game-edit="'+esc(g.id)+'">Изменить</button><button data-game-toggle="'+esc(g.id)+'" data-active="'+(g.is_active?'true':'false')+'">'+(g.is_active?'Скрыть':'Показать')+'</button><button class="warn" data-game-delete="'+esc(g.id)+'">Удалить</button></div></article>').join("")||'<div class="empty">Список игр пуст</div>';}catch(e){el.innerHTML='<div class="notice error">'+esc(e.message)+'</div>';}}
+function openGame(g){g=g||{};document.getElementById("gId").value=g.id||"";document.getElementById("gName").value=g.name||"";document.getElementById("gSlug").value=g.slug||"";document.getElementById("gImage").value=g.image_url||"";document.getElementById("gSort").value=g.sort_order??0;document.getElementById("gActive").checked=g.is_active!==false;document.getElementById("gameMsg").textContent="";document.getElementById("gameEditor").classList.remove("hide");}
+document.getElementById("newGame").onclick=()=>openGame();document.getElementById("reloadGames").onclick=loadGames;document.getElementById("cancelGame").onclick=()=>document.getElementById("gameEditor").classList.add("hide");document.getElementById("saveGame").onclick=async()=>{const name=document.getElementById("gName").value.trim(),slug=document.getElementById("gSlug").value.trim().toLowerCase(),msg=document.getElementById("gameMsg");if(!name||!/^[a-z0-9][a-z0-9-]{1,63}$/.test(slug)){msg.textContent="Проверь название и slug";return;}try{await api("POST",{action:"save_game",id:document.getElementById("gId").value||undefined,name,slug,image_url:document.getElementById("gImage").value.trim(),sort_order:Number(document.getElementById("gSort").value)||0,is_active:document.getElementById("gActive").checked});document.getElementById("gameEditor").classList.add("hide");await loadGames();}catch(e){msg.textContent=e.message;}};
+document.getElementById("gamesList").onclick=async e=>{const edit=e.target.closest("[data-game-edit]"),toggle=e.target.closest("[data-game-toggle]"),del=e.target.closest("[data-game-delete]");if(edit){openGame(allGames.find(g=>g.id===edit.dataset.gameEdit));return;}try{if(toggle)await api("POST",{action:"save_game",id:toggle.dataset.gameToggle,name:allGames.find(g=>g.id===toggle.dataset.gameToggle).name,slug:allGames.find(g=>g.id===toggle.dataset.gameToggle).slug,image_url:allGames.find(g=>g.id===toggle.dataset.gameToggle).image_url||"",sort_order:allGames.find(g=>g.id===toggle.dataset.gameToggle).sort_order,is_active:toggle.dataset.active!=="true"});if(del){if(!confirm("Удалить игру?"))return;await api("POST",{action:"delete_game",id:del.dataset.gameDelete});}if(toggle||del)await loadGames();}catch(err){alert(err.message);}};
+// V14: order search, bulk notices, and audit log.
+function renderOrderSearch(rows){const el=document.getElementById("orderSearchResult");el.innerHTML=rows.length?rows.map(o=>{const u=o.kds_users||{};return '<div class="audit-row"><b>Заказ #'+esc(o.order_number)+'</b> · '+esc(labels[o.status]||o.status)+'<div class="muted">'+esc(o.product_name)+' · '+esc(o.duration_label)+'<br>'+esc(u.first_name||"")+' '+(u.username?'@'+esc(u.username):'')+' · Telegram ID: '+esc(u.telegram_user_id||"—")+'<br>'+new Date(o.created_at).toLocaleString("ru-RU")+' · '+money(o.amount_rub)+'</div></div>';}).join(""):'<div class="muted">Ничего не найдено.</div>';}
+document.getElementById("orderSearchBtn").onclick=async()=>{const q=document.getElementById("orderSearch").value.trim();if(!q)return;const el=document.getElementById("orderSearchResult");el.textContent="Ищу…";try{const d=await api("POST",{action:"search_orders",query:q});renderOrderSearch(d.orders||[]);}catch(e){el.textContent="Ошибка поиска: "+e.message;}};
+document.getElementById("orderSearch").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("orderSearchBtn").click();});
+document.getElementById("orderSearchClear").onclick=()=>{document.getElementById("orderSearch").value="";document.getElementById("orderSearchResult").innerHTML="";};
+function setBulkStatusOptions(){setDropdown("bulkNoticeStatus",[{value:"",label:"Без уведомления"},{value:"Ожидает обновления",label:"Ожидает обновления"},{value:"Технические работы",label:"Технические работы"}],"");}
+document.getElementById("selectAllProducts").onclick=()=>{allProducts.forEach(p=>selectedProductIds.add(p.id));loadProducts();};
+document.getElementById("clearProductSelection").onclick=()=>{selectedProductIds.clear();loadProducts();};
+document.getElementById("productsList").addEventListener("change",e=>{const c=e.target.closest("[data-product-select]");if(!c)return;if(c.checked)selectedProductIds.add(c.dataset.productSelect);else selectedProductIds.delete(c.dataset.productSelect);});
+document.getElementById("applyBulkNotice").onclick=async()=>{const ids=[...selectedProductIds],status=document.getElementById("bulkNoticeStatus").dataset.value||"",message=document.getElementById("bulkNoticeText").value.trim(),out=document.getElementById("bulkMsg");if(!ids.length){out.textContent="Сначала выбери товары.";return;}if(status&&!message){out.textContent="Добавь текст уведомления.";return;}try{await api("POST",{action:"bulk_product_notice",product_ids:ids,notice_status:status,notice_text:message});out.textContent="Обновлено товаров: "+ids.length;await loadProducts();}catch(e){out.textContent="Ошибка: "+e.message;}};
+function auditDetailsHuman(details){
+ const names={product_id:"ID товара",plan_id:"ID тарифа",price_rub:"Цена",cost_rub:"Закупочная цена",old_price:"Старая цена",new_price:"Новая цена",quantity:"Количество",status:"Статус",is_active:"Активность",title:"Название",name:"Название",slug:"Slug",game:"Игра",section:"Раздел",subcategory:"Подраздел",platform:"Платформа",order_id:"ID заказа",order_number:"Номер заказа",user_id:"ID пользователя",telegram_user_id:"Telegram ID",reason:"Причина",action:"Действие",amount_rub:"Сумма",duration_days:"Длительность (дни)"
+ };
+ const flatten=(obj,prefix="")=>{if(obj==null)return [];if(typeof obj!=="object")return [[prefix, String(obj)]];return Object.entries(obj).flatMap(([k,v])=>flatten(v,prefix?prefix+" / "+(names[k]||k):(names[k]||k)));};
+ try{const parsed=typeof details==="string"?JSON.parse(details):details;const rows=flatten(parsed);return rows.length?rows.map(([k,v])=>'<div class="planline"><b>'+esc(k)+'</b>: '+esc(v)+'</div>').join(""):'<span class="muted">Подробностей нет</span>';}catch(_){return '<div class="muted">'+esc(String(details||"Подробностей нет"))+'</div>';}
+}
+async function loadAudit(){const el=document.getElementById("auditList");el.innerHTML='<div class="notice">Загрузка…</div>';try{const d=await api("GET",null,"audit");const rows=d.entries||[];el.innerHTML=rows.length?rows.map(x=>'<div class="panel audit-row"><b>'+esc(x.action)+'</b><div class="muted">'+esc(x.target_type||"—")+' · '+esc(x.target_id||"—")+'<br>Администратор: '+esc(x.admin_telegram_id)+'<br>'+new Date(x.created_at).toLocaleString("ru-RU")+'</div><div class="audit-details">'+auditDetailsHuman(x.details||{})+'</div></div>').join(""):'<div class="empty">Записей пока нет</div>'; }catch(e){el.innerHTML='<div class="notice error">'+esc(e.message)+'</div>';}}
+document.getElementById("reloadAudit").onclick=loadAudit;
+let selectedUser=null;
+function renderUserPicker(rows,container){
+ const users=rows||[];
+ container.innerHTML=users.length?users.map(u=>'<div class="audit-row"><b>'+esc(u.first_name||'Пользователь без имени')+'</b> · '+(u.username?'@'+esc(u.username):'<span class="notice-pill">Без username</span>')+'<div class="muted">Telegram ID: '+esc(u.telegram_user_id)+' · Баланс: '+money(u.balance_rub)+'<br>Регистрация: '+(u.created_at?new Date(u.created_at).toLocaleString("ru-RU"):'—')+'</div><div class="actions"><button class="primary" data-admin-openuser="'+esc(u.telegram_user_id)+'">Открыть пользователя</button></div></div>').join(''):'<div class="empty">Пользователи не найдены.</div>';
+}
+function renderWalletTransactions(rows,container){
+ container.innerHTML=rows.length?rows.map(t=>{const u=t.kds_users||{},amount=Number(t.amount_rub||0),label=amount>0?'Пополнение':'Списание';return '<div class="audit-row"><b class="'+(amount>=0?'':'error')+'">'+(amount>0?'+':'')+money(amount)+'</b> · '+esc(label)+'<div class="muted">'+esc(u.first_name||'Пользователь без имени')+' · '+(u.username?'@'+esc(u.username):'Без username')+'<br>Telegram ID: '+esc(u.telegram_user_id||'—')+'<br>Баланс после операции: '+money(t.balance_after_rub)+'<br>'+new Date(t.created_at).toLocaleString('ru-RU')+'<br>'+esc(t.note||'Без комментария')+'</div><div class="actions"><button data-admin-openuser="'+esc(u.telegram_user_id||'')+'">Открыть пользователя</button></div></div>';}).join(''):'<div class="empty">Ручных пополнений и списаний пока нет.</div>';
+}
+async function openAdminUserById(id){
+ const out=document.getElementById('userResult');out.innerHTML='<div class="muted">Открываю профиль…</div>';document.getElementById('userSearch').value=String(id);
+ try{const d=await api('POST',{action:'search_user',query:String(id)});const u=d.user||d.users?.[0];if(!u)throw new Error('USER_NOT_FOUND');await renderSelectedAdminUser(u);out.scrollIntoView({behavior:'smooth',block:'start'});}
+ catch(e){out.innerHTML='<div class="meta error">'+esc(e.message)+'</div>';}
+}
+async function renderSelectedAdminUser(u){
+ selectedUser=u;const out=document.getElementById('userResult');
+ out.innerHTML='<div class="stat" style="margin-top:8px"><small>Профиль пользователя</small><strong style="font-size:16px">'+esc(u.first_name||'Пользователь без имени')+(u.username?' · @'+esc(u.username):' · Без username')+'</strong><div class="meta">Telegram ID: '+esc(u.telegram_user_id)+'</div><div class="price">Баланс: '+money(u.balance_rub)+'</div><div class="meta">Пополнения: '+money(u.topup_balance_rub)+' · Заработок: '+money(u.earnings_balance_rub)+' · На удержании: '+money(u.frozen_balance_rub)+'</div><div class="meta">Администратор может списать также удержанные средства. Максимум: '+money(Number(u.balance_rub||0)+Number(u.frozen_balance_rub||0))+'</div><div class="actions"><button data-copy-user-id="'+esc(u.telegram_user_id)+'">Копировать ID</button></div></div>'+
+ '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><input id="balanceAmount" type="text" inputmode="decimal" placeholder="Например, 100,1 ₽"><input id="balanceReason" placeholder="Причина операции"></div>'+
+ '<div style="margin-top:12px;padding:12px;border:1px solid #37c97866;border-radius:11px;background:#10251b"><label for="balanceCreditSource" style="display:block;color:#8be0ad;font-size:13px;font-weight:800;margin-bottom:8px">ТИП НАЧИСЛЕНИЯ — выбери перед нажатием «Начислить»</label><select id="balanceCreditSource" aria-label="Куда зачислить средства" style="display:block;width:100%;min-height:46px;background:#090909;border:2px solid #37c978;border-radius:9px;padding:11px;color:white;font-size:15px;font-weight:700"><option value="topup">💳 В ПОПОЛНЕНИЯ</option><option value="earnings">💰 В ЗАРАБОТОК</option></select><div style="color:#b8c8bd;font-size:11px;line-height:1.5;margin-top:7px">Этот выбор применяется только к кнопке «Начислить». При списании тип не используется.</div></div>'+
+ '<div class="actions"><button class="good" data-balance="credit">＋ Начислить</button><button class="warn" data-balance="debit">− Списать</button></div>'+
+ '<div class="panel" style="margin-top:12px"><b>Финансовая история пользователя</b><div id="selectedUserWalletHistory" class="muted">Загрузка истории…</div></div>';
+ const hist=document.getElementById('selectedUserWalletHistory');
+ try{const d=await api('POST',{action:'list_user_wallet_transactions',telegram_user_id:u.telegram_user_id});renderWalletTransactionsForUser(d.transactions||[],hist);}catch(e){hist.innerHTML='<div class="meta error">История недоступна: '+esc(e.message)+'</div>';}
+}
+function renderWalletTransactionsForUser(rows,container){
+ container.innerHTML=rows.length?rows.map(t=>{const amount=Number(t.amount_rub||0);return '<div class="audit-row"><b class="'+(amount>=0?'':'error')+'">'+(amount>0?'+':'')+money(amount)+'</b><div class="muted">'+esc(t.kind||'Операция')+' · Баланс после: '+money(t.balance_after_rub)+'<br>'+new Date(t.created_at).toLocaleString('ru-RU')+'<br>'+esc(t.note||'')+'</div></div>';}).join(''):'<div class="empty">История операций пользователя пуста.</div>';
+}
+document.getElementById('userFind').onclick=async()=>{
+ const query=document.getElementById('userSearch').value.trim(),out=document.getElementById('userResult');if(!query){out.innerHTML='<div class="meta error">Введи Telegram ID, username или имя.</div>';return;}out.innerHTML='<div class="meta">Поиск…</div>';
+ try{const d=await api('POST',{action:'search_user',query});const users=d.users|| (d.user?[d.user]:[]);if(users.length===1){await renderSelectedAdminUser(users[0]);return;}selectedUser=null;renderUserPicker(users,out);}
+ catch(e){selectedUser=null;out.innerHTML='<div class="meta error">'+esc(e.message)+'</div>';}
+};
+document.getElementById('userSearch').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('userFind').click();});
+document.getElementById('userResult').onclick=async e=>{
+ const open=e.target.closest('[data-admin-openuser]');if(open){await openAdminUserById(open.dataset.adminOpenuser);return;}
+ const copy=e.target.closest('[data-copy-user-id]');if(copy){try{await navigator.clipboard.writeText(String(copy.dataset.copyUserId));alert('Telegram ID скопирован');}catch(_){prompt('Скопируй Telegram ID:',copy.dataset.copyUserId);}return;}
+ const b=e.target.closest('button[data-balance]');if(!b||!selectedUser)return;
+ const amount=parseRubInput(document.getElementById('balanceAmount').value),reason=document.getElementById('balanceReason').value.trim();if(!validRubAmount(amount)){alert('Введи сумму больше нуля, максимум с одной цифрой после запятой');return;}if(!reason){alert('Укажи причину операции');return;}
+ const action=b.dataset.balance,creditSource=action==='credit'?(document.getElementById('balanceCreditSource')?.value||'topup'):'topup',verb=action==='credit'?'начислить ('+(creditSource==='earnings'?'в заработок':'в пополнения')+')':'списать';if(action==='credit'&&!['topup','earnings'].includes(creditSource)){alert('Выбери тип начисления: в пополнения или в заработок.');return;}if(!confirm('Подтвердить: '+verb+' '+money(amount)+' пользователю '+selectedUser.telegram_user_id+'?'))return;b.disabled=true;
+ try{const d=await api('POST',{action:'adjust_balance',telegram_user_id:selectedUser.telegram_user_id,amount_rub:amount,operation:action,credit_source:creditSource,reason});alert('Готово. Новый баланс: '+money(d.result.balance_rub));await openAdminUserById(selectedUser.telegram_user_id);await loadAdminWalletHistory();}
+ catch(err){alert(err.message);b.disabled=false;}
+};
+document.getElementById('adminUsersResult').onclick=async e=>{const b=e.target.closest('[data-admin-openuser]');if(b)await openAdminUserById(b.dataset.adminOpenuser);};
+async function loadAdminUsers(filter){const out=document.getElementById('adminUsersResult');out.innerHTML='<div class="meta">Загрузка пользователей…</div>';try{const d=await api('POST',{action:'list_admin_users',filter});renderUserPicker(d.users||[],out);}catch(e){out.innerHTML='<div class="meta error">'+esc(e.message)+'</div>';}}
+document.getElementById('loadNoUsernameUsers').onclick=()=>loadAdminUsers('no_username');document.getElementById('loadRecentUsers').onclick=()=>loadAdminUsers('recent');
+async function loadAdminWalletHistory(){const out=document.getElementById('adminWalletHistory');out.innerHTML='<div class="meta">Загрузка финансовой истории…</div>';try{const d=await api('POST',{action:'list_admin_balance_history'});renderWalletTransactions(d.transactions||[],out);}catch(e){out.innerHTML='<div class="meta error">'+esc(e.message)+'</div>';}}
+document.getElementById('reloadAdminWalletHistory').onclick=loadAdminWalletHistory;
+document.getElementById('adminWalletHistory').onclick=async e=>{const b=e.target.closest('[data-admin-openuser]');if(b&&b.dataset.adminOpenuser)await openAdminUserById(b.dataset.adminOpenuser);};
+document.getElementById("backToStore").onclick=()=>{location.href="https://bykadzistore.github.io/kadzistore/";};
+document.getElementById("reload").onclick=()=>{load();if(!document.getElementById("productsSection").classList.contains("hide"))loadProducts();if(!document.getElementById("analyticsSection").classList.contains("hide"))loadAnalytics();};
+document.getElementById("filters").onclick=e=>{const b=e.target.closest("button[data-filter]");if(!b)return;filter=b.dataset.filter;document.querySelectorAll("[data-filter]").forEach(x=>x.classList.toggle("primary",x===b));render();};
+document.getElementById("orders").onclick=async e=>{
+ const b=e.target.closest("button[data-act]");if(!b)return;const id=b.dataset.id,act=b.dataset.act;
+ try{
+  b.disabled=true;
+  if(act==="start")await api("POST",{action:"start",order_id:id});
+  if(act==="dispatch")await api("POST",{action:"dispatch",order_id:id});
+  if(act==="refund"){const reason=prompt("Причина отмены и возврата:");if(!reason){b.disabled=false;return;}await api("POST",{action:"refund",order_id:id,reason});}
+  if(act==="fulfill"){
+   const data=await openDeliveryDialog(id);if(!data){b.disabled=false;return;}
+   await api("POST",{action:"fulfill",order_id:id,delivery_type:data.delivery_type,message:data.message||null,download_url:data.download_url||null,storage_path:data.storage_path||null,instruction:data.instruction||null});
+  }
+  await load();
+ }catch(err){alert(err.message);b.disabled=false;}
+};
+async function openDeliveryDialog(orderId){return new Promise(resolve=>{const wrap=document.createElement("div");wrap.className="modal-backdrop";wrap.innerHTML='<div class="modal-card"><div class="number">Выдача товара</div><div class="field"><label>Тип выдачи</label><div class="dropdown glass-dropdown"><input id="deliveryType" type="text" readonly placeholder="Выбери тип"><div class="dropdown-menu"></div></div></div><div class="field" id="deliveryTextWrap"><label>Текст / ключ</label><textarea id="deliveryText" rows="4" placeholder="Вставь ключ или сообщение"></textarea></div><div class="field hide" id="deliveryFileWrap"><label>Файл для покупателя (например APK)</label><input class="file-pick" id="deliveryFile" type="file" accept=".apk,.zip,.pdf,.txt,.rar,.7z,.ipa,.exe,.dmg,.pkg"><div class="muted">Файл будет прикреплён к заказу.</div></div><div class="field hide" id="deliveryUrlWrap"><label>Ссылка на скачивание</label><input id="deliveryUrl" type="url" placeholder="https://..."></div><div class="field"><label>Инструкция (необязательно)</label><input id="deliveryInstruction" type="url" value="https://t.me/+YGOwB71cb3AzYTNi"></div><div class="actions"><button class="primary" id="deliverySubmit">Подтвердить выдачу</button><button id="deliveryCancel">Отмена</button></div><div id="deliveryMsg" class="muted"></div></div>';document.body.appendChild(wrap);const finish=v=>{wrap.remove();resolve(v)};setDropdown("deliveryType",[{value:"activation_key",label:"Ключ / текст"},{value:"file",label:"Файл (APK и другие)"},{value:"download_link",label:"Ссылка на скачивание"}],"activation_key");const sync=()=>{const t=document.getElementById("deliveryType").dataset.value||"activation_key";document.getElementById("deliveryTextWrap").classList.toggle("hide",t==="file");document.getElementById("deliveryFileWrap").classList.toggle("hide",t!=="file");document.getElementById("deliveryUrlWrap").classList.toggle("hide",t!=="download_link");};wrap.addEventListener("click",e=>{if(e.target.closest("[data-option-value]"))setTimeout(sync,0);});sync();document.getElementById("deliveryCancel").onclick=()=>finish(null);document.getElementById("deliverySubmit").onclick=async()=>{const t=document.getElementById("deliveryType").dataset.value||"activation_key",message=document.getElementById("deliveryText").value.trim(),file=document.getElementById("deliveryFile").files[0],url=document.getElementById("deliveryUrl").value.trim(),instruction=document.getElementById("deliveryInstruction").value.trim(),msg=document.getElementById("deliveryMsg");try{let storage_path="";if(t==="activation_key"&&!message)throw new Error("Введи текст или ключ.");if(t==="file"){if(!file)throw new Error("Выбери файл.");msg.textContent="Загружаю файл через защищённый сервер…";const uploadUrl="https://vpuaihznkswrpsqxgcvm.supabase.co/functions/v1/kds-admin?api=1&action=upload_delivery_file&order_id="+encodeURIComponent(orderId)+"&file_name="+encodeURIComponent(file.name)+"&file_size="+file.size;const r=await fetch(uploadUrl,{method:"POST",headers:{"X-Telegram-Init-Data":initData,"Content-Type":file.type||"application/octet-stream"},body:file});const uploadData=await r.json().catch(()=>({}));if(!r.ok)throw new Error(uploadData.error||uploadData.message||"Не удалось загрузить файл в хранилище.");if(!uploadData.storage_path)throw new Error("Сервер не вернул путь загруженного файла.");storage_path=uploadData.storage_path;}if(t==="download_link"&&!/^https:\/\//i.test(url))throw new Error("Укажи HTTPS-ссылку.");if(instruction&&!/^https:\/\//i.test(instruction))throw new Error("Инструкция должна быть HTTPS-ссылкой.");finish({delivery_type:t,message,download_url:t==="download_link"?url:"",storage_path,instruction});}catch(e){msg.textContent=e.message;}};});}
+document.getElementById("pPlatform").value="Android";
+setBulkStatusOptions();
+if(!initData){document.getElementById("orders").innerHTML='<div class="notice error">Открой эту страницу через Telegram Mini App, чтобы подтвердить администратора.</div>';}
+else load();
+loadAdminWalletHistory();
+const MARKET_API="https://vpuaihznkswrpsqxgcvm.supabase.co/functions/v1/kds-marketplace";
+let marketAdminDisputes=[],marketAdminOrders=[],marketAdminListings=[],marketAdminCurrentDispute=null,marketAdminUserId=null,marketListingFilter="active",marketOrderFilter="all";
+async function marketAdminApi(method="GET",body=null,section="bootstrap",params={}){
+ const q=new URLSearchParams({section,...Object.fromEntries(Object.entries(params).filter(([,v])=>v!==undefined&&v!==null&&v!==""))});
+ const r=await fetch(MARKET_API+"?"+q.toString(),{method,headers:{"Content-Type":"application/json","X-Telegram-Init-Data":initData},body:body?JSON.stringify(body):undefined});
+ let d={};try{d=await r.json()}catch(_){}if(!r.ok)throw new Error(d.error||"Ошибка маркетплейса");return d;
+}
+async function loadMarketplaceAdmin(){
+ const targets=["marketplaceDisputes","marketplaceListings","marketplaceOrders"];
+ targets.forEach(id=>document.getElementById(id).innerHTML='<div class="notice">Загружаю данные…</div>');
+ try{
+  const [boot,d,l,o]=await Promise.all([marketAdminApi("GET",null,"bootstrap"),marketAdminApi("GET",null,"admin_disputes"),marketAdminApi("GET",null,"admin_listings"),marketAdminApi("GET",null,"admin_orders")]);
+  marketAdminUserId=boot.user?.id||null;marketAdminDisputes=d.disputes||[];marketAdminListings=l.listings||[];marketAdminOrders=o.orders||[];
+  renderMarketplaceAdmin();
+ }catch(e){targets.forEach(id=>document.getElementById(id).innerHTML='<div class="notice error">'+esc(e.message)+'</div>');}
+}
+function renderMarketplaceAdmin(){
+ const disputes=document.getElementById("marketplaceDisputes");
+ disputes.innerHTML=marketAdminDisputes.length?marketAdminDisputes.map(x=>{const o=x.kds_marketplace_orders||{},l=o.kds_marketplace_listings||{};return '<article class="market-admin-card"><h3>Спор по заказу #'+esc(o.order_code||"")+'</h3><p>'+esc(l.title||"Товар")+' · '+money(o.total_rub||0)+' · '+esc(o.status||"")+'</p><p>Причина не требуется.</p><p>Открыт: '+new Date(x.created_at).toLocaleString("ru-RU")+'</p><div class="market-admin-actions"><button class="primary" data-market-chat="'+esc(o.id||x.order_id)+'">Открыть переписку</button><button data-market-verdict="buyer" data-market-order="'+esc(o.id||x.order_id)+'">Решить в пользу покупателя</button><button data-market-verdict="seller" data-market-order="'+esc(o.id||x.order_id)+'">Решить в пользу продавца</button></div></article>';}).join(""):'<div class="notice">Открытых споров нет.</div>';
+ const listings=document.getElementById("marketplaceListings");
+ const statusLabels={active:"Активно",paused:"Приостановлено",under_review:"На проверке",sold:"Продано",removed:"Снято",inactive:"Неактивно"};
+ const visibleListings=marketListingFilter==="all"?marketAdminListings:marketAdminListings.filter(x=>String(x.status||"").toLowerCase()===marketListingFilter);
+ document.querySelectorAll("#marketListingFilters [data-market-filter]").forEach(b=>b.classList.toggle("primary",b.dataset.marketFilter===marketListingFilter));
+ listings.innerHTML=visibleListings.length?visibleListings.map(x=>'<article class="market-admin-card"><h3>'+esc(x.title)+'</h3><p>'+esc(x.kds_games?.name||"Игра")+' · '+esc(x.kds_marketplace_categories?.category_name||"Категория")+' · продавец: '+esc(x.seller_nickname)+'</p><p>'+money(x.unit_price_rub)+(x.pricing_mode==="per_g"?" / G":"")+' · остаток: '+esc(x.quantity_available)+' · статус: '+esc(statusLabels[x.status]||x.status)+'</p><div class="market-admin-actions">'+(x.status!=="active"?'<button class="primary" data-market-listing-status="active" data-market-listing="'+esc(x.id)+'">Опубликовать</button>':'')+(x.status!=="paused"?'<button data-market-listing-status="paused" data-market-listing="'+esc(x.id)+'">Приостановить</button>':'')+(x.status!=="under_review"?'<button data-market-listing-status="under_review" data-market-listing="'+esc(x.id)+'">На проверку</button>':'')+(x.status!=="removed"?'<button class="warn" data-market-listing-status="removed" data-market-listing="'+esc(x.id)+'">Снять с продажи</button>':'')+'</div></article>').join(""):'<div class="notice">Нет объявлений с выбранным статусом.</div>';
+ const orders=document.getElementById("marketplaceOrders");
+ const orderStatus=x=>String(x.status||"").toLowerCase();
+ const filteredOrders=marketAdminOrders.filter(x=>marketOrderFilter==="all"||(marketOrderFilter==="active"&&["pending","paid","processing","in_delivery","delivering","shipping","awaiting_confirmation"].includes(orderStatus(x)))||(marketOrderFilter==="delivered"&&orderStatus(x)==="delivered")||(marketOrderFilter==="completed"&&["completed","confirmed","fulfilled"].includes(orderStatus(x)))||(marketOrderFilter==="cancelled"&&["cancelled","refunded"].includes(orderStatus(x))));
+ document.querySelectorAll("#marketOrderFilters [data-market-order-filter]").forEach(b=>b.classList.toggle("primary",b.dataset.marketOrderFilter===marketOrderFilter));
+ const turnover=marketAdminOrders.filter(x=>!["cancelled","refunded"].includes(orderStatus(x))).reduce((a,x)=>a+Number(x.total_rub||0),0);
+ const estimate=turnover-(turnover/1.1);
+ document.getElementById("marketStatTurnover").textContent=money(turnover);
+ document.getElementById("marketStatIncome").textContent=money(estimate);
+ document.getElementById("marketStatCount").textContent=marketAdminOrders.length;
+ document.getElementById("marketStatDone").textContent=marketAdminOrders.filter(x=>["delivered","completed","confirmed","fulfilled"].includes(orderStatus(x))).length;
+ orders.innerHTML=filteredOrders.length?filteredOrders.map(x=>'<article class="market-admin-card"><h3>Заказ #'+esc(x.order_code)+'</h3><p>'+esc(x.kds_marketplace_listings?.title||"Лот")+' · '+esc(x.kds_marketplace_listings?.kds_games?.name||"Игра")+'</p><p>'+money(x.total_rub)+' · '+esc(x.status)+' · '+new Date(x.created_at).toLocaleString("ru-RU")+'</p><div class="market-admin-actions"><button data-market-chat-order="'+esc(x.id)+'">Открыть чат</button>'+(x.status==="delivered"?'<button class="primary" data-market-admin-confirm="'+esc(x.id)+'">Подтвердить заказ</button>':"")+'</div></article>').join(""):'<div class="notice">Нет сделок с выбранным фильтром.</div>';
+
+}
+async function openMarketplaceSupport(orderId){
+ const dispute=marketAdminDisputes.find(x=>(x.kds_marketplace_orders?.id||x.order_id)===orderId);
+ const order=marketAdminOrders.find(x=>x.id===orderId);
+ if(!dispute&&!order)return;
+ const o=dispute?.kds_marketplace_orders||order||{};
+ marketAdminCurrentDispute={...(dispute||{}),order_id:orderId,kds_marketplace_orders:o};
+ document.getElementById("marketChatModalTitle").textContent=(dispute?"Чат спора · ":"Чат заказа · ")+"#"+(o.order_code||"");
+ const overlay=document.getElementById("marketAdminChatOverlay");overlay.classList.remove("hide");document.body.style.overflow="hidden";
+ const feed=document.getElementById("marketChatModalMessages");feed.innerHTML='<div class="notice">Загрузка переписки…</div>';
+ const d=await marketAdminApi("GET",null,"messages",{order_id:orderId});
+ const msgs=d.messages||[];let nickById={};
+ for(const listing of marketAdminListings){if(listing.seller_id&&listing.seller_nickname)nickById[listing.seller_id]=listing.seller_nickname;}
+ try{const ids=[...new Set(msgs.map(m=>m.sender_id).filter(Boolean))];if(ids.length){const pd=await marketAdminApi("GET",null,"presence",{user_ids:ids.join(",")});for(const profile of pd.presence||[])if(profile.seller_nickname)nickById[profile.user_id]=profile.seller_nickname;}}catch(_){/* nickname lookup is optional; chat itself still loads */}
+ feed.innerHTML=msgs.map(m=>{let author=m.sender_id===marketAdminUserId?"Администратор":(m.sender_nickname||m.sender_username||m.nickname||m.username||m.sender_name||m.profile?.nickname||m.profile?.username||m.sender?.nickname||m.sender?.username||nickById[m.sender_id]||((m.sender_id===o.buyer_id)?"Покупатель":(m.sender_id===o.seller_id)?"Продавец":"Участник"));return '<div class="market-chat-msg '+(m.sender_id===marketAdminUserId?'mine ':'')+(m.message_type==='system'?'system':m.message_type==='delivery'?'delivery':'')+'"><b>'+esc(author)+'</b><div>'+esc(m.message_text||"")+'</div>'+(m.image_url?'<img src="'+esc(m.image_url)+'" alt="Вложение">':"")+'<small>'+new Date(m.created_at).toLocaleString("ru-RU")+'</small></div>';}).join("")||'<div class="notice">Сообщений пока нет.</div>';
+ feed.scrollTop=feed.scrollHeight;document.getElementById("marketChatInput").focus();
+}
+async function sendMarketplaceSupportReply(){
+ if(!marketAdminCurrentDispute)return;const o=marketAdminCurrentDispute.kds_marketplace_orders||{},input=document.getElementById("marketChatInput"),message=input.value.trim();if(!message)return;
+ const btn=document.getElementById("marketChatSend");if(btn.dataset.sending==="1")return;const original=btn.textContent;btn.dataset.sending="1";btn.disabled=true;btn.textContent="Отправка…";
+ try{await marketAdminApi("POST",{action:"send_message",order_id:o.id||marketAdminCurrentDispute.order_id,message_text:message,client_message_id:marketClientMessageId()});input.value="";await openMarketplaceSupport(o.id||marketAdminCurrentDispute.order_id);}catch(e){alert(e.message);}finally{btn.dataset.sending="0";btn.disabled=false;btn.textContent=original||"Отправить";input.focus();}
+}
+
+function marketClientMessageId(){if(window.crypto?.randomUUID)return window.crypto.randomUUID();return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return (c==='x'?r:(r&3|8)).toString(16);});}
+async function sendMarketplaceSupportReply(){
+ if(!marketAdminCurrentDispute)return;const o=marketAdminCurrentDispute.kds_marketplace_orders||{};const message=prompt("Сообщение покупателю и продавцу в общий чат");if(!message)return;
+ try{await marketAdminApi("POST",{action:"send_message",order_id:o.id||marketAdminCurrentDispute.order_id,message_text:message,client_message_id:marketClientMessageId()});await openMarketplaceSupport(o.id||marketAdminCurrentDispute.order_id);}catch(e){alert(e.message);}
+}
+document.getElementById("marketplaceTab").onclick=()=>showAdminSection("marketplaceSection");document.getElementById("referralsTab").onclick=()=>showAdminSection("referralsSection");
+document.getElementById("reloadMarketplace").onclick=loadMarketplaceAdmin;
+document.getElementById("marketplaceDisputes").addEventListener("click",async e=>{
+ const chat=e.target.closest("[data-market-chat]");if(chat){try{await openMarketplaceSupport(chat.dataset.marketChat);}catch(x){alert(x.message);}return;}
+ const verdict=e.target.closest("[data-market-verdict]");if(verdict){const note=prompt("Комментарий администратора (необязательно):","")||"";if(!confirm("Подтвердить решение по спору?"))return;try{await marketAdminApi("POST",{action:"resolve_dispute",order_id:verdict.dataset.marketOrder,verdict:verdict.dataset.marketVerdict,admin_note:note});alert("Решение сохранено.");await loadMarketplaceAdmin();}catch(x){alert(x.message);}}
+});
+document.getElementById("marketplaceOrders").addEventListener("click",async e=>{
+ const chat=e.target.closest("[data-market-chat-order]");if(chat){try{await openMarketplaceSupport(chat.dataset.marketChatOrder);}catch(x){alert(x.message);}return;}
+ const confirmBtn=e.target.closest("[data-market-admin-confirm]");if(confirmBtn){if(!confirm("Подтвердить выполнение заказа вручную? Средства продавца будут заморожены на 48 часов."))return;try{await marketAdminApi("POST",{action:"admin_confirm_order",order_id:confirmBtn.dataset.marketAdminConfirm});alert("Заказ подтверждён администратором.");await loadMarketplaceAdmin();}catch(x){alert(x.message);}}
+});
+document.getElementById("marketplaceListings").addEventListener("click",async e=>{const b=e.target.closest("[data-market-listing-status]");if(!b)return;try{await marketAdminApi("POST",{action:"admin_set_listing_status",listing_id:b.dataset.marketListing,status:b.dataset.marketListingStatus});await loadMarketplaceAdmin();}catch(x){alert(x.message);}});
+document.getElementById("replyChat").onclick=()=>sendMarketplaceSupportReply();
+document.getElementById("closeMarketplaceSupport").onclick=()=>document.getElementById("marketAdminChatOverlay").classList.add("hide");
+document.getElementById("marketChatClose").onclick=()=>{document.getElementById("marketAdminChatOverlay").classList.add("hide");document.body.style.overflow="";};
+document.getElementById("marketChatCompose").addEventListener("submit",e=>{e.preventDefault();sendMarketplaceSupportReply();});
+document.getElementById("marketAdminChatOverlay").addEventListener("click",e=>{if(e.target.id==="marketAdminChatOverlay")document.getElementById("marketChatClose").click();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!document.getElementById("marketAdminChatOverlay").classList.contains("hide"))document.getElementById("marketChatClose").click();});
+document.getElementById("marketListingFilters").addEventListener("click",e=>{const b=e.target.closest("[data-market-filter]");if(!b)return;marketListingFilter=b.dataset.marketFilter;renderMarketplaceAdmin();});
+document.getElementById("marketOrderFilters").addEventListener("click",e=>{const b=e.target.closest("[data-market-order-filter]");if(!b)return;marketOrderFilter=b.dataset.marketOrderFilter;renderMarketplaceAdmin();});
+
+
+// User sanctions: server-enforced block of all financial and marketplace mutations.
+let sanctionSelectedUser=null;
+async function loadSanctionHistory(){
+ const out=document.getElementById("sanctionHistory");
+ if(!sanctionSelectedUser){out.textContent="Найди пользователя, чтобы увидеть историю.";return;}
+ out.innerHTML='<div class="notice">Загрузка истории…</div>';
+ try{
+  const d=await api("POST",{action:"list_user_sanctions",telegram_user_id:sanctionSelectedUser.telegram_user_id});
+  const rows=d.sanctions||[];
+  out.innerHTML=rows.length?rows.map(x=>{
+   const active=!x.revoked_at&&(!x.expires_at||new Date(x.expires_at).getTime()>Date.now());
+   const status=active?"Активна":(x.revoked_at?"Снята":"Истекла");
+   const sanctionLabels={warning:"Предупреждение",block_buying:"Запрет покупок",block_selling:"Запрет продаж",block_marketplace:"Блокировка маркетплейса",block_chat:"Блокировка чата",block_financial:"Блокировка финансовых операций",block_all_operations:"Полная блокировка операций"};
+   return '<article class="market-admin-card"><h3>'+esc(sanctionLabels[x.sanction_type]||x.sanction_type||"Наказание")+' · '+esc(status)+' · '+(x.expires_at?'до '+new Date(x.expires_at).toLocaleString("ru-RU"):"бессрочно")+'</h3><p>Причина: '+esc(x.reason)+'</p><p>Создано: '+new Date(x.created_at).toLocaleString("ru-RU")+' · Администратор: '+esc(x.created_by_telegram_id)+'</p>'+(active?'<div class="market-admin-actions"><button class="primary" data-sanction-revoke="'+esc(x.id)+'">Снять наказание</button></div>':'')+'</article>';
+  }).join(""):'<div class="notice">Наказаний нет.</div>';
+ }catch(e){out.innerHTML='<div class="notice error">'+esc(e.message)+'</div>';}
+}
+
+document.getElementById("amlTab").onclick=()=>showAdminSection("amlSection");
+document.getElementById("withdrawalsTab").onclick=()=>showAdminSection("withdrawalsSection");
+document.getElementById("amlRefresh").onclick=loadAmlAdmin;
+async function loadAmlAdmin(){
+ const casesEl=document.getElementById("amlCases");
+ casesEl.innerHTML='<div class="notice">Загружаю AML-кейсы…</div>';
+ try{
+  const [c,w]=await Promise.all([api("POST",{action:"list_aml_cases"}),api("POST",{action:"list_withdrawals"})]);
+  const cases=c.cases||[],withdrawals=w.withdrawals||[];
+  document.getElementById("amlOpenCount").textContent=cases.length;
+  document.getElementById("amlWithdrawCount").textContent=withdrawals.length;
+  renderAmlCases(cases);
+  document.getElementById("amlUpdated").textContent="Обновлено: "+new Date().toLocaleTimeString("ru-RU");
+ }catch(e){
+  casesEl.innerHTML='<div class="notice error">Не удалось загрузить AML-кейсы: '+esc(e.message)+'</div>';
+
+ }
+}
+function renderAmlCases(rows){
+ const out=document.getElementById("amlCases");
+ out.innerHTML=rows.length?rows.map(c=>{
+  const u=c.kds_users||{},who=[u.first_name,u.username?"@"+u.username:null].filter(Boolean).join(" · ")||"Пользователь";
+  const rules=(c.rule_codes||[]).map(esc).join(", ")||"Не указаны";
+  const details=typeof c.details==="string"?c.details:JSON.stringify(c.details||{},null,2);
+  const severity={critical:"Критический",high:"Высокий",medium:"Средний",low:"Низкий"}[c.severity]||c.severity||"—";
+  return '<article class="market-admin-card"><h3>Риск '+esc(c.risk_score)+' / 100 · '+esc(severity)+'</h3><p>'+esc(who)+' · Telegram ID: '+esc(u.telegram_user_id||"—")+'</p><p>Правила: '+rules+'</p><p>Создан: '+(c.created_at?new Date(c.created_at).toLocaleString("ru-RU"):"—")+'</p>'+(c.related_order_id?'<p>Связанная сделка: '+esc(c.related_order_id)+'</p>':"")+(c.related_withdrawal_id?'<p>Связанная заявка: '+esc(c.related_withdrawal_id)+'</p>':"")+'<details><summary>Подробности и метрики</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px">'+esc(details)+'</pre></details><div class="market-admin-actions"><button class="good" data-aml-decision="clear" data-aml-id="'+esc(c.id)+'">Проверено — снять флаг</button><button class="warn" data-aml-decision="restrict" data-aml-id="'+esc(c.id)+'">Подтвердить риск</button></div></article>';
+ }).join(""):'<div class="notice">Открытых AML-кейсов нет.</div>';
+}
+function renderAmlWithdrawals(rows){
+ const out=document.getElementById("withdrawalsList");
+ out.innerHTML=rows.length?rows.map(w=>{
+  const u=w.kds_users||{},who=[u.first_name,u.username?"@"+u.username:null].filter(Boolean).join(" · ")||"Пользователь";
+  const statusLabels={pending:"В процессе",paid:"Успешно",rejected:"Отмена"};
+  const flagged=w.risk_review_required===true;
+  const canProcess=w.status==="pending";
+  return '<article class="market-admin-card"><h3>'+money(w.amount_rub)+' · '+esc(statusLabels[w.status]||w.status)+'</h3><p>'+esc(who)+' · Telegram ID: '+esc(u.telegram_user_id||"—")+'</p><p>Способ: '+esc(({bank_kg:"Банк Кыргызстана · KGS",kaspi_kz:"Kaspi.kz · KZT",usdt_trc20:"USDT · TRC20",usdt_bep20:"USDT · BEP20",ltc:"Litecoin · LTC"})[w.payout_method]||w.payout_method||"—")+' · Риск на момент заявки: '+esc(w.risk_score_at_request??"—")+'</p><p>Создана: '+(w.created_at?new Date(w.created_at).toLocaleString("ru-RU"):"—")+'</p>'+(flagged?'<p class="error"><b>Требуется AML-проверка. Выплата не может быть отмечена оплаченной.</b></p>':"")+(w.admin_note?'<p>Комментарий: '+esc(w.admin_note)+'</p>':"")+(canProcess?'<div class="market-admin-actions">'+(flagged?'':'<button class="good" data-withdraw-decision="paid" data-withdraw-id="'+esc(w.id)+'">Успешно</button>')+'<button class="warn" data-withdraw-decision="rejected" data-withdraw-id="'+esc(w.id)+'">Отмена</button></div>':'')+'</article>';
+ }).join(""):'<div class="notice">Заявок на вывод пока нет.</div>';
+}
+let adminWithdrawalRows=[];let adminWithdrawalFilter="all";
+async function loadAdminWithdrawals(){
+ const out=document.getElementById("withdrawalsList");out.innerHTML='<div class="notice">Загружаю заявки…</div>';
+ try{const w=await api("POST",{action:"list_withdrawals"});adminWithdrawalRows=w.withdrawals||[];
+  const pending=adminWithdrawalRows.filter(x=>x.status==="pending").length;
+  document.getElementById("withdrawalsTotal").textContent=adminWithdrawalRows.length;
+  document.getElementById("withdrawalsPending").textContent=pending;
+  document.getElementById("withdrawalsClosed").textContent=adminWithdrawalRows.length-pending;
+  renderAdminWithdrawalFilter();
+  document.getElementById("withdrawalsUpdated").textContent="Обновлено: "+new Date().toLocaleTimeString("ru-RU");
+ }catch(e){out.innerHTML='<div class="notice error">Не удалось загрузить заявки: '+esc(e.message)+'</div>';}
+}
+function renderAdminWithdrawalFilter(){const rows=adminWithdrawalFilter==="all"?adminWithdrawalRows:adminWithdrawalRows.filter(x=>x.status===adminWithdrawalFilter);renderAmlWithdrawals(rows);}
+document.getElementById("withdrawalsRefresh").onclick=loadAdminWithdrawals;
+document.getElementById("withdrawalsFilters").addEventListener("click",e=>{const b=e.target.closest("button[data-withdraw-filter]");if(!b)return;adminWithdrawalFilter=b.dataset.withdrawFilter;document.querySelectorAll("#withdrawalsFilters button").forEach(x=>x.classList.toggle("primary",x===b));renderAdminWithdrawalFilter();});
+
+document.getElementById("amlCases").addEventListener("click",async e=>{
+ const b=e.target.closest("button[data-aml-decision]");if(!b)return;
+ const decision=b.dataset.amlDecision;
+ const note=prompt(decision==="clear"?"Комментарий к снятию AML-флага:":"Причина подтверждения риска:");
+ if(note===null)return;
+ if(!confirm(decision==="clear"?"Закрыть AML-кейс как проверенный и снять ограничение на вывод, если других оснований нет?":"Подтвердить риск и сохранить ограничение на вывод?"))return;
+ b.disabled=true;
+ try{await api("POST",{action:"resolve_aml_case",case_id:b.dataset.amlId,decision,note});await loadAmlAdmin();}
+ catch(err){alert(err.message);b.disabled=false;}
+});
+document.getElementById("withdrawalsList").addEventListener("click",async e=>{
+ const b=e.target.closest("button[data-withdraw-decision]");if(!b)return;
+ const decision=b.dataset.withdrawDecision;
+ const note=prompt(decision==="paid"?"Комментарий к фактической выплате:":"Причина отмены заявки:");
+ if(note===null)return;
+ if(!confirm(decision==="paid"?"Подтверди, что деньги действительно переведены пользователю. Отметить заявку выплаченной?":"Отменить заявку и вернуть сумму на баланс заработка?"))return;
+ b.disabled=true;
+ try{await api("POST",{action:"process_withdrawal",request_id:b.dataset.withdrawId,decision,admin_note:note});await loadAdminWithdrawals();}
+ catch(err){alert(err.message);b.disabled=false;}
+});
+
+async function loadLinkedAccounts(){
+ const out=document.getElementById("sanctionLinkedAccounts");
+ if(!sanctionSelectedUser){out.textContent="Сначала найди пользователя.";return;}
+ out.innerHTML='<div class="notice">Загрузка связанных профилей…</div>';
+ try{
+  const d=await api("POST",{action:"list_linked_accounts",telegram_user_id:sanctionSelectedUser.telegram_user_id});
+  const rows=d.linked_accounts||[];
+  out.innerHTML=rows.length?rows.map(x=>'<article class="market-admin-card"><b>'+esc(x.first_name||"Пользователь")+(x.username?' · @'+esc(x.username):'')+'</b><p>Telegram ID: '+esc(x.telegram_user_id)+'</p><p>Баланс: '+money(x.balance_rub)+' · Уже удержано: '+money(x.frozen_balance_rub)+'</p><p>Основание связи: '+esc(x.verification_note)+'</p></article>').join(""):'<div class="notice">Подтверждённых связанных профилей нет.</div>';
+ }catch(e){out.innerHTML='<div class="notice error">'+esc(e.message)+'</div>';}
+}
+async function detectLinkedAccounts(){
+ const out=document.getElementById("linkedAutoDetectResult"),btn=document.getElementById("linkedAutoDetect");
+ if(!sanctionSelectedUser)return;
+ btn.disabled=true;out.innerHTML='<div class="notice">KADZI проверяет подтверждённые идентификаторы…</div>';
+ try{
+  const d=await api("POST",{action:"detect_linked_accounts",telegram_user_id:sanctionSelectedUser.telegram_user_id});
+  const rows=d.candidates||[];
+  out.innerHTML=rows.length?rows.map(x=>{
+   const reasons=(x.match_reasons||[]).map(esc).join(" · ");
+   const strong=Number(x.strong_match_count||0);
+   const confidence=strong>=2?"Несколько сильных совпадений":strong===1?"Одно сильное совпадение":"Недостаточно подтверждений";
+   return '<article class="market-admin-card"><h3>'+esc(x.display_name||"Пользователь")+(x.username?' · @'+esc(x.username):'')+'</h3><p>KADZI ID: <b>'+esc(x.kadzi_id||"—")+'</b></p><p>Telegram ID: '+esc(x.telegram_user_id)+'</p><p>Совпадения: '+reasons+'</p><p>'+esc(confidence)+' · '+strong+' сильн. сигнал(ов)</p><p class="muted">Это рекомендация для проверки. Совпадение не связывает профили и не запускает удержание средств автоматически.</p><div class="market-admin-actions"><button class="primary" data-auto-link-user="'+esc(x.telegram_user_id)+'" data-auto-link-reasons="'+esc(reasons)+'">Проверить и подтвердить связь</button></div></article>';
+  }).join(""):'<div class="notice">Совпадений по доступным подтверждённым идентификаторам не найдено. Если у профилей пока нет общих проверенных сигналов, система не сможет их сопоставить.</div>';
+ }catch(e){out.innerHTML='<div class="notice error">Автопоиск недоступен: '+esc(e.message)+'. Проверь серверный обработчик detect_linked_accounts и миграцию V15.12.</div>';}
+ finally{btn.disabled=false;}
+}
+document.getElementById("linkedAutoDetect").onclick=detectLinkedAccounts;
+document.getElementById("linkedAutoDetectResult").addEventListener("click",async e=>{
+ const b=e.target.closest("[data-auto-link-user]");if(!b||!sanctionSelectedUser)return;
+ const linkedId=Number(b.dataset.autoLinkUser);
+ const note=prompt("KADZI нашла совпадение: "+(b.dataset.autoLinkReasons||"подтверждённые идентификаторы")+". Проверь доказательства и укажи основание подтверждения связи:");
+ if(note===null)return;
+ if(note.trim().length<3){alert("Нужно указать основание не менее 3 символов.");return;}
+ if(!confirm("Подтвердить связь профилей? Только после проверки доказательств. Это позволит учитывать связанный профиль при санкциях и удержании доступного баланса."))return;
+ b.disabled=true;
+ try{await api("POST",{action:"link_related_account",telegram_user_id:sanctionSelectedUser.telegram_user_id,linked_telegram_user_id:linkedId,verification_note:note.trim()});await loadLinkedAccounts();await detectLinkedAccounts();}
+ catch(err){alert("Не удалось подтвердить связь: "+err.message);b.disabled=false;}
+});
+document.getElementById("linkedAccountAdd").onclick=async()=>{
+ if(!sanctionSelectedUser)return;
+ const linkedId=Number(document.getElementById("linkedTelegramId").value.trim());
+ const note=document.getElementById("linkedVerificationNote").value.trim();
+ const msg=document.getElementById("linkedAccountMessage"),btn=document.getElementById("linkedAccountAdd");
+ if(!Number.isSafeInteger(linkedId)||linkedId<=0){msg.textContent="Введи корректный Telegram ID.";return;}
+ if(linkedId===Number(sanctionSelectedUser.telegram_user_id)){msg.textContent="Нельзя связать профиль с самим собой.";return;}
+ if(note.length<3){msg.textContent="Укажи проверенное основание связи.";return;}
+ if(!confirm("Подтвердить связь Telegram ID "+linkedId+" с профилем "+sanctionSelectedUser.telegram_user_id+"? Добавляй только при наличии доказательств."))return;
+ btn.disabled=true;msg.textContent="Сохраняю связь…";
+ try{await api("POST",{action:"link_related_account",telegram_user_id:sanctionSelectedUser.telegram_user_id,linked_telegram_user_id:linkedId,verification_note:note});msg.textContent="Связь подтверждена и сохранена.";document.getElementById("linkedTelegramId").value="";document.getElementById("linkedVerificationNote").value="";await loadLinkedAccounts();}
+ catch(e){msg.textContent="Ошибка: "+e.message;}finally{btn.disabled=false;}
+};
+document.getElementById("sanctionsTab").onclick=()=>showAdminSection("sanctionsSection");
+document.getElementById("supplierTab").onclick=()=>showAdminSection("supplierSection");
+document.getElementById("braisoxideTab").onclick=()=>showAdminSection("braisoxideSection");
+document.getElementById("sanctionUserFind").onclick=async()=>{
+ const query=document.getElementById("sanctionUserSearch").value.trim(),out=document.getElementById("sanctionUserResult");
+ if(!query){out.innerHTML='<span class="error">Введи Telegram ID или username.</span>';return;}
+ out.textContent="Поиск пользователя…";
+ try{
+  const d=await api("POST",{action:"search_user",query});sanctionSelectedUser=d.user;
+  out.innerHTML='<article class="market-admin-card"><h3>'+esc(d.user.first_name||"Пользователь")+(d.user.username?' · @'+esc(d.user.username):'')+'</h3><p>Telegram ID: '+esc(d.user.telegram_user_id)+'</p><p>Баланс: '+money(d.user.balance_rub)+' · Заморожено: '+money(d.user.frozen_balance_rub||0)+'</p></article>';
+  document.getElementById("sanctionControls").classList.remove("hide");document.getElementById("sanctionMsg").textContent="";document.getElementById("sanctionViolation").value="";document.getElementById("sanctionType").disabled=false;document.getElementById("sanctionDuration").disabled=false;document.getElementById("sanctionApply").disabled=false;document.getElementById("holdLinkedWrap").style.display="none";await Promise.all([loadSanctionHistory(),loadLinkedAccounts()]);
+ }catch(e){sanctionSelectedUser=null;document.getElementById("sanctionControls").classList.add("hide");out.innerHTML='<span class="error">'+esc(e.message)+'</span>';document.getElementById("sanctionHistory").textContent="Пользователь не найден.";}
+};
+// Violation presets: recommendation is automatic, administrator retains final control.
+const sanctionViolationPresets={
+ fraud:{label:"Мошенничество / обман покупателя",type:"block_all_operations",hours:0,holdLinked:true,summary:"Бессрочная полная блокировка операций: магазин, маркетплейс, оплата и вывод средств. Доступные средства на подтверждённых связанных профилях временно удерживаются до проверки."},
+ account_recovery:{label:"Восстановление ранее проданного игрового аккаунта",type:"block_all_operations",hours:0,holdLinked:true,summary:"Бессрочная полная блокировка операций. При подтверждённой связи профилей временно удержать доступные средства на связанных аккаунтах."},
+ no_delivery:{label:"Не выдал оплаченный товар",noPenalty:true,summary:"Без наказания. Рассмотреть заказ через спор и при наличии оснований оформить возврат. Если выявлено отдельное мошенничество, выбери именно это нарушение."},
+ fake_delivery:{label:"Подмена товара / ложное подтверждение передачи",type:"block_marketplace",hours:168,summary:"Блокировка маркетплейса на 7 дней. При доказанном умышленном мошенничестве выбери «Мошенничество»."},
+ threats_insults:{label:"Оскорбления или обычные угрозы",type:"block_marketplace",hours:24,summary:"Блокировка маркетплейса на 1 день."},
+ severe_threats:{label:"Серьёзные угрозы / запугивание / травля",type:"block_marketplace",hours:168,summary:"Блокировка маркетплейса на 7 дней."},
+ ban_evasion:{label:"Обход блокировки через другой аккаунт",type:"block_all_operations",hours:0,summary:"Полная блокировка операций бессрочно после подтверждения связи аккаунтов."},
+ prohibited_goods:{label:"Продажа запрещённого товара",type:"block_selling",hours:168,summary:"Запрет продаж на 7 дней."},
+ spam_listing:{label:"Спам или вводящее в заблуждение объявление",type:"block_selling",hours:24,summary:"Запрет продаж на 24 часа."},
+ other:{label:"Другое нарушение",type:"warning",hours:0,summary:"Рекомендуется предупреждение. Администратор может вручную выбрать другую меру."}
+};
+const sanctionViolationSelect=document.getElementById("sanctionViolation");
+const sanctionRecommendation=document.getElementById("sanctionRecommendation");
+const sanctionDurationSelect=document.getElementById("sanctionDuration");
+const sanctionReasonInput=document.getElementById("sanctionReason");
+function syncLinkedHoldOption(){
+ const p=sanctionViolationPresets[sanctionViolationSelect.value];
+ const eligible=!!p?.holdLinked && document.getElementById("sanctionType").value==="block_all_operations" && Number(sanctionDurationSelect.value)===0;
+ document.getElementById("holdLinkedWrap").style.display=eligible?"flex":"none";
+ if(!eligible)document.getElementById("holdLinkedAccounts").checked=false;
+}
+document.getElementById("sanctionType").addEventListener("change",syncLinkedHoldOption);
+sanctionDurationSelect.addEventListener("change",syncLinkedHoldOption);
+sanctionViolationSelect.addEventListener("change",()=>{
+ const p=sanctionViolationPresets[sanctionViolationSelect.value];
+ const typeSelect=document.getElementById("sanctionType"),durationSelect=sanctionDurationSelect;
+ const applyButton=document.getElementById("sanctionApply"),holdWrap=document.getElementById("holdLinkedWrap");
+ if(!p){typeSelect.disabled=false;durationSelect.disabled=false;applyButton.disabled=false;holdWrap.style.display="none";sanctionRecommendation.textContent="После выбора нарушения здесь появится рекомендуемое наказание.";return;}
+ if(p.noPenalty){
+  typeSelect.disabled=true;durationSelect.disabled=true;applyButton.disabled=true;holdWrap.style.display="none";
+  sanctionRecommendation.textContent="Без наказания. Используй спор и возврат по правилам. Для отдельного доказанного мошенничества выбери другой пункт.";
+  sanctionReasonInput.value=p.label;
+  document.getElementById("sanctionMsg").textContent="По этому нарушению санкция не применяется.";
+  return;
+ }
+ typeSelect.disabled=false;durationSelect.disabled=false;applyButton.disabled=false;
+ typeSelect.value=p.type;durationSelect.value=String(p.hours);
+ document.getElementById("holdLinkedAccounts").checked=!!p.holdLinked;
+ syncLinkedHoldOption();
+ sanctionRecommendation.textContent="Рекомендация KADZI: "+p.summary+" Тип и срок можно изменить вручную.";
+ if(!sanctionReasonInput.value.trim()||Object.values(sanctionViolationPresets).some(x=>sanctionReasonInput.value===x.label))sanctionReasonInput.value=p.label;
+ document.getElementById("sanctionMsg").textContent="";
+});
+document.getElementById("sanctionApply").onclick=async()=>{
+ if(!sanctionSelectedUser)return;
+ const violation=document.getElementById("sanctionViolation").value,p=sanctionViolationPresets[violation];
+ const reason=document.getElementById("sanctionReason").value.trim(),duration_hours=Number(document.getElementById("sanctionDuration").value),sanction_type=document.getElementById("sanctionType").value,msg=document.getElementById("sanctionMsg"),btn=document.getElementById("sanctionApply");
+ if(!violation){msg.textContent="Сначала выбери нарушение.";return;}
+ if(p?.noPenalty){msg.textContent="Для невыдачи товара наказание не применяется. Используй спор и возврат.";return;}
+ if(reason.length<3){msg.textContent="Укажи причину не короче 3 символов.";return;}
+ const typeLabels={warning:"Предупреждение",block_buying:"Запрет покупок",block_selling:"Запрет продаж",block_marketplace:"Блокировка маркетплейса",block_chat:"Блокировка чата",block_financial:"Блокировка финансовых операций",block_all_operations:"Полная блокировка операций"},term=duration_hours===0?"бессрочно":duration_hours===1?"на 1 час":duration_hours===24?"на 24 часа":duration_hours===72?"на 3 дня":duration_hours===168?"на 7 дней":"на 30 дней";
+ const holdLinked=!!document.getElementById("holdLinkedAccounts")?.checked && !!p?.holdLinked && sanction_type==="block_all_operations" && duration_hours===0;
+ const confirmText="Нарушение: "+(p?.label||"Другое нарушение")+"\\nНаказание: "+typeLabels[sanction_type]+"\\nСрок: "+term+"\\nПользователь: "+sanctionSelectedUser.telegram_user_id+(holdLinked?"\\nТакже удержать доступный баланс на подтверждённых связанных профилях.":"")+"\\n\\nПодтвердить применение?";
+ if(!confirm(confirmText))return;
+ btn.disabled=true;msg.textContent="Применяю наказание…";
+ try{
+  const result=await api("POST",{action:"set_user_sanction",telegram_user_id:sanctionSelectedUser.telegram_user_id,reason,duration_hours,sanction_type,hold_linked_accounts:holdLinked});
+  const holds=result.linked_holds||[];
+  msg.textContent="Наказание применено."+ (holds.length?" Удержание создано на "+holds.length+" связанных профилях.":"");
+  document.getElementById("sanctionReason").value="";document.getElementById("sanctionViolation").value="";
+  document.getElementById("sanctionRecommendation").textContent="После выбора нарушения здесь появится рекомендуемое наказание.";
+  document.getElementById("sanctionType").disabled=false;document.getElementById("sanctionDuration").disabled=false;document.getElementById("holdLinkedWrap").style.display="none";
+  await Promise.all([loadSanctionHistory(),loadLinkedAccounts()]);
+ }catch(e){msg.textContent="Ошибка: "+e.message;}finally{btn.disabled=false;}
+};
+
+document.getElementById("sanctionHistory").addEventListener("click",async e=>{
+ const b=e.target.closest("[data-sanction-revoke]");if(!b)return;
+ if(!confirm("Снять это наказание и освободить удержания связанных профилей, созданные именно по этой санкции?"))return;
+ b.disabled=true;try{await api("POST",{action:"revoke_user_sanction",sanction_id:b.dataset.sanctionRevoke});await loadSanctionHistory();}catch(x){alert(x.message);b.disabled=false;}
+});
+
+
+</script>
+<style id="kds-admin-subnavigation-style">ody.admin-subnav-active{padding-bottom:20px}
+.admin-subnav{display:flex;flex-direction:column;gap:8px;margin:0 0 14px;padding:10px;background:linear-gradient(145deg,#ffffff12,#ffffff04);border:1px solid #ffffff25;border-radius:16px;position:sticky;top:76px;z-index:2;backdrop-filter:blur(14px)}
+.admin-subnav-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.admin-subnav-title{font-size:12px;color:#ff8292;font-weight:850;letter-spacing:.4px}.admin-subnav-back{padding:7px 10px;font-size:12px;white-space:nowrap}.admin-subnav-buttons{display:flex;gap:6px;overflow-x:auto;overscroll-behavior-x:contain;padding:2px 0 4px;scrollbar-width:thin}.admin-subnav-buttons button{white-space:nowrap;flex:0 0 auto;font-size:12px;padding:9px 11px}.admin-subnav-buttons button.active{background:linear-gradient(110deg,#ff2947,#c70d30);border-color:#ff6578;box-shadow:0 5px 14px #ff183a30}
+.admin-subsection-hidden{display:none!important}
+@media(max-width:600px){.admin-subnav{top:66px;padding:9px}.admin-subnav-buttons button{padding:9px 10px}.tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-subnav-head{align-items:flex-start}}
+</style>
+<script id="kds-admin-subnavigation">
+(function(){
+ const sectionIds=['ordersSection','productsSection','announcementsSection','gamesSection','analyticsSection','auditSection','marketplaceSection','amlSection','withdrawalsSection','sanctionsSection','supplierSection'];
+ const tabIds=['ordersTab','productsTab','announcementsTab','gamesTab','analyticsTab','auditTab','marketplaceTab','amlTab','withdrawalsTab','sanctionsTab','supplierTab'];
+ const labels={ordersSection:'Заказы',productsSection:'Товары',inventorySection:'Склад',announcementsSection:'Объявления',gamesSection:'Игры',analyticsSection:'Аналитика',auditSection:'Журнал',marketplaceSection:'Маркетплейс',amlSection:'AML',withdrawalsSection:'Выводы',sanctionsSection:'Наказания',supplierSection:'Поставщик'};
+ const fallback={ordersSection:['Статистика','Поиск заказов','Баланс пользователей','Пользователи','История операций','Фильтр заказов','Статус загрузки','Список заказов'],productsSection:['Управление товарами','Редактор товара','Категории','Массовое управление','Список товаров'],inventorySection:['Управление складом','Список товаров и остатков'],announcementsSection:['Объявления','Редактор объявления','Список объявлений','История рассылок'],analyticsSection:['Параметры аналитики','Общие показатели','Маркетплейс — аналитика','Продажи и прибыль','Проверки','Продажи по товарам','Продажи по играм','Последние заказы'],gamesSection:['Игры каталога','Редактор игры','Список игр'],auditSection:['Журнал действий','Список записей'],marketplaceSection:['Обзор маркетплейса','Споры','Объявления','Аналитика','Сделки','Чат по заказу'],amlSection:['Центр AML-проверок'],withdrawalsSection:['Управление выводами средств','Фильтр заявок','Список заявок'],sanctionsSection:['Наказания пользователей','История наказаний'],supplierSection:['Braisbot API','Привязать тариф к товару поставщика','Активные привязки']};
+ function getTitle(el,section,index){if(section==='ordersSection'){if(el.id==='orders')return 'Список заказов';if(el.id==='filters')return 'Фильтр заказов';if(el.id==='updated')return 'Статус загрузки';if(el.classList.contains('stats'))return 'Статистика';if(el.id==='orderSearchPanel')return 'Поиск заказов';if(el.id==='adminUsersPanel')return 'Пользователи';if(el.id==='adminWalletHistoryPanel')return 'История операций';if(el.classList.contains('order'))return 'Баланс пользователей';}const title=el.querySelector('.number,h1,h2,h3,h4,label');let text=title?.textContent?.trim().replace(/\s+/g,' ');if(!text){text=(fallback[section]||[])[index]||('Подраздел '+(index+1));}return text.slice(0,58);}
+ function buildNav(section){const host=document.getElementById(section);if(!host)return;let nav=host.querySelector(':scope > .admin-subnav');if(!nav){nav=document.createElement('div');nav.className='admin-subnav';nav.innerHTML='<div class="admin-subnav-head"><div class="admin-subnav-title">ПОДРАЗДЕЛЫ · '+labels[section]+'</div><button type="button" class="admin-subnav-back">← К разделам</button></div><div class="admin-subnav-buttons"></div>';host.insertBefore(nav,host.firstChild);nav.querySelector('.admin-subnav-back').addEventListener('click',()=>{sectionIds.forEach(id=>document.getElementById(id)?.classList.add('hide'));tabIds.forEach(id=>document.getElementById(id)?.classList.remove('primary'));document.body.classList.remove('admin-subnav-active');});}
+ nav=host.querySelector(':scope > .admin-subnav');const buttons=nav.querySelector('.admin-subnav-buttons');
+ const eligible=Array.from(host.children).filter(el=>{if(el===nav||el.classList.contains('hide')||el.classList.contains('admin-subnav')||el.hasAttribute('data-admin-subnav-skip'))return false;if(el.id==='updated'||el.classList.contains('refresh'))return false;return el.classList.contains('panel')||el.classList.contains('stats')||el.classList.contains('filters')||el.id==='orders'||(section==='ordersSection'&&el.tagName==='SECTION'&&el.classList.contains('order'));});
+ eligible.forEach(el=>el.classList.add('admin-subsection-hidden'));
+ if(!buttons.dataset.ready){buttons.dataset.ready='1';}
+ buttons.innerHTML='';eligible.forEach((el,i)=>{const b=document.createElement('button');b.type='button';b.textContent=getTitle(el,section,i);b.title=b.textContent;b.addEventListener('click',()=>select(el,b,eligible,buttons));buttons.appendChild(b);});
+ if(eligible.length)select(eligible[0],buttons.firstElementChild,eligible,buttons);
+ }
+ function select(el,button,eligible,buttons){eligible.forEach(x=>x.classList.add('admin-subsection-hidden'));el.classList.remove('admin-subsection-hidden');Array.from(buttons.children).forEach(b=>b.classList.remove('active'));button.classList.add('active');el.scrollIntoView({behavior:'smooth',block:'start'});}
+ const originalShow=window.showAdminSection;
+ window.showAdminSection=function(which){if(typeof originalShow==='function')originalShow(which);sectionIds.forEach(id=>{const sec=document.getElementById(id);if(sec&&id!==which)sec.classList.add('hide');});document.body.classList.add('admin-subnav-active');buildNav(which);};
+ tabIds.forEach((id,i)=>{const tab=document.getElementById(id);if(tab)tab.onclick=()=>window.showAdminSection(sectionIds[i]);});
+ // Rebuild the initial Orders navigation without triggering a second data load.
+ if(!document.getElementById('ordersSection').classList.contains('hide'))buildNav('ordersSection');
+})();
+</script>
+</body></html>
