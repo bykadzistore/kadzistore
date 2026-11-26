@@ -1276,11 +1276,7 @@ async function buyPlan(planId,button){
    if(needsCertificate&&certificatePlan)await checkSupplierPlan(certificatePlan.id,"Общий iOS-сертификат",false);
   }
   kdsHidePurchaseState();
-  const supplierLines=supplierQuotes.map(x=>`${x.label}: $${x.price.toFixed(2)} · остаток ${x.stock}`).join("\n");
-  const certificateQuote=certificatePlan&&supplierQuotes.some(x=>x.planId===certificatePlan.id);
-  const certNote=certificatePlan?certificateQuote?`\nСертификат будет закуплен у Braisbot отдельной позицией.`:`\nСертификат будет оформлен отдельной позицией.`:"";
-  const supplierNote=supplierLines?`Проверка Braisbot пройдена.\n${supplierLines}`:`Для этого тарифа автоматическая закупка у Braisbot не подключена; выдача будет обработана по действующей схеме.`;
-  if(!confirm(`Подтверди покупку.\n${details}\n\n${supplierNote}${certNote}\n\nИтоговая цена KADZI STORE: ${money(retailTotal)}.\nСредства спишутся с баланса только после подтверждения.`))return;
+  if(!confirm(`Подтверди покупку.\n${details}\n\nИтоговая цена KADZI STORE: ${money(retailTotal)}.\nСредства спишутся с баланса только после подтверждения.`))return;
   if(supplierQuotes.length){
    kdsPurchaseState("loading","Оформляем покупку","Повторно проверяем цену и наличие, затем списываем средства и закупаем товар…");
    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
