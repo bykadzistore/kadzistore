@@ -1268,9 +1268,9 @@ async function buyPlan(planId,button){
     throw err;
    }
   };
+  kdsPurchaseState("loading","Проверяем покупку","Проверяем наличие товара и ваш баланс. Деньги пока не списываются…");
+  await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
   if(shouldCheckSupplier){
-   kdsPurchaseState("loading","Проверяем поставщика","Проверяем наличие, актуальную цену и баланс Braisbot. Деньги пока не списываются…");
-   await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
    if(usesBraisbot)await checkSupplierPlan(plan.id,p.name,true);
    if(isSharedCertificate)await checkSupplierPlan(plan.id,"iOS Certificate",false);
    if(needsCertificate&&certificatePlan)await checkSupplierPlan(certificatePlan.id,"Общий iOS-сертификат",false);
