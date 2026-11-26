@@ -839,6 +839,16 @@ header{background:linear-gradient(110deg,#0b0a11f5,#17101af2)!important}
 }
 </style>
 
+
+<style id="kds-topup-detail-centering-v15-12-36">
+/* Keep the close control out of document flow so expanded payment views
+   use the full modal width instead of wrapping around the floated button. */
+.modal-backdrop.topup-modal-backdrop .product-modal.topup-modal{position:relative;box-sizing:border-box}
+.modal-backdrop.topup-modal-backdrop .product-modal.topup-modal>.modal-close{position:absolute!important;top:12px!important;right:12px!important;float:none!important;z-index:5}
+.modal-backdrop.topup-modal-backdrop .product-modal.topup-modal>#topupForm{width:100%;max-width:none;box-sizing:border-box;clear:both}
+.modal-backdrop.topup-modal-backdrop .product-modal.topup-modal .kds-topup-view{width:100%;max-width:none;box-sizing:border-box;clear:both}
+.modal-backdrop.topup-modal-backdrop .product-modal.topup-modal .kds-topup-view>*{max-width:100%;box-sizing:border-box}
+</style>
 </head>
 <body>
 <div id="kdsBoot" role="status" aria-live="polite">
