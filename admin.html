@@ -75,7 +75,7 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
 <body>
 <header><div><div class="logo"><b>KD</b>S ADMIN</div><div class="tag">Панель управления магазином</div></div><div class="actions" style="margin:0"><button id="backToStore">← В магазин</button><button id="reload">↻ Обновить</button></div></header>
 <main>
-<div class="tabs"><button id="ordersTab" class="primary">Заказы</button><button id="productsTab">Товары</button><button id="inventoryTab">Склад</button><button id="announcementsTab">Объявления</button><button id="gamesTab">Игры</button><button id="analyticsTab">Аналитика</button><button id="auditTab">Журнал</button><button id="marketplaceTab">Маркетплейс</button><button id="amlTab">AML</button><button id="sanctionsTab">Наказания</button><button id="supplierTab">Braisbot</button><button id="braisoxideTab">Braisoxide</button></div>
+<div class="tabs"><button id="ordersTab" class="primary">Заказы</button><button id="productsTab">Товары</button><button id="inventoryTab">Склад</button><button id="announcementsTab">Объявления</button><button id="gamesTab">Игры</button><button id="analyticsTab">Аналитика</button><button id="auditTab">Журнал</button><button id="marketplaceTab">Маркетплейс</button><button id="amlTab">AML</button><button id="withdrawalsTab">Выводы</button><button id="sanctionsTab">Наказания</button><button id="supplierTab">Braisbot</button><button id="braisoxideTab">Braisoxide</button></div>
 <section id="ordersSection">
 <div class="stats"><div class="stat"><small>Новые</small><strong id="sNew">—</strong></div><div class="stat"><small>В работе</small><strong id="sWork">—</strong></div><div class="stat"><small>Выполнено</small><strong id="sDone">—</strong></div></div>
 <section class="panel" id="orderSearchPanel"><div class="number">Поиск заказов</div><div class="muted">Номер заказа, Telegram ID, username или название товара.</div><div class="actions" style="align-items:center"><input id="orderSearch" placeholder="Например, 1042 или @username" style="flex:1;min-width:180px"><button class="primary" id="orderSearchBtn">Найти</button><button id="orderSearchClear">Сбросить</button></div><div id="orderSearchResult" class="muted"></div></section>
@@ -201,10 +201,19 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
   </div>
   <div id="amlCases"><div class="notice">Открой раздел и нажми «Обновить данные».</div></div>
  </div>
+</section>
+<section id="withdrawalsSection" class="hide">
  <div class="panel">
-  <div class="number">Заявки на вывод</div>
-  <div class="muted">Выплату отмечай только после фактического перевода денег. При открытом AML-флаге сервер не разрешит отметить заявку оплаченной.</div>
-  <div id="amlWithdrawals"><div class="notice">Загрузка после открытия раздела.</div></div>
+  <div class="number">Управление выводами средств</div>
+  <div class="muted">Отмечай «Успешно» только после фактической выплаты. При отмене укажи причину.</div>
+  <div class="actions"><button class="primary" id="withdrawalsRefresh">↻ Обновить заявки</button><span class="muted" id="withdrawalsUpdated"></span></div>
+  <div class="stats" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-top:12px">
+   <div class="stat"><small>Всего заявок</small><strong id="withdrawalsTotal">—</strong></div>
+   <div class="stat"><small>В процессе</small><strong id="withdrawalsPending">—</strong></div>
+   <div class="stat"><small>Завершено</small><strong id="withdrawalsClosed">—</strong></div>
+  </div>
+  <div class="filters" id="withdrawalsFilters"><button class="primary" data-withdraw-filter="all">Все</button><button data-withdraw-filter="pending">В процессе</button><button data-withdraw-filter="paid">Успешно</button><button data-withdraw-filter="rejected">Отмена</button></div>
+  <div id="withdrawalsList"><div class="notice">Открой раздел для загрузки заявок.</div></div>
  </div>
 </section>
 <section id="sanctionsSection" class="hide">
@@ -613,7 +622,7 @@ async function loadBraisoxide(){
 document.getElementById("braisoxideReload").onclick=loadBraisoxide;
 document.getElementById("braisoxideSave").onclick=async()=>{const plan_id=document.getElementById("braisoxidePlan").value,supplier_product_id=Number(document.getElementById("braisoxideProduct").value),msg=document.getElementById("braisoxideMsg"),btn=document.getElementById("braisoxideSave");if(!plan_id||!Number.isSafeInteger(supplier_product_id)||supplier_product_id<=0){msg.textContent="Выбери тариф и товар поставщика.";return;}btn.disabled=true;msg.textContent="Проверяю товар и сохраняю привязку…";try{await api("POST",{action:"save_braisoxide_mapping",plan_id,supplier_product_id});msg.textContent="Привязка сохранена.";await loadBraisoxide();}catch(e){msg.textContent="Ошибка: "+e.message;}finally{btn.disabled=false;}};
 document.getElementById("braisoxideMappings").addEventListener("click",async e=>{const b=e.target.closest("[data-braisoxide-delete]");if(!b)return;if(!confirm("Удалить привязку Braisoxide?"))return;b.disabled=true;try{await api("POST",{action:"delete_braisoxide_mapping",plan_id:b.dataset.braisoxideDelete});await loadBraisoxide();}catch(e){alert(e.message);b.disabled=false;}});
-function showAdminSection(which){for(const id of ["ordersSection","productsSection","inventorySection","announcementsSection","gamesSection","analyticsSection","auditSection","marketplaceSection","amlSection","sanctionsSection","supplierSection","braisoxideSection"])document.getElementById(id).classList.toggle("hide",id!==which);for(const id of ["ordersTab","productsTab","inventoryTab","announcementsTab","gamesTab","analyticsTab","auditTab","marketplaceTab","amlTab","sanctionsTab","supplierTab","braisoxideTab"])document.getElementById(id).classList.toggle("primary",id===(which+"Tab").replace("Section",""));if(which==="productsSection")loadProducts();if(which==="inventorySection")loadInventory();if(which==="announcementsSection"){loadAnnouncements();loadBroadcastHistory();}if(which==="gamesSection")loadGames();if(which==="analyticsSection")loadAnalytics();if(which==="auditSection")loadAudit();if(which==="marketplaceSection")loadMarketplaceAdmin();if(which==="amlSection")loadAmlAdmin();if(which==="supplierSection")loadBraisbot();if(which==="braisoxideSection")loadBraisoxide();}
+function showAdminSection(which){for(const id of ["ordersSection","productsSection","inventorySection","announcementsSection","gamesSection","analyticsSection","auditSection","marketplaceSection","amlSection","withdrawalsSection","sanctionsSection","supplierSection","braisoxideSection"])document.getElementById(id).classList.toggle("hide",id!==which);for(const id of ["ordersTab","productsTab","inventoryTab","announcementsTab","gamesTab","analyticsTab","auditTab","marketplaceTab","amlTab","withdrawalsTab","sanctionsTab","supplierTab","braisoxideTab"])document.getElementById(id).classList.toggle("primary",id===(which+"Tab").replace("Section",""));if(which==="productsSection")loadProducts();if(which==="inventorySection")loadInventory();if(which==="announcementsSection"){loadAnnouncements();loadBroadcastHistory();}if(which==="gamesSection")loadGames();if(which==="analyticsSection")loadAnalytics();if(which==="auditSection")loadAudit();if(which==="marketplaceSection")loadMarketplaceAdmin();if(which==="amlSection")loadAmlAdmin();if(which==="withdrawalsSection")loadAdminWithdrawals();if(which==="supplierSection")loadBraisbot();if(which==="braisoxideSection")loadBraisoxide();}
 
 document.getElementById("ordersTab").onclick=()=>showAdminSection("ordersSection");
 document.getElementById("productsTab").onclick=()=>showAdminSection("productsSection");
@@ -817,21 +826,21 @@ async function loadSanctionHistory(){
 }
 
 document.getElementById("amlTab").onclick=()=>showAdminSection("amlSection");
+document.getElementById("withdrawalsTab").onclick=()=>showAdminSection("withdrawalsSection");
 document.getElementById("amlRefresh").onclick=loadAmlAdmin;
 async function loadAmlAdmin(){
- const casesEl=document.getElementById("amlCases"),withdrawalsEl=document.getElementById("amlWithdrawals");
+ const casesEl=document.getElementById("amlCases");
  casesEl.innerHTML='<div class="notice">Загружаю AML-кейсы…</div>';
- withdrawalsEl.innerHTML='<div class="notice">Загружаю заявки…</div>';
  try{
   const [c,w]=await Promise.all([api("POST",{action:"list_aml_cases"}),api("POST",{action:"list_withdrawals"})]);
   const cases=c.cases||[],withdrawals=w.withdrawals||[];
   document.getElementById("amlOpenCount").textContent=cases.length;
   document.getElementById("amlWithdrawCount").textContent=withdrawals.length;
-  renderAmlCases(cases);renderAmlWithdrawals(withdrawals);
+  renderAmlCases(cases);
   document.getElementById("amlUpdated").textContent="Обновлено: "+new Date().toLocaleTimeString("ru-RU");
  }catch(e){
   casesEl.innerHTML='<div class="notice error">Не удалось загрузить AML-кейсы: '+esc(e.message)+'</div>';
-  withdrawalsEl.innerHTML='<div class="notice error">Не удалось загрузить заявки: '+esc(e.message)+'</div>';
+
  }
 }
 function renderAmlCases(rows){
@@ -845,15 +854,31 @@ function renderAmlCases(rows){
  }).join(""):'<div class="notice">Открытых AML-кейсов нет.</div>';
 }
 function renderAmlWithdrawals(rows){
- const out=document.getElementById("amlWithdrawals");
+ const out=document.getElementById("withdrawalsList");
  out.innerHTML=rows.length?rows.map(w=>{
   const u=w.kds_users||{},who=[u.first_name,u.username?"@"+u.username:null].filter(Boolean).join(" · ")||"Пользователь";
-  const statusLabels={pending:"Ожидает",paid:"Выплачена",rejected:"Отклонена"};
+  const statusLabels={pending:"В процессе",paid:"Успешно",rejected:"Отмена"};
   const flagged=w.risk_review_required===true;
   const canProcess=w.status==="pending";
-  return '<article class="market-admin-card"><h3>'+money(w.amount_rub)+' · '+esc(statusLabels[w.status]||w.status)+'</h3><p>'+esc(who)+' · Telegram ID: '+esc(u.telegram_user_id||"—")+'</p><p>Способ: '+esc(({bank_kg:"Банк Кыргызстана · KGS",kaspi_kz:"Kaspi.kz · KZT",usdt_trc20:"USDT · TRC20",usdt_bep20:"USDT · BEP20",ltc:"Litecoin · LTC"})[w.payout_method]||w.payout_method||"—")+' · Риск на момент заявки: '+esc(w.risk_score_at_request??"—")+'</p><p>Создана: '+(w.created_at?new Date(w.created_at).toLocaleString("ru-RU"):"—")+'</p>'+(flagged?'<p class="error"><b>Требуется AML-проверка. Выплата не может быть отмечена оплаченной.</b></p>':"")+(w.admin_note?'<p>Комментарий: '+esc(w.admin_note)+'</p>':"")+(canProcess?'<div class="market-admin-actions">'+(flagged?'':'<button class="good" data-withdraw-decision="paid" data-withdraw-id="'+esc(w.id)+'">Отметить выплаченной</button>')+'<button class="warn" data-withdraw-decision="rejected" data-withdraw-id="'+esc(w.id)+'">Отклонить заявку</button></div>':'')+'</article>';
+  return '<article class="market-admin-card"><h3>'+money(w.amount_rub)+' · '+esc(statusLabels[w.status]||w.status)+'</h3><p>'+esc(who)+' · Telegram ID: '+esc(u.telegram_user_id||"—")+'</p><p>Способ: '+esc(({bank_kg:"Банк Кыргызстана · KGS",kaspi_kz:"Kaspi.kz · KZT",usdt_trc20:"USDT · TRC20",usdt_bep20:"USDT · BEP20",ltc:"Litecoin · LTC"})[w.payout_method]||w.payout_method||"—")+' · Риск на момент заявки: '+esc(w.risk_score_at_request??"—")+'</p><p>Создана: '+(w.created_at?new Date(w.created_at).toLocaleString("ru-RU"):"—")+'</p>'+(flagged?'<p class="error"><b>Требуется AML-проверка. Выплата не может быть отмечена оплаченной.</b></p>':"")+(w.admin_note?'<p>Комментарий: '+esc(w.admin_note)+'</p>':"")+(canProcess?'<div class="market-admin-actions">'+(flagged?'':'<button class="good" data-withdraw-decision="paid" data-withdraw-id="'+esc(w.id)+'">Успешно</button>')+'<button class="warn" data-withdraw-decision="rejected" data-withdraw-id="'+esc(w.id)+'">Отмена</button></div>':'')+'</article>';
  }).join(""):'<div class="notice">Заявок на вывод пока нет.</div>';
 }
+let adminWithdrawalRows=[];let adminWithdrawalFilter="all";
+async function loadAdminWithdrawals(){
+ const out=document.getElementById("withdrawalsList");out.innerHTML='<div class="notice">Загружаю заявки…</div>';
+ try{const w=await api("POST",{action:"list_withdrawals"});adminWithdrawalRows=w.withdrawals||[];
+  const pending=adminWithdrawalRows.filter(x=>x.status==="pending").length;
+  document.getElementById("withdrawalsTotal").textContent=adminWithdrawalRows.length;
+  document.getElementById("withdrawalsPending").textContent=pending;
+  document.getElementById("withdrawalsClosed").textContent=adminWithdrawalRows.length-pending;
+  renderAdminWithdrawalFilter();
+  document.getElementById("withdrawalsUpdated").textContent="Обновлено: "+new Date().toLocaleTimeString("ru-RU");
+ }catch(e){out.innerHTML='<div class="notice error">Не удалось загрузить заявки: '+esc(e.message)+'</div>';}
+}
+function renderAdminWithdrawalFilter(){const rows=adminWithdrawalFilter==="all"?adminWithdrawalRows:adminWithdrawalRows.filter(x=>x.status===adminWithdrawalFilter);renderAmlWithdrawals(rows);}
+document.getElementById("withdrawalsRefresh").onclick=loadAdminWithdrawals;
+document.getElementById("withdrawalsFilters").addEventListener("click",e=>{const b=e.target.closest("button[data-withdraw-filter]");if(!b)return;adminWithdrawalFilter=b.dataset.withdrawFilter;document.querySelectorAll("#withdrawalsFilters button").forEach(x=>x.classList.toggle("primary",x===b));renderAdminWithdrawalFilter();});
+
 document.getElementById("amlCases").addEventListener("click",async e=>{
  const b=e.target.closest("button[data-aml-decision]");if(!b)return;
  const decision=b.dataset.amlDecision;
@@ -864,14 +889,14 @@ document.getElementById("amlCases").addEventListener("click",async e=>{
  try{await api("POST",{action:"resolve_aml_case",case_id:b.dataset.amlId,decision,note});await loadAmlAdmin();}
  catch(err){alert(err.message);b.disabled=false;}
 });
-document.getElementById("amlWithdrawals").addEventListener("click",async e=>{
+document.getElementById("withdrawalsList").addEventListener("click",async e=>{
  const b=e.target.closest("button[data-withdraw-decision]");if(!b)return;
  const decision=b.dataset.withdrawDecision;
- const note=prompt(decision==="paid"?"Комментарий к фактической выплате:":"Причина отклонения заявки:");
+ const note=prompt(decision==="paid"?"Комментарий к фактической выплате:":"Причина отмены заявки:");
  if(note===null)return;
- if(!confirm(decision==="paid"?"Подтверди, что деньги действительно переведены пользователю. Отметить заявку выплаченной?":"Отклонить заявку и вернуть сумму на баланс заработка?"))return;
+ if(!confirm(decision==="paid"?"Подтверди, что деньги действительно переведены пользователю. Отметить заявку выплаченной?":"Отменить заявку и вернуть сумму на баланс заработка?"))return;
  b.disabled=true;
- try{await api("POST",{action:"process_withdrawal",request_id:b.dataset.withdrawId,decision,admin_note:note});await loadAmlAdmin();}
+ try{await api("POST",{action:"process_withdrawal",request_id:b.dataset.withdrawId,decision,admin_note:note});await loadAdminWithdrawals();}
  catch(err){alert(err.message);b.disabled=false;}
 });
 
@@ -1023,10 +1048,10 @@ document.getElementById("sanctionHistory").addEventListener("click",async e=>{
 </style>
 <script id="kds-admin-subnavigation">
 (function(){
- const sectionIds=['ordersSection','productsSection','announcementsSection','gamesSection','analyticsSection','auditSection','marketplaceSection','amlSection','sanctionsSection','supplierSection'];
- const tabIds=['ordersTab','productsTab','announcementsTab','gamesTab','analyticsTab','auditTab','marketplaceTab','amlTab','sanctionsTab','supplierTab'];
- const labels={ordersSection:'Заказы',productsSection:'Товары',inventorySection:'Склад',announcementsSection:'Объявления',gamesSection:'Игры',analyticsSection:'Аналитика',auditSection:'Журнал',marketplaceSection:'Маркетплейс',amlSection:'AML',sanctionsSection:'Наказания',supplierSection:'Поставщик'};
- const fallback={ordersSection:['Статистика','Поиск заказов','Баланс пользователей','Пользователи','История операций','Фильтр заказов','Статус загрузки','Список заказов'],productsSection:['Управление товарами','Редактор товара','Категории','Массовое управление','Список товаров'],inventorySection:['Управление складом','Список товаров и остатков'],announcementsSection:['Объявления','Редактор объявления','Список объявлений','История рассылок'],analyticsSection:['Параметры аналитики','Общие показатели','Маркетплейс — аналитика','Продажи и прибыль','Проверки','Продажи по товарам','Продажи по играм','Последние заказы'],gamesSection:['Игры каталога','Редактор игры','Список игр'],auditSection:['Журнал действий','Список записей'],marketplaceSection:['Обзор маркетплейса','Споры','Объявления','Аналитика','Сделки','Чат по заказу'],amlSection:['Центр AML-проверок','Заявки на вывод'],sanctionsSection:['Наказания пользователей','История наказаний'],supplierSection:['Braisbot API','Привязать тариф к товару поставщика','Активные привязки']};
+ const sectionIds=['ordersSection','productsSection','announcementsSection','gamesSection','analyticsSection','auditSection','marketplaceSection','amlSection','withdrawalsSection','sanctionsSection','supplierSection'];
+ const tabIds=['ordersTab','productsTab','announcementsTab','gamesTab','analyticsTab','auditTab','marketplaceTab','amlTab','withdrawalsTab','sanctionsTab','supplierTab'];
+ const labels={ordersSection:'Заказы',productsSection:'Товары',inventorySection:'Склад',announcementsSection:'Объявления',gamesSection:'Игры',analyticsSection:'Аналитика',auditSection:'Журнал',marketplaceSection:'Маркетплейс',amlSection:'AML',withdrawalsSection:'Выводы',sanctionsSection:'Наказания',supplierSection:'Поставщик'};
+ const fallback={ordersSection:['Статистика','Поиск заказов','Баланс пользователей','Пользователи','История операций','Фильтр заказов','Статус загрузки','Список заказов'],productsSection:['Управление товарами','Редактор товара','Категории','Массовое управление','Список товаров'],inventorySection:['Управление складом','Список товаров и остатков'],announcementsSection:['Объявления','Редактор объявления','Список объявлений','История рассылок'],analyticsSection:['Параметры аналитики','Общие показатели','Маркетплейс — аналитика','Продажи и прибыль','Проверки','Продажи по товарам','Продажи по играм','Последние заказы'],gamesSection:['Игры каталога','Редактор игры','Список игр'],auditSection:['Журнал действий','Список записей'],marketplaceSection:['Обзор маркетплейса','Споры','Объявления','Аналитика','Сделки','Чат по заказу'],amlSection:['Центр AML-проверок'],withdrawalsSection:['Управление выводами средств','Фильтр заявок','Список заявок'],sanctionsSection:['Наказания пользователей','История наказаний'],supplierSection:['Braisbot API','Привязать тариф к товару поставщика','Активные привязки']};
  function getTitle(el,section,index){if(section==='ordersSection'){if(el.id==='orders')return 'Список заказов';if(el.id==='filters')return 'Фильтр заказов';if(el.id==='updated')return 'Статус загрузки';if(el.classList.contains('stats'))return 'Статистика';if(el.id==='orderSearchPanel')return 'Поиск заказов';if(el.id==='adminUsersPanel')return 'Пользователи';if(el.id==='adminWalletHistoryPanel')return 'История операций';if(el.classList.contains('order'))return 'Баланс пользователей';}const title=el.querySelector('.number,h1,h2,h3,h4,label');let text=title?.textContent?.trim().replace(/\s+/g,' ');if(!text){text=(fallback[section]||[])[index]||('Подраздел '+(index+1));}return text.slice(0,58);}
  function buildNav(section){const host=document.getElementById(section);if(!host)return;let nav=host.querySelector(':scope > .admin-subnav');if(!nav){nav=document.createElement('div');nav.className='admin-subnav';nav.innerHTML='<div class="admin-subnav-head"><div class="admin-subnav-title">ПОДРАЗДЕЛЫ · '+labels[section]+'</div><button type="button" class="admin-subnav-back">← К разделам</button></div><div class="admin-subnav-buttons"></div>';host.insertBefore(nav,host.firstChild);nav.querySelector('.admin-subnav-back').addEventListener('click',()=>{sectionIds.forEach(id=>document.getElementById(id)?.classList.add('hide'));tabIds.forEach(id=>document.getElementById(id)?.classList.remove('primary'));document.body.classList.remove('admin-subnav-active');});}
  nav=host.querySelector(':scope > .admin-subnav');const buttons=nav.querySelector('.admin-subnav-buttons');
