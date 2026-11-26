@@ -60,7 +60,7 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
 #marketAdminChatOverlay.hide{display:none!important}.market-chat-head{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px;border-bottom:1px solid #ffffff20}.market-chat-title{font-weight:850;font-size:16px}.market-chat-sub{font-size:11px;color:var(--muted);margin-top:4px}.market-chat-feed{flex:1;min-height:0;overflow:auto;padding:12px 3px;display:flex;flex-direction:column;gap:8px}.market-chat-msg{max-width:min(88%,600px);align-self:flex-start;background:#1b1721;border:1px solid #ffffff16;padding:11px 13px;border-radius:15px 15px 15px 4px;white-space:pre-wrap;overflow-wrap:anywhere}.market-chat-msg.mine{align-self:flex-end;background:#35202a;border-color:#ff294733;border-radius:15px 15px 4px 15px}.market-chat-msg.system{align-self:center;max-width:96%;background:#ffffff0a;border-color:#ffffff20;text-align:center;font-size:12px}.market-chat-msg.delivery{border-color:#37c97855;background:#153126}.market-chat-msg small{display:block;color:#a99fac;font-size:10px;margin-top:7px}.market-chat-msg img{display:block;max-width:min(100%,280px);border-radius:10px;margin-top:8px}.market-chat-compose{display:flex;gap:8px;padding-top:10px;border-top:1px solid #ffffff20;align-items:flex-end}.market-chat-compose textarea{flex:1;min-width:0;max-height:120px;resize:vertical;border-radius:14px;padding:12px;background:#0c0911;border:1px solid #ffffff2b;color:white;font:inherit}.market-chat-compose button{min-height:45px}.market-admin-card .market-admin-actions button{min-width:0}
 
 
-/* Braisbot searchable selectors */
+/* KDSbot searchable selectors */
 .supplier-picker{position:relative;width:100%}
 .supplier-picker>input[type="search"]{width:100%;box-sizing:border-box;min-height:48px;padding:12px 42px 12px 14px;border-radius:13px;border:1px solid var(--border,#ffffff26);background:var(--input,#100d15);color:var(--text,#fff);font:inherit;font-size:14px;outline:none}
 .supplier-picker>input[type="search"]:focus{border-color:#ff365d;box-shadow:0 0 0 2px #ff365d22}
@@ -70,12 +70,12 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
 .supplier-picker-option:hover,.supplier-picker-option:focus{background:#ffffff12;outline:none}
 .supplier-picker-option small{display:block;color:#aaa1b1;font-size:11px;margin-top:3px}
 .supplier-picker-empty{padding:14px 12px;color:#aaa1b1;font-size:13px}
-#braisbotPlanSelected,#braisbotProductSelected{display:block;margin-top:6px;font-size:11px}
+#KDSbotPlanSelected,#KDSbotProductSelected{display:block;margin-top:6px;font-size:11px}
 </style><style>#inventoryTab,#inventorySection,[data-admin-section='inventorySection']{display:none!important}</style></head>
 <body>
 <header><div><div class="logo"><b>KD</b>S ADMIN</div><div class="tag">Панель управления магазином</div></div><div class="actions" style="margin:0"><button id="backToStore">← В магазин</button><button id="reload">↻ Обновить</button></div></header>
 <main>
-<div class="tabs"><button id="ordersTab" class="primary">Заказы</button><button id="productsTab">Товары</button><button id="inventoryTab">Склад</button><button id="announcementsTab">Объявления</button><button id="gamesTab">Игры</button><button id="analyticsTab">Аналитика</button><button id="auditTab">Журнал</button><button id="marketplaceTab">Маркетплейс</button><button id="referralsTab">Рефералы</button><button id="amlTab">AML</button><button id="withdrawalsTab">Выводы</button><button id="sanctionsTab">Наказания</button><button id="supplierTab">Braisbot</button><button id="braisoxideTab">Braisoxide</button></div>
+<div class="tabs"><button id="ordersTab" class="primary">Заказы</button><button id="productsTab">Товары</button><button id="inventoryTab">Склад</button><button id="announcementsTab">Объявления</button><button id="gamesTab">Игры</button><button id="analyticsTab">Аналитика</button><button id="auditTab">Журнал</button><button id="marketplaceTab">Маркетплейс</button><button id="referralsTab">Рефералы</button><button id="amlTab">AML</button><button id="withdrawalsTab">Выводы</button><button id="sanctionsTab">Наказания</button><button id="supplierTab">KDSbot</button><button id="braisoxideTab">Braisoxide</button></div>
 <section id="ordersSection">
 <div class="stats"><div class="stat"><small>Новые</small><strong id="sNew">—</strong></div><div class="stat"><small>В работе</small><strong id="sWork">—</strong></div><div class="stat"><small>Выполнено</small><strong id="sDone">—</strong></div></div>
 <section class="panel" id="orderSearchPanel"><div class="number">Поиск заказов</div><div class="muted">Номер заказа, Telegram ID, username или название товара.</div><div class="actions" style="align-items:center"><input id="orderSearch" placeholder="Например, 1042 или @username" style="flex:1;min-width:180px"><button class="primary" id="orderSearchBtn">Найти</button><button id="orderSearchClear">Сбросить</button></div><div id="orderSearchResult" class="muted"></div></section>
@@ -272,29 +272,29 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
 
 <section id="supplierSection" class="hide">
  <div class="panel">
-  <div class="number">Braisbot API</div>
-  <div class="muted">Braisbot подключён только для софтов и ключей PUBG Mobile. UC, валюты, предметы и товары других игр через этого поставщика не закупаются.</div>
-  <div class="actions"><button class="primary" id="braisbotReload">↻ Обновить каталог и баланс</button></div>
-  <div id="braisbotStatus" class="muted">Загрузка…</div>
-  <div id="braisbotAccount" class="market-admin-card hide"></div>
+  <div class="number">KDSbot API</div>
+  <div class="muted">KDSbot подключён только для софтов и ключей PUBG Mobile. UC, валюты, предметы и товары других игр через этого поставщика не закупаются.</div>
+  <div class="actions"><button class="primary" id="KDSbotReload">↻ Обновить каталог и баланс</button></div>
+  <div id="KDSbotStatus" class="muted">Загрузка…</div>
+  <div id="KDSbotAccount" class="market-admin-card hide"></div>
  </div>
  <div class="panel">
   <div class="number">Привязать тариф к товару поставщика</div>
-  <div class="field"><label for="braisbotPlanSearch">Тариф KADZI STORE</label>
-   <div class="supplier-picker" id="braisbotPlanPicker"><input id="braisbotPlanSearch" type="search" autocomplete="off" placeholder="Поиск тарифа по названию, игре или сроку…"><input type="hidden" id="braisbotPlan"><div class="supplier-picker-list" id="braisbotPlanOptions"></div></div>
-   <div class="muted" id="braisbotPlanSelected">Тариф не выбран</div>
+  <div class="field"><label for="KDSbotPlanSearch">Тариф KADZI STORE</label>
+   <div class="supplier-picker" id="KDSbotPlanPicker"><input id="KDSbotPlanSearch" type="search" autocomplete="off" placeholder="Поиск тарифа по названию, игре или сроку…"><input type="hidden" id="KDSbotPlan"><div class="supplier-picker-list" id="KDSbotPlanOptions"></div></div>
+   <div class="muted" id="KDSbotPlanSelected">Тариф не выбран</div>
   </div>
-  <div class="field"><label for="braisbotProductSearch">Товар Braisbot</label>
-   <div class="supplier-picker" id="braisbotProductPicker"><input id="braisbotProductSearch" type="search" autocomplete="off" placeholder="Поиск товара по названию или ID…"><input type="hidden" id="braisbotProduct"><div class="supplier-picker-list" id="braisbotProductOptions"></div></div>
-   <div class="muted" id="braisbotProductSelected">Товар не выбран</div>
+  <div class="field"><label for="KDSbotProductSearch">Товар KDSbot</label>
+   <div class="supplier-picker" id="KDSbotProductPicker"><input id="KDSbotProductSearch" type="search" autocomplete="off" placeholder="Поиск товара по названию или ID…"><input type="hidden" id="KDSbotProduct"><div class="supplier-picker-list" id="KDSbotProductOptions"></div></div>
+   <div class="muted" id="KDSbotProductSelected">Товар не выбран</div>
   </div>
-  <div class="actions"><button class="primary" id="braisbotSave">Сохранить привязку</button></div>
-  <div class="muted">Проверь название, валюту и цену у поставщика перед включением автозакупки. Закупочная стоимость Braisbot в USD пока не конвертируется в себестоимость заказа в RUB.</div>
-  <div id="braisbotMsg" class="muted"></div>
+  <div class="actions"><button class="primary" id="KDSbotSave">Сохранить привязку</button></div>
+  <div class="muted">Проверь название, валюту и цену у поставщика перед включением автозакупки. Закупочная стоимость KDSbot в USD пока не конвертируется в себестоимость заказа в RUB.</div>
+  <div id="KDSbotMsg" class="muted"></div>
  </div>
  <div class="panel">
   <div class="number">Активные привязки</div>
-  <div id="braisbotMappings"><div class="notice">Загружаю…</div></div>
+  <div id="KDSbotMappings"><div class="notice">Загружаю…</div></div>
  </div>
 </section>
 
@@ -544,17 +544,17 @@ document.getElementById("clearInventory").onclick=()=>{document.getElementById("
 document.getElementById("inventoryProductsList").onclick=e=>{const b=e.target.closest("[data-stock]");if(!b)return;setDropdown("inventoryProduct",inventoryProducts.map(p=>({value:p.id,label:p.name})),b.dataset.stock);renderInventoryPlans();document.getElementById("inventoryLines").focus();};
 async function showInventoryForProduct(productId){showAdminSection("inventorySection");try{await loadInventory();setDropdown("inventoryProduct",inventoryProducts.map(p=>({value:p.id,label:p.name})),productId);renderInventoryPlans();document.getElementById("inventoryLines").focus();}catch(e){document.getElementById("inventoryMsg").textContent="Ошибка загрузки: "+e.message;}}
 
-let braisbotState={plans:[],products:[],mappings:[]}; 
-function braisbotPlanLabel(p){
+let KDSbotState={plans:[],products:[],mappings:[]}; 
+function KDSbotPlanLabel(p){
  const prod=Array.isArray(p.kds_products)?p.kds_products[0]:p.kds_products;
  return {title:[prod?.game_category,prod?.name,p.duration_label].filter(Boolean).join(" · ")||"Тариф",meta:(p.price_rub??"—")+" ₽ · ID "+p.id};
 }
-function braisbotProductLabel(p){
+function KDSbotProductLabel(p){
  const id=p.product_id??p.id,name=[p.category?.name,p.position?.name,p.name].filter(Boolean).join(" / ")||"Товар";
  return {id,title:name,meta:"#"+id+" · $"+(p.price_usd??"—")+" · Остаток: "+(p.stock??"—")};
 }
-function setupBraisbotPicker(kind,items,labelFn){
- const picker=document.getElementById("braisbot"+kind+"Picker"),search=document.getElementById("braisbot"+kind+"Search"),hidden=document.getElementById("braisbot"+kind),list=document.getElementById("braisbot"+kind+"Options"),selected=document.getElementById("braisbot"+kind+"Selected");
+function setupKDSbotPicker(kind,items,labelFn){
+ const picker=document.getElementById("KDSbot"+kind+"Picker"),search=document.getElementById("KDSbot"+kind+"Search"),hidden=document.getElementById("KDSbot"+kind),list=document.getElementById("KDSbot"+kind+"Options"),selected=document.getElementById("KDSbot"+kind+"Selected");
  const render=()=>{
   const q=search.value.trim().toLocaleLowerCase("ru");
   const matches=items.map(item=>({item,label:labelFn(item)})).filter(x=>(x.label.title+" "+x.label.meta).toLocaleLowerCase("ru").includes(q)).slice(0,100);
@@ -563,55 +563,55 @@ function setupBraisbotPicker(kind,items,labelFn){
  };
  search.onfocus=render;search.oninput=()=>{hidden.value="";selected.textContent=kind==="Plan"?"Тариф не выбран":"Товар не выбран";render();};
  list.onclick=e=>{const b=e.target.closest("[data-value]");if(!b)return;hidden.value=b.dataset.value;const found=items.find(x=>String(kind==="Plan"?x.id:(x.product_id??x.id))===String(hidden.value));const label=labelFn(found);search.value=label.title;selected.textContent="Выбрано: "+label.title+" · "+label.meta;picker.classList.remove("open");};
- if(!window.__braisbotPickerOutside){window.__braisbotPickerOutside=true;document.addEventListener("click",e=>document.querySelectorAll(".supplier-picker.open").forEach(p=>{if(!p.contains(e.target))p.classList.remove("open");}));}
+ if(!window.__KDSbotPickerOutside){window.__KDSbotPickerOutside=true;document.addEventListener("click",e=>document.querySelectorAll(".supplier-picker.open").forEach(p=>{if(!p.contains(e.target))p.classList.remove("open");}));}
 }
-function renderBraisbotPickers(){
- setupBraisbotPicker("Plan",braisbotState.plans,braisbotPlanLabel);
- setupBraisbotPicker("Product",braisbotState.products,braisbotProductLabel);
- document.getElementById("braisbotPlanSearch").value="";
- document.getElementById("braisbotProductSearch").value="";
- document.getElementById("braisbotPlan").value="";
- document.getElementById("braisbotProduct").value="";
- document.getElementById("braisbotPlanSelected").textContent="Тариф не выбран";
- document.getElementById("braisbotProductSelected").textContent="Товар не выбран";
+function renderKDSbotPickers(){
+ setupKDSbotPicker("Plan",KDSbotState.plans,KDSbotPlanLabel);
+ setupKDSbotPicker("Product",KDSbotState.products,KDSbotProductLabel);
+ document.getElementById("KDSbotPlanSearch").value="";
+ document.getElementById("KDSbotProductSearch").value="";
+ document.getElementById("KDSbotPlan").value="";
+ document.getElementById("KDSbotProduct").value="";
+ document.getElementById("KDSbotPlanSelected").textContent="Тариф не выбран";
+ document.getElementById("KDSbotProductSelected").textContent="Товар не выбран";
 }
 
-async function loadBraisbot(){
- const status=document.getElementById("braisbotStatus"),account=document.getElementById("braisbotAccount"),msg=document.getElementById("braisbotMsg");
- status.textContent="Подключаюсь к Braisbot…";msg.textContent="";
+async function loadKDSbot(){
+ const status=document.getElementById("KDSbotStatus"),account=document.getElementById("KDSbotAccount"),msg=document.getElementById("KDSbotMsg");
+ status.textContent="Подключаюсь к KDSbot…";msg.textContent="";
  try{
-  const d=await api("GET",null,"braisbot");
-  braisbotState={plans:(d.plans||[]).filter(p=>{const prod=Array.isArray(p.kds_products)?p.kds_products[0]:p.kds_products;return prod?.game_category==="PUBG Mobile"&&prod?.subcategory==="Ключи";}),products:d.supplier_products||[],mappings:(d.mappings||[]).filter(m=>(d.plans||[]).some(p=>p.id===m.plan_id&&((Array.isArray(p.kds_products)?p.kds_products[0]:p.kds_products)?.game_category==="PUBG Mobile")&&((Array.isArray(p.kds_products)?p.kds_products[0]:p.kds_products)?.subcategory==="Ключи")))};
+  const d=await api("GET",null,"KDSbot");
+  KDSbotState={plans:(d.plans||[]).filter(p=>{const prod=Array.isArray(p.kds_products)?p.kds_products[0]:p.kds_products;return prod?.game_category==="PUBG Mobile"&&prod?.subcategory==="Ключи";}),products:d.supplier_products||[],mappings:(d.mappings||[]).filter(m=>(d.plans||[]).some(p=>p.id===m.plan_id&&((Array.isArray(p.kds_products)?p.kds_products[0]:p.kds_products)?.game_category==="PUBG Mobile")&&((Array.isArray(p.kds_products)?p.kds_products[0]:p.kds_products)?.subcategory==="Ключи")))};
   const bal=d.account?.balance_usd??"—",login=d.account?.login??"—";
   account.classList.remove("hide");
-  account.innerHTML='<b>Аккаунт поставщика: '+esc(login)+'</b><p>Баланс: <strong>'+esc(bal)+' USD</strong></p><p>Товаров в каталоге: '+braisbotState.products.length+'</p>';
+  account.innerHTML='<b>Аккаунт поставщика: '+esc(login)+'</b><p>Баланс: <strong>'+esc(bal)+' USD</strong></p><p>Товаров в каталоге: '+KDSbotState.products.length+'</p>';
   status.textContent="Подключение успешно. Каталог и баланс получены.";
-  renderBraisbotPickers();
-  renderBraisbotMappings();
- }catch(e){status.textContent="Ошибка подключения: "+e.message;account.classList.add("hide");document.getElementById("braisbotMappings").innerHTML='<div class="notice error">'+esc(e.message)+'</div>';}
+  renderKDSbotPickers();
+  renderKDSbotMappings();
+ }catch(e){status.textContent="Ошибка подключения: "+e.message;account.classList.add("hide");document.getElementById("KDSbotMappings").innerHTML='<div class="notice error">'+esc(e.message)+'</div>';}
 }
-function renderBraisbotMappings(){
- const el=document.getElementById("braisbotMappings"),plans=braisbotState.plans,products=braisbotState.products;
- if(!braisbotState.mappings.length){el.innerHTML='<div class="empty">Привязок пока нет. Автозакупка не включена ни для одного тарифа.</div>';return;}
- el.innerHTML=braisbotState.mappings.map(m=>{
+function renderKDSbotMappings(){
+ const el=document.getElementById("KDSbotMappings"),plans=KDSbotState.plans,products=KDSbotState.products;
+ if(!KDSbotState.mappings.length){el.innerHTML='<div class="empty">Привязок пока нет. Автозакупка не включена ни для одного тарифа.</div>';return;}
+ el.innerHTML=KDSbotState.mappings.map(m=>{
   const plan=plans.find(p=>p.id===m.plan_id),prod=Array.isArray(plan?.kds_products)?plan.kds_products[0]:plan?.kds_products;
   const supplier=products.find(p=>Number(p.product_id??p.id)===Number(m.supplier_product_id));
-  return '<article class="market-admin-card"><h3>'+esc(prod?.name||"Тариф")+' · '+esc(plan?.duration_label||"")+'</h3><p>Поставщик: #'+esc(m.supplier_product_id)+' · '+esc(m.supplier_product_name||supplier?.name||supplier?.position?.name||"Товар")+'</p><div class="market-admin-actions"><button class="warn" data-braisbot-delete="'+esc(m.plan_id)+'">Удалить привязку</button></div></article>';
+  return '<article class="market-admin-card"><h3>'+esc(prod?.name||"Тариф")+' · '+esc(plan?.duration_label||"")+'</h3><p>Поставщик: #'+esc(m.supplier_product_id)+' · '+esc(m.supplier_product_name||supplier?.name||supplier?.position?.name||"Товар")+'</p><div class="market-admin-actions"><button class="warn" data-KDSbot-delete="'+esc(m.plan_id)+'">Удалить привязку</button></div></article>';
  }).join("");
 }
-document.getElementById("braisbotReload").onclick=loadBraisbot;
-document.getElementById("braisbotSave").onclick=async()=>{
- const plan_id=document.getElementById("braisbotPlan").value,supplier_product_id=Number(document.getElementById("braisbotProduct").value),msg=document.getElementById("braisbotMsg"),btn=document.getElementById("braisbotSave");
+document.getElementById("KDSbotReload").onclick=loadKDSbot;
+document.getElementById("KDSbotSave").onclick=async()=>{
+ const plan_id=document.getElementById("KDSbotPlan").value,supplier_product_id=Number(document.getElementById("KDSbotProduct").value),msg=document.getElementById("KDSbotMsg"),btn=document.getElementById("KDSbotSave");
  if(!plan_id||!Number.isSafeInteger(supplier_product_id)||supplier_product_id<=0){msg.textContent="Выбери тариф магазина и товар поставщика.";return;}
  btn.disabled=true;msg.textContent="Проверяю товар у поставщика и сохраняю…";
- try{await api("POST",{action:"save_braisbot_mapping",plan_id,supplier_product_id});msg.textContent="Привязка сохранена. Автозакупка включена для этого тарифа.";await loadBraisbot();}
+ try{await api("POST",{action:"save_KDSbot_mapping",plan_id,supplier_product_id});msg.textContent="Привязка сохранена. Автозакупка включена для этого тарифа.";await loadKDSbot();}
  catch(e){msg.textContent="Ошибка: "+e.message;}
  finally{btn.disabled=false;}
 };
-document.getElementById("braisbotMappings").addEventListener("click",async e=>{
- const b=e.target.closest("[data-braisbot-delete]");if(!b)return;
- if(!confirm("Удалить привязку? Новые заказы по этому тарифу больше не будут покупать товар у Braisbot."))return;
- b.disabled=true;try{await api("POST",{action:"delete_braisbot_mapping",plan_id:b.dataset.braisbotDelete});await loadBraisbot();}catch(e){alert(e.message);b.disabled=false;}
+document.getElementById("KDSbotMappings").addEventListener("click",async e=>{
+ const b=e.target.closest("[data-KDSbot-delete]");if(!b)return;
+ if(!confirm("Удалить привязку? Новые заказы по этому тарифу больше не будут покупать товар у KDSbot."))return;
+ b.disabled=true;try{await api("POST",{action:"delete_KDSbot_mapping",plan_id:b.dataset.KDSbotDelete});await loadKDSbot();}catch(e){alert(e.message);b.disabled=false;}
 });
 
 let braisoxideState={plans:[],products:[],mappings:[]};
@@ -642,7 +642,7 @@ async function loadBraisoxide(){
 document.getElementById("braisoxideReload").onclick=loadBraisoxide;
 document.getElementById("braisoxideSave").onclick=async()=>{const plan_id=document.getElementById("braisoxidePlan").value,supplier_product_id=Number(document.getElementById("braisoxideProduct").value),msg=document.getElementById("braisoxideMsg"),btn=document.getElementById("braisoxideSave");if(!plan_id||!Number.isSafeInteger(supplier_product_id)||supplier_product_id<=0){msg.textContent="Выбери тариф и товар поставщика.";return;}btn.disabled=true;msg.textContent="Проверяю товар и сохраняю привязку…";try{await api("POST",{action:"save_braisoxide_mapping",plan_id,supplier_product_id});msg.textContent="Привязка сохранена.";await loadBraisoxide();}catch(e){msg.textContent="Ошибка: "+e.message;}finally{btn.disabled=false;}};
 document.getElementById("braisoxideMappings").addEventListener("click",async e=>{const b=e.target.closest("[data-braisoxide-delete]");if(!b)return;if(!confirm("Удалить привязку Braisoxide?"))return;b.disabled=true;try{await api("POST",{action:"delete_braisoxide_mapping",plan_id:b.dataset.braisoxideDelete});await loadBraisoxide();}catch(e){alert(e.message);b.disabled=false;}});
-function showAdminSection(which){for(const id of ["ordersSection","productsSection","inventorySection","announcementsSection","gamesSection","analyticsSection","auditSection","marketplaceSection","amlSection","withdrawalsSection","sanctionsSection","supplierSection","braisoxideSection","referralsSection"])document.getElementById(id).classList.toggle("hide",id!==which);for(const id of ["ordersTab","productsTab","inventoryTab","announcementsTab","gamesTab","analyticsTab","auditTab","marketplaceTab","amlTab","withdrawalsTab","sanctionsTab","supplierTab","braisoxideTab","referralsTab"])document.getElementById(id).classList.toggle("primary",id===(which+"Tab").replace("Section",""));if(which==="productsSection")loadProducts();if(which==="inventorySection")loadInventory();if(which==="announcementsSection"){loadAnnouncements();loadBroadcastHistory();}if(which==="gamesSection")loadGames();if(which==="analyticsSection")loadAnalytics();if(which==="auditSection")loadAudit();if(which==="marketplaceSection")loadMarketplaceAdmin();if(which==="amlSection")loadAmlAdmin();if(which==="withdrawalsSection")loadAdminWithdrawals();if(which==="supplierSection")loadBraisbot();if(which==="braisoxideSection")loadBraisoxide();if(which==="referralsSection")loadReferralAdmin();}
+function showAdminSection(which){for(const id of ["ordersSection","productsSection","inventorySection","announcementsSection","gamesSection","analyticsSection","auditSection","marketplaceSection","amlSection","withdrawalsSection","sanctionsSection","supplierSection","braisoxideSection","referralsSection"])document.getElementById(id).classList.toggle("hide",id!==which);for(const id of ["ordersTab","productsTab","inventoryTab","announcementsTab","gamesTab","analyticsTab","auditTab","marketplaceTab","amlTab","withdrawalsTab","sanctionsTab","supplierTab","braisoxideTab","referralsTab"])document.getElementById(id).classList.toggle("primary",id===(which+"Tab").replace("Section",""));if(which==="productsSection")loadProducts();if(which==="inventorySection")loadInventory();if(which==="announcementsSection"){loadAnnouncements();loadBroadcastHistory();}if(which==="gamesSection")loadGames();if(which==="analyticsSection")loadAnalytics();if(which==="auditSection")loadAudit();if(which==="marketplaceSection")loadMarketplaceAdmin();if(which==="amlSection")loadAmlAdmin();if(which==="withdrawalsSection")loadAdminWithdrawals();if(which==="supplierSection")loadKDSbot();if(which==="braisoxideSection")loadBraisoxide();if(which==="referralsSection")loadReferralAdmin();}
 
 function referralAdminStat(label,value){return '<div class="stat"><small>'+esc(label)+'</small><strong>'+esc(value)+'</strong></div>';}
 function renderReferralLeaderboard(targetId,title,rows){
@@ -1119,7 +1119,7 @@ document.getElementById("sanctionHistory").addEventListener("click",async e=>{
  const sectionIds=['ordersSection','productsSection','announcementsSection','gamesSection','analyticsSection','auditSection','marketplaceSection','amlSection','withdrawalsSection','sanctionsSection','supplierSection'];
  const tabIds=['ordersTab','productsTab','announcementsTab','gamesTab','analyticsTab','auditTab','marketplaceTab','amlTab','withdrawalsTab','sanctionsTab','supplierTab'];
  const labels={ordersSection:'Заказы',productsSection:'Товары',inventorySection:'Склад',announcementsSection:'Объявления',gamesSection:'Игры',analyticsSection:'Аналитика',auditSection:'Журнал',marketplaceSection:'Маркетплейс',amlSection:'AML',withdrawalsSection:'Выводы',sanctionsSection:'Наказания',supplierSection:'Поставщик'};
- const fallback={ordersSection:['Статистика','Поиск заказов','Баланс пользователей','Пользователи','История операций','Фильтр заказов','Статус загрузки','Список заказов'],productsSection:['Управление товарами','Редактор товара','Категории','Массовое управление','Список товаров'],inventorySection:['Управление складом','Список товаров и остатков'],announcementsSection:['Объявления','Редактор объявления','Список объявлений','История рассылок'],analyticsSection:['Параметры аналитики','Общие показатели','Маркетплейс — аналитика','Продажи и прибыль','Проверки','Продажи по товарам','Продажи по играм','Последние заказы'],gamesSection:['Игры каталога','Редактор игры','Список игр'],auditSection:['Журнал действий','Список записей'],marketplaceSection:['Обзор маркетплейса','Споры','Объявления','Аналитика','Сделки','Чат по заказу'],amlSection:['Центр AML-проверок'],withdrawalsSection:['Управление выводами средств','Фильтр заявок','Список заявок'],sanctionsSection:['Наказания пользователей','История наказаний'],supplierSection:['Braisbot API','Привязать тариф к товару поставщика','Активные привязки']};
+ const fallback={ordersSection:['Статистика','Поиск заказов','Баланс пользователей','Пользователи','История операций','Фильтр заказов','Статус загрузки','Список заказов'],productsSection:['Управление товарами','Редактор товара','Категории','Массовое управление','Список товаров'],inventorySection:['Управление складом','Список товаров и остатков'],announcementsSection:['Объявления','Редактор объявления','Список объявлений','История рассылок'],analyticsSection:['Параметры аналитики','Общие показатели','Маркетплейс — аналитика','Продажи и прибыль','Проверки','Продажи по товарам','Продажи по играм','Последние заказы'],gamesSection:['Игры каталога','Редактор игры','Список игр'],auditSection:['Журнал действий','Список записей'],marketplaceSection:['Обзор маркетплейса','Споры','Объявления','Аналитика','Сделки','Чат по заказу'],amlSection:['Центр AML-проверок'],withdrawalsSection:['Управление выводами средств','Фильтр заявок','Список заявок'],sanctionsSection:['Наказания пользователей','История наказаний'],supplierSection:['KDSbot API','Привязать тариф к товару поставщика','Активные привязки']};
  function getTitle(el,section,index){if(section==='ordersSection'){if(el.id==='orders')return 'Список заказов';if(el.id==='filters')return 'Фильтр заказов';if(el.id==='updated')return 'Статус загрузки';if(el.classList.contains('stats'))return 'Статистика';if(el.id==='orderSearchPanel')return 'Поиск заказов';if(el.id==='adminUsersPanel')return 'Пользователи';if(el.id==='adminWalletHistoryPanel')return 'История операций';if(el.classList.contains('order'))return 'Баланс пользователей';}const title=el.querySelector('.number,h1,h2,h3,h4,label');let text=title?.textContent?.trim().replace(/\s+/g,' ');if(!text){text=(fallback[section]||[])[index]||('Подраздел '+(index+1));}return text.slice(0,58);}
  function buildNav(section){const host=document.getElementById(section);if(!host)return;let nav=host.querySelector(':scope > .admin-subnav');if(!nav){nav=document.createElement('div');nav.className='admin-subnav';nav.innerHTML='<div class="admin-subnav-head"><div class="admin-subnav-title">ПОДРАЗДЕЛЫ · '+labels[section]+'</div><button type="button" class="admin-subnav-back">← К разделам</button></div><div class="admin-subnav-buttons"></div>';host.insertBefore(nav,host.firstChild);nav.querySelector('.admin-subnav-back').addEventListener('click',()=>{sectionIds.forEach(id=>document.getElementById(id)?.classList.add('hide'));tabIds.forEach(id=>document.getElementById(id)?.classList.remove('primary'));document.body.classList.remove('admin-subnav-active');});}
  nav=host.querySelector(':scope > .admin-subnav');const buttons=nav.querySelector('.admin-subnav-buttons');
