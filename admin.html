@@ -75,7 +75,7 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
 <body>
 <header><div><div class="logo"><b>KD</b>S ADMIN</div><div class="tag">Панель управления магазином</div></div><div class="actions" style="margin:0"><button id="backToStore">← В магазин</button><button id="reload">↻ Обновить</button></div></header>
 <main>
-<div class="tabs"><button id="ordersTab" class="primary">Заказы</button><button id="productsTab">Товары</button><button id="inventoryTab">Склад</button><button id="announcementsTab">Объявления</button><button id="gamesTab">Игры</button><button id="analyticsTab">Аналитика</button><button id="auditTab">Журнал</button><button id="marketplaceTab">Маркетплейс</button><button id="referralsTab">Рефералы</button><button id="amlTab">AML</button><button id="withdrawalsTab">Выводы</button><button id="sanctionsTab">Наказания</button><button id="supplierTab">KDSbot</button><button id="braisoxideTab">Braisoxide</button></div>
+<div class="tabs"><button id="ordersTab" class="primary">Заказы</button><button id="productsTab">Товары</button><button id="inventoryTab">Склад</button><button id="announcementsTab">Объявления</button><button id="gamesTab">Игры</button><button id="analyticsTab">Аналитика</button><button id="auditTab">Журнал</button><button id="marketplaceTab">Маркетплейс</button><button id="referralsTab">Рефералы</button><button id="amlTab">AML</button><button id="withdrawalsTab">Выводы</button><button id="sanctionsTab">Наказания</button><button id="supplierTab">KDSbot</button><button id="KDSoxideTab">KDSoxide</button></div>
 <section id="ordersSection">
 <div class="stats"><div class="stat"><small>Новые</small><strong id="sNew">—</strong></div><div class="stat"><small>В работе</small><strong id="sWork">—</strong></div><div class="stat"><small>Выполнено</small><strong id="sDone">—</strong></div></div>
 <section class="panel" id="orderSearchPanel"><div class="number">Поиск заказов</div><div class="muted">Номер заказа, Telegram ID, username или название товара.</div><div class="actions" style="align-items:center"><input id="orderSearch" placeholder="Например, 1042 или @username" style="flex:1;min-width:180px"><button class="primary" id="orderSearchBtn">Найти</button><button id="orderSearchClear">Сбросить</button></div><div id="orderSearchResult" class="muted"></div></section>
@@ -298,21 +298,21 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
  </div>
 </section>
 
-<section id="braisoxideSection" class="hide">
+<section id="KDSoxideSection" class="hide">
  <div class="panel">
-  <div class="number">Braisoxide API</div>
+  <div class="number">KDSoxide API</div>
   <div class="muted">Второй поставщик. Здесь отображаются баланс, каталог и привязки тарифов KADZI STORE.</div>
-  <div class="actions"><button class="primary" id="braisoxideReload">↻ Обновить каталог и баланс</button></div>
-  <div id="braisoxideStatus" class="muted">Нажми обновить для загрузки данных.</div>
-  <div id="braisoxideAccount" class="market-admin-card hide"></div>
+  <div class="actions"><button class="primary" id="KDSoxideReload">↻ Обновить каталог и баланс</button></div>
+  <div id="KDSoxideStatus" class="muted">Нажми обновить для загрузки данных.</div>
+  <div id="KDSoxideAccount" class="market-admin-card hide"></div>
  </div>
  <div class="panel">
-  <div class="number">Привязать тариф к товару Braisoxide</div>
-  <div class="field"><label for="braisoxidePlanSearch">Тариф KADZI STORE</label><div class="supplier-picker" id="braisoxidePlanPicker"><input id="braisoxidePlanSearch" type="search" autocomplete="off" placeholder="Поиск тарифа…"><input type="hidden" id="braisoxidePlan"><div class="supplier-picker-list" id="braisoxidePlanOptions"></div></div><div class="muted" id="braisoxidePlanSelected">Тариф не выбран</div></div>
-  <div class="field"><label for="braisoxideProductSearch">Товар Braisoxide</label><div class="supplier-picker" id="braisoxideProductPicker"><input id="braisoxideProductSearch" type="search" autocomplete="off" placeholder="Поиск товара…"><input type="hidden" id="braisoxideProduct"><div class="supplier-picker-list" id="braisoxideProductOptions"></div></div><div class="muted" id="braisoxideProductSelected">Товар не выбран</div></div>
-  <div class="actions"><button class="primary" id="braisoxideSave">Сохранить привязку</button></div><div id="braisoxideMsg" class="muted"></div>
+  <div class="number">Привязать тариф к товару KDSoxide</div>
+  <div class="field"><label for="KDSoxidePlanSearch">Тариф KADZI STORE</label><div class="supplier-picker" id="KDSoxidePlanPicker"><input id="KDSoxidePlanSearch" type="search" autocomplete="off" placeholder="Поиск тарифа…"><input type="hidden" id="KDSoxidePlan"><div class="supplier-picker-list" id="KDSoxidePlanOptions"></div></div><div class="muted" id="KDSoxidePlanSelected">Тариф не выбран</div></div>
+  <div class="field"><label for="KDSoxideProductSearch">Товар KDSoxide</label><div class="supplier-picker" id="KDSoxideProductPicker"><input id="KDSoxideProductSearch" type="search" autocomplete="off" placeholder="Поиск товара…"><input type="hidden" id="KDSoxideProduct"><div class="supplier-picker-list" id="KDSoxideProductOptions"></div></div><div class="muted" id="KDSoxideProductSelected">Товар не выбран</div></div>
+  <div class="actions"><button class="primary" id="KDSoxideSave">Сохранить привязку</button></div><div id="KDSoxideMsg" class="muted"></div>
  </div>
- <div class="panel"><div class="number">Активные привязки</div><div id="braisoxideMappings"><div class="notice">Загрузи каталог.</div></div></div>
+ <div class="panel"><div class="number">Активные привязки</div><div id="KDSoxideMappings"><div class="notice">Загрузи каталог.</div></div></div>
 </section>
 
 <script>
@@ -614,35 +614,35 @@ document.getElementById("KDSbotMappings").addEventListener("click",async e=>{
  b.disabled=true;try{await api("POST",{action:"delete_KDSbot_mapping",plan_id:b.dataset.KDSbotDelete});await loadKDSbot();}catch(e){alert(e.message);b.disabled=false;}
 });
 
-let braisoxideState={plans:[],products:[],mappings:[]};
+let KDSoxideState={plans:[],products:[],mappings:[]};
 function boPlanLabel(p){const prod=Array.isArray(p.kds_products)?p.kds_products[0]:p.kds_products;return {title:[prod?.game_category,prod?.name,p.duration_label].filter(Boolean).join(" · ")||"Тариф",meta:(p.price_rub??"—")+" ₽ · ID "+p.id};}
 function boProductLabel(p){const id=p.product_id??p.id;const name=[p.category?.name,p.position?.name,p.name].filter(Boolean).join(" / ")||"Товар";return {id,title:name,meta:"#"+id+" · $"+(p.price_usd??"—")+" · Остаток: "+(p.stock??"—")};}
 function setupBOPicker(kind,items,labelFn){
- const picker=document.getElementById("braisoxide"+kind+"Picker"),search=document.getElementById("braisoxide"+kind+"Search"),hidden=document.getElementById("braisoxide"+kind),list=document.getElementById("braisoxide"+kind+"Options"),selected=document.getElementById("braisoxide"+kind+"Selected");
+ const picker=document.getElementById("KDSoxide"+kind+"Picker"),search=document.getElementById("KDSoxide"+kind+"Search"),hidden=document.getElementById("KDSoxide"+kind),list=document.getElementById("KDSoxide"+kind+"Options"),selected=document.getElementById("KDSoxide"+kind+"Selected");
  const render=()=>{const q=search.value.trim().toLocaleLowerCase("ru");const matches=items.map(item=>({item,label:labelFn(item)})).filter(x=>(x.label.title+" "+x.label.meta).toLocaleLowerCase("ru").includes(q)).slice(0,100);list.innerHTML=matches.length?matches.map(x=>'<button type="button" class="supplier-picker-option" data-value="'+esc(kind==="Plan"?x.item.id:x.label.id)+'">'+esc(x.label.title)+'<small>'+esc(x.label.meta)+'</small></button>').join(""):'<div class="supplier-picker-empty">Ничего не найдено.</div>';picker.classList.add("open");};
  search.onfocus=render;search.oninput=()=>{hidden.value="";selected.textContent=kind==="Plan"?"Тариф не выбран":"Товар не выбран";render();};
  list.onclick=e=>{const b=e.target.closest("[data-value]");if(!b)return;hidden.value=b.dataset.value;const found=items.find(x=>String(kind==="Plan"?x.id:(x.product_id??x.id))===String(hidden.value));const label=labelFn(found);search.value=label.title;selected.textContent="Выбрано: "+label.title+" · "+label.meta;picker.classList.remove("open");};
 }
-function renderBraisoxidePickers(){setupBOPicker("Plan",braisoxideState.plans,boPlanLabel);setupBOPicker("Product",braisoxideState.products,boProductLabel);}
-function renderBraisoxideMappings(){
- const el=document.getElementById("braisoxideMappings"),plans=braisoxideState.plans,products=braisoxideState.products;
- if(!braisoxideState.mappings.length){el.innerHTML='<div class="notice">Привязок пока нет.</div>';return;}
- el.innerHTML=braisoxideState.mappings.map(m=>{const plan=plans.find(p=>p.id===m.plan_id),prod=products.find(p=>String(p.product_id??p.id)===String(m.supplier_product_id));return '<article class="market-admin-card"><h3>'+esc((plan?.kds_products?.name)||plan?.name||("Тариф "+m.plan_id))+'</h3><p>Товар поставщика: '+esc(prod?.name||prod?.position?.name||("#"+m.supplier_product_id))+'</p><div class="market-admin-actions"><button class="warn" data-braisoxide-delete="'+esc(m.plan_id)+'">Удалить привязку</button></div></article>';}).join("");
+function renderKDSoxidePickers(){setupBOPicker("Plan",KDSoxideState.plans,boPlanLabel);setupBOPicker("Product",KDSoxideState.products,boProductLabel);}
+function renderKDSoxideMappings(){
+ const el=document.getElementById("KDSoxideMappings"),plans=KDSoxideState.plans,products=KDSoxideState.products;
+ if(!KDSoxideState.mappings.length){el.innerHTML='<div class="notice">Привязок пока нет.</div>';return;}
+ el.innerHTML=KDSoxideState.mappings.map(m=>{const plan=plans.find(p=>p.id===m.plan_id),prod=products.find(p=>String(p.product_id??p.id)===String(m.supplier_product_id));return '<article class="market-admin-card"><h3>'+esc((plan?.kds_products?.name)||plan?.name||("Тариф "+m.plan_id))+'</h3><p>Товар поставщика: '+esc(prod?.name||prod?.position?.name||("#"+m.supplier_product_id))+'</p><div class="market-admin-actions"><button class="warn" data-KDSoxide-delete="'+esc(m.plan_id)+'">Удалить привязку</button></div></article>';}).join("");
 }
-async function loadBraisoxide(){
- const status=document.getElementById("braisoxideStatus"),account=document.getElementById("braisoxideAccount"),msg=document.getElementById("braisoxideMsg");status.textContent="Подключаюсь к Braisoxide…";msg.textContent="";
+async function loadKDSoxide(){
+ const status=document.getElementById("KDSoxideStatus"),account=document.getElementById("KDSoxideAccount"),msg=document.getElementById("KDSoxideMsg");status.textContent="Подключаюсь к KDSoxide…";msg.textContent="";
  try{
-  const d=await api("GET",null,"braisoxide");
-  braisoxideState={plans:d.plans||[],products:d.supplier_products||d.products||[],mappings:d.mappings||[]};
+  const d=await api("GET",null,"KDSoxide");
+  KDSoxideState={plans:d.plans||[],products:d.supplier_products||d.products||[],mappings:d.mappings||[]};
   const bal=d.account?.balance_usd??"—",login=d.account?.login??"—";account.classList.remove("hide");
-  account.innerHTML='<b>Аккаунт поставщика: '+esc(login)+'</b><p>Баланс: <strong>'+esc(bal)+' USD</strong></p><p>Товаров в каталоге: '+braisoxideState.products.length+'</p>';
-  status.textContent="Подключение успешно. Каталог и баланс получены.";renderBraisoxidePickers();renderBraisoxideMappings();
- }catch(e){status.textContent="Ошибка подключения: "+e.message;account.classList.add("hide");document.getElementById("braisoxideMappings").innerHTML='<div class="notice error">'+esc(e.message)+'</div>';}
+  account.innerHTML='<b>Аккаунт поставщика: '+esc(login)+'</b><p>Баланс: <strong>'+esc(bal)+' USD</strong></p><p>Товаров в каталоге: '+KDSoxideState.products.length+'</p>';
+  status.textContent="Подключение успешно. Каталог и баланс получены.";renderKDSoxidePickers();renderKDSoxideMappings();
+ }catch(e){status.textContent="Ошибка подключения: "+e.message;account.classList.add("hide");document.getElementById("KDSoxideMappings").innerHTML='<div class="notice error">'+esc(e.message)+'</div>';}
 }
-document.getElementById("braisoxideReload").onclick=loadBraisoxide;
-document.getElementById("braisoxideSave").onclick=async()=>{const plan_id=document.getElementById("braisoxidePlan").value,supplier_product_id=Number(document.getElementById("braisoxideProduct").value),msg=document.getElementById("braisoxideMsg"),btn=document.getElementById("braisoxideSave");if(!plan_id||!Number.isSafeInteger(supplier_product_id)||supplier_product_id<=0){msg.textContent="Выбери тариф и товар поставщика.";return;}btn.disabled=true;msg.textContent="Проверяю товар и сохраняю привязку…";try{await api("POST",{action:"save_braisoxide_mapping",plan_id,supplier_product_id});msg.textContent="Привязка сохранена.";await loadBraisoxide();}catch(e){msg.textContent="Ошибка: "+e.message;}finally{btn.disabled=false;}};
-document.getElementById("braisoxideMappings").addEventListener("click",async e=>{const b=e.target.closest("[data-braisoxide-delete]");if(!b)return;if(!confirm("Удалить привязку Braisoxide?"))return;b.disabled=true;try{await api("POST",{action:"delete_braisoxide_mapping",plan_id:b.dataset.braisoxideDelete});await loadBraisoxide();}catch(e){alert(e.message);b.disabled=false;}});
-function showAdminSection(which){for(const id of ["ordersSection","productsSection","inventorySection","announcementsSection","gamesSection","analyticsSection","auditSection","marketplaceSection","amlSection","withdrawalsSection","sanctionsSection","supplierSection","braisoxideSection","referralsSection"])document.getElementById(id).classList.toggle("hide",id!==which);for(const id of ["ordersTab","productsTab","inventoryTab","announcementsTab","gamesTab","analyticsTab","auditTab","marketplaceTab","amlTab","withdrawalsTab","sanctionsTab","supplierTab","braisoxideTab","referralsTab"])document.getElementById(id).classList.toggle("primary",id===(which+"Tab").replace("Section",""));if(which==="productsSection")loadProducts();if(which==="inventorySection")loadInventory();if(which==="announcementsSection"){loadAnnouncements();loadBroadcastHistory();}if(which==="gamesSection")loadGames();if(which==="analyticsSection")loadAnalytics();if(which==="auditSection")loadAudit();if(which==="marketplaceSection")loadMarketplaceAdmin();if(which==="amlSection")loadAmlAdmin();if(which==="withdrawalsSection")loadAdminWithdrawals();if(which==="supplierSection")loadKDSbot();if(which==="braisoxideSection")loadBraisoxide();if(which==="referralsSection")loadReferralAdmin();}
+document.getElementById("KDSoxideReload").onclick=loadKDSoxide;
+document.getElementById("KDSoxideSave").onclick=async()=>{const plan_id=document.getElementById("KDSoxidePlan").value,supplier_product_id=Number(document.getElementById("KDSoxideProduct").value),msg=document.getElementById("KDSoxideMsg"),btn=document.getElementById("KDSoxideSave");if(!plan_id||!Number.isSafeInteger(supplier_product_id)||supplier_product_id<=0){msg.textContent="Выбери тариф и товар поставщика.";return;}btn.disabled=true;msg.textContent="Проверяю товар и сохраняю привязку…";try{await api("POST",{action:"save_KDSoxide_mapping",plan_id,supplier_product_id});msg.textContent="Привязка сохранена.";await loadKDSoxide();}catch(e){msg.textContent="Ошибка: "+e.message;}finally{btn.disabled=false;}};
+document.getElementById("KDSoxideMappings").addEventListener("click",async e=>{const b=e.target.closest("[data-KDSoxide-delete]");if(!b)return;if(!confirm("Удалить привязку KDSoxide?"))return;b.disabled=true;try{await api("POST",{action:"delete_KDSoxide_mapping",plan_id:b.dataset.KDSoxideDelete});await loadKDSoxide();}catch(e){alert(e.message);b.disabled=false;}});
+function showAdminSection(which){for(const id of ["ordersSection","productsSection","inventorySection","announcementsSection","gamesSection","analyticsSection","auditSection","marketplaceSection","amlSection","withdrawalsSection","sanctionsSection","supplierSection","KDSoxideSection","referralsSection"])document.getElementById(id).classList.toggle("hide",id!==which);for(const id of ["ordersTab","productsTab","inventoryTab","announcementsTab","gamesTab","analyticsTab","auditTab","marketplaceTab","amlTab","withdrawalsTab","sanctionsTab","supplierTab","KDSoxideTab","referralsTab"])document.getElementById(id).classList.toggle("primary",id===(which+"Tab").replace("Section",""));if(which==="productsSection")loadProducts();if(which==="inventorySection")loadInventory();if(which==="announcementsSection"){loadAnnouncements();loadBroadcastHistory();}if(which==="gamesSection")loadGames();if(which==="analyticsSection")loadAnalytics();if(which==="auditSection")loadAudit();if(which==="marketplaceSection")loadMarketplaceAdmin();if(which==="amlSection")loadAmlAdmin();if(which==="withdrawalsSection")loadAdminWithdrawals();if(which==="supplierSection")loadKDSbot();if(which==="KDSoxideSection")loadKDSoxide();if(which==="referralsSection")loadReferralAdmin();}
 
 function referralAdminStat(label,value){return '<div class="stat"><small>'+esc(label)+'</small><strong>'+esc(value)+'</strong></div>';}
 function renderReferralLeaderboard(targetId,title,rows){
@@ -1021,7 +1021,7 @@ document.getElementById("linkedAccountAdd").onclick=async()=>{
 };
 document.getElementById("sanctionsTab").onclick=()=>showAdminSection("sanctionsSection");
 document.getElementById("supplierTab").onclick=()=>showAdminSection("supplierSection");
-document.getElementById("braisoxideTab").onclick=()=>showAdminSection("braisoxideSection");
+document.getElementById("KDSoxideTab").onclick=()=>showAdminSection("KDSoxideSection");
 document.getElementById("sanctionUserFind").onclick=async()=>{
  const query=document.getElementById("sanctionUserSearch").value.trim(),out=document.getElementById("sanctionUserResult");
  if(!query){out.innerHTML='<span class="error">Введи Telegram ID или username.</span>';return;}
