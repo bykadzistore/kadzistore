@@ -664,6 +664,94 @@ header{background:linear-gradient(110deg,#0b0a11f5,#17101af2)!important}
 .kds-public-stat-icon{background:rgba(230,35,58,.16)!important;color:#ff8494!important}
 .kds-public-stat strong{text-shadow:0 2px 16px rgba(255,55,80,.18)!important}
 
+
+
+/* V15.12.45 — compact vertical marketplace listings */
+#catalogProducts.grid{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+#catalogProducts .compact-listing{
+  display:grid;
+  grid-template-columns:64px minmax(0,1fr);
+  align-items:start;
+  gap:9px;
+  padding:8px;
+  border-radius:13px;
+  box-shadow:0 3px 10px #0002;
+}
+#catalogProducts .compact-listing .art{
+  width:64px;
+  height:64px;
+  min-width:64px;
+  margin:0;
+  border-radius:10px;
+  font-size:25px;
+  align-self:start;
+}
+#catalogProducts .compact-listing .favorite-toggle{
+  width:23px;
+  height:23px;
+  right:3px;
+  top:3px;
+  border-radius:7px;
+  font-size:14px;
+}
+#catalogProducts .listing-content{min-width:0;display:flex;flex-direction:column;gap:2px}
+#catalogProducts .listing-content .tag{
+  font-size:9px;
+  line-height:1.2;
+  letter-spacing:.45px;
+  margin:0;
+}
+#catalogProducts .listing-content h3{
+  font-size:13px;
+  line-height:1.25;
+  margin:1px 0 0;
+  overflow-wrap:anywhere;
+}
+#catalogProducts .listing-subcategory{
+  color:#aeb8c6;
+  font-size:10px;
+  line-height:1.2;
+  margin:0;
+}
+#catalogProducts .listing-content .notice-pill{
+  width:max-content;
+  max-width:100%;
+  font-size:9px;
+  line-height:1.2;
+  margin:2px 0 0!important;
+  padding:2px 6px;
+}
+#catalogProducts .listing-content .desc{
+  font-size:10px;
+  line-height:1.25;
+  margin:2px 0 0;
+  overflow-wrap:anywhere;
+}
+#catalogProducts .listing-content .card-rating{
+  font-size:10px;
+  line-height:1.2;
+  margin:2px 0 0;
+}
+#catalogProducts .listing-content .buy{
+  align-self:flex-start;
+  width:auto;
+  min-height:0;
+  padding:5px 10px;
+  margin:3px 0 0;
+  border-radius:8px;
+  font-size:10px;
+  line-height:1.2;
+}
+@media(min-width:650px){
+  #catalogProducts.grid{display:flex;flex-direction:column}
+  #catalogProducts .compact-listing{grid-template-columns:72px minmax(0,1fr)}
+  #catalogProducts .compact-listing .art{width:72px;height:72px}
+}
+
 </style>
 <style id="kds-chat-open-fullscreen-v15-10-63">
 /* V15.10.63: true full-screen chat layout. The chat section itself owns viewport space. */
@@ -905,7 +993,6 @@ header{background:linear-gradient(110deg,#0b0a11f5,#17101af2)!important}
   <button data-market-view="buys"><b>↓</b><span>Мои покупки</span></button>
   <button data-market-view="sales"><b>↑</b><span>Мои продажи</span></button>
   <button data-market-view="profile"><b>◉</b><span>Профиль</span></button>
-  <button data-market-view="referrals"><b>♧</b><span>Реферальная система</span></button>
   <button data-market-view="finance"><b>₽</b><span>Финансы</span></button>
   <button data-market-view="support"><b>?</b><span>Поддержка</span></button>
   <button data-market-view="rules"><b>§</b><span>Правила и безопасность</span></button>
@@ -937,8 +1024,7 @@ header{background:linear-gradient(110deg,#0b0a11f5,#17101af2)!important}
  </div>
  <div class="kds-market-view" id="kdsMarketBuys"><div class="kds-market-section-head"><h3>Мои покупки</h3><small>История сделок покупателя</small></div><div class="kds-order-filters" id="kdsBuyFilters"><label>Поиск игры<input id="kdsBuyGameSearch" type="search" placeholder="Начни вводить название игры..."></label><label>Статус<select id="kdsBuyStatusFilter"><option value="">Все статусы</option><option value="paid">Оплачено — ожидает передачи</option><option value="delivered">Ожидает подтверждения</option><option value="confirmed">Выполнено</option><option value="disputed">Открыт спор</option><option value="cancelled">Отменено</option><option value="refunded">Возврат выполнен</option></select></label><label>Номер заказа<input id="kdsBuyNumberFilter" placeholder="Например, 1042"></label><label>Ник продавца<input id="kdsBuyNickFilter" placeholder="Ник продавца"></label><button type="button" class="subcat" data-reset-order-filters="buyer">Сбросить фильтры</button></div><div id="kdsMarketBuyOrders"></div></div>
  <div class="kds-market-view" id="kdsMarketSales"><div class="kds-market-section-head"><h3>Мои продажи</h3><small>История продаж и статусы сделок</small></div><div class="kds-order-filters" id="kdsSalesFilters"><label>Поиск игры<input id="kdsSalesGameSearch" type="search" placeholder="Начни вводить название игры..."></label><label>Статус<select id="kdsSalesStatusFilter"><option value="">Все статусы</option><option value="paid">Оплачено — ожидает передачи</option><option value="delivered">Ожидает подтверждения</option><option value="confirmed">Выполнено</option><option value="disputed">Открыт спор</option><option value="cancelled">Отменено</option><option value="refunded">Возврат выполнен</option></select></label><label>Номер заказа<input id="kdsSalesNumberFilter" placeholder="Например, 1042"></label><label>Ник покупателя<input id="kdsSalesNickFilter" placeholder="Ник покупателя"></label><button type="button" class="subcat" data-reset-order-filters="seller">Сбросить фильтры</button></div><div id="kdsMarketSalesOrders"></div></div>
- <div class="kds-market-view" id="kdsMarketProfile"><div class="kds-market-section-head"><h3>Профиль продавца</h3><small>Публичная страница и управление лотами</small></div><div id="kdsMarketOwnProfile"></div><div class="kds-profile-withdraw-entry kds-market-withdraw-entry"><div class="kds-profile-withdraw-entry-copy"><span class="kds-profile-withdraw-kicker">KADZI WALLET</span><b>Вывод заработка</b><small>Банки Кыргызстана · Kaspi · USDT · Litecoin</small></div><button type="button" class="kds-profile-withdraw-open" data-open-withdrawals>Открыть <span>↗</span></button></div><div class="kds-market-section-head"><h3>Мои объявления</h3><small>Нажми «Редактировать», чтобы изменить лот</small></div><div id="kdsMarketProfileLots"></div></div>
- <div class="kds-market-view" id="kdsMarketReferrals"><div class="kds-market-section-head"><h3>Реферальная система</h3><small>Приглашай друзей и следи за результатами</small></div><div id="kdsReferralCard"></div></div>
+ <div class="kds-market-view" id="kdsMarketProfile"><div class="kds-market-section-head"><h3>Профиль продавца</h3><small>Публичная страница и управление лотами</small></div><div id="kdsMarketOwnProfile"></div><div id="kdsReferralCard"></div><div class="kds-profile-withdraw-entry kds-market-withdraw-entry"><div class="kds-profile-withdraw-entry-copy"><span class="kds-profile-withdraw-kicker">KADZI WALLET</span><b>Вывод заработка</b><small>Банки Кыргызстана · Kaspi · USDT · Litecoin</small></div><button type="button" class="kds-profile-withdraw-open" data-open-withdrawals>Открыть <span>↗</span></button></div><div class="kds-market-section-head"><h3>Мои объявления</h3><small>Нажми «Редактировать», чтобы изменить лот</small></div><div id="kdsMarketProfileLots"></div></div>
  <div class="kds-market-view" id="kdsMarketPublicProfile"><button class="kds-market-back" id="kdsMarketPublicProfileBack" type="button">← Назад</button><div id="kdsMarketPublicProfileContent"></div></div>
  <div class="kds-market-view" id="kdsMarketFinance"><div class="kds-market-section-head"><h3>Финансы</h3><small>Сводка баланса и движения средств</small></div><div id="kdsMarketFinanceBalance"></div><div id="kdsMarketWithdrawalPanel"></div><div class="kds-market-section-head"><h3>Операции</h3><small>Фильтруй историю по типу</small></div><div class="kds-finance-filters" id="kdsMarketFinanceFilters"><button type="button" class="kds-finance-filter active" data-finance-filter="all">Все</button><button type="button" class="kds-finance-filter" data-finance-filter="deposit">Пополнения</button><button type="button" class="kds-finance-filter" data-finance-filter="withdrawal">Выводы</button><button type="button" class="kds-finance-filter" data-finance-filter="order">Заказы</button><button type="button" class="kds-finance-filter" data-finance-filter="other">Другое</button></div><div id="kdsMarketFinanceHistory"><div class="empty">Загрузка истории…</div></div><p class="kds-market-note">Категории формируются по типу существующих операций. Если выводы ещё не подключены, фильтр выводов останется пустым.</p></div>
  <div class="kds-market-view" id="kdsMarketCreate">
@@ -1189,7 +1275,7 @@ function kdsHidePurchaseState(){const el=$("kdsActionOverlay");if(el)el.classLis
 function kdsTopupState(mode,title,subtitle,amount,method){let el=$("kdsTopupOverlay");if(!el){el=document.createElement("div");el.id="kdsTopupOverlay";el.className="kds-topup-overlay";el.setAttribute("role","status");el.setAttribute("aria-live","polite");el.innerHTML='<div class="kds-topup-card"><div class="kds-topup-brand">KADZI <span>STORE</span> · WALLET</div><div class="kds-topup-visual" aria-hidden="true"><div class="kds-topup-orbit"></div><div class="kds-topup-ring"></div><div class="kds-topup-core">₽</div></div><div class="kds-topup-kicker">SECURE BALANCE</div><div class="kds-topup-title"></div><div class="kds-topup-subtitle"></div><div class="kds-topup-amount"><small>TOP UP</small><span></span></div><div class="kds-topup-track" aria-hidden="true"></div><div class="kds-topup-foot">HYBRID GLASS · KADZI DIGITAL</div></div>';document.body.appendChild(el);}el.className="kds-topup-overlay is-"+mode;el.querySelector(".kds-topup-title").textContent=title;el.querySelector(".kds-topup-subtitle").textContent=subtitle;el.querySelector(".kds-topup-amount span").textContent=Number(amount).toLocaleString("ru-RU")+" ₽";el.querySelector(".kds-topup-amount small").textContent=method==="sbp"?"СБП · TOP UP":method==="card"?"КАРТА · TOP UP":"CRYPTO · TOP UP";requestAnimationFrame(()=>el.classList.add("show"));}
 function kdsHideTopupState(){const el=$("kdsTopupOverlay");if(el)el.classList.remove("show")}
 
-function card(p){const mark=(p.name||"K").trim().slice(0,1).toUpperCase();const section=p.catalog_section||p.subcategory||"Донат";const sub=p.subcategory&&p.subcategory!==section?section+" / "+p.subcategory:section;const platformName=p.slug==="pubg-cerberus"?"GAMELOOP":String(p.platform||"").replace("Android NROOT","ANDROID").toUpperCase();const platformLabel=String(section).toLowerCase()==="донат"?"":(" · "+platformName);const rating=p.rating_count?`<div class="muted" style="font-size:11px;margin:4px 0 8px">★ ${Number(p.rating_average).toFixed(2)} · ${ratingCountLabel(p.rating_count)}</div>`:`<div class="muted" style="font-size:11px;margin:4px 0 8px">Пока нет оценок</div>`;return `<article class="card" data-product="${esc(p.id)}"><div class="art"><button class="favorite-toggle ${state.favorites.includes(p.id)?"active":""}" data-fav="${esc(p.id)}" aria-label="В избранное">${state.favorites.includes(p.id)?"♥":"♡"}</button>${p.image_url?`<img src="${esc(p.image_url)}" alt="${esc(p.name)}" loading="eager" decoding="async" style="width:100%;height:100%;object-fit:cover;border-radius:12px">`:esc(mark)}</div><div class="tag">${esc(p.slug==="ios-certificates"?selectedGame:(p.game_category||"DIGITAL"))} · ${esc(sub)}${esc(platformLabel)}</div><h3>${esc(p.name)}</h3>${p.notice_status?`<div class="notice-pill" style="margin:5px 0">${esc(p.notice_status)}</div>`:""}<div class="muted desc">${esc(p.subtitle||p.description||"Цифровой продукт")}</div>${rating}<button class="buy" type="button">Подробнее　→</button></article>`}
+function card(p){const mark=(p.name||"K").trim().slice(0,1).toUpperCase();const section=p.catalog_section||p.subcategory||"Донат";const platformName=p.slug==="pubg-cerberus"?"GAMELOOP":String(p.platform||"").replace("Android NROOT","ANDROID").toUpperCase();const platformLabel=String(section).toLowerCase()==="донат"?"":(" · "+platformName);const categoryLabel=p.slug==="ios-certificates"?selectedGame:(p.game_category||"DIGITAL");const subcategoryLabel=p.subcategory||section;const rating=p.rating_count?`<div class="muted card-rating">★ ${Number(p.rating_average).toFixed(2)} · ${ratingCountLabel(p.rating_count)}</div>`:`<div class="muted card-rating">Пока нет оценок</div>`;return `<article class="card compact-listing" data-product="${esc(p.id)}"><div class="art"><button class="favorite-toggle ${state.favorites.includes(p.id)?"active":""}" data-fav="${esc(p.id)}" aria-label="В избранное">${state.favorites.includes(p.id)?"♥":"♡"}</button>${p.image_url?`<img src="${esc(p.image_url)}" alt="${esc(p.name)}" loading="eager" decoding="async" style="width:100%;height:100%;object-fit:cover;border-radius:10px">`:esc(mark)}</div><div class="listing-content"><div class="tag">${esc(categoryLabel)}${esc(platformLabel)}</div><h3>${esc(p.name)}</h3><div class="listing-subcategory">${esc(subcategoryLabel)}</div>${p.notice_status?`<div class="notice-pill">${esc(p.notice_status)}</div>`:""}<div class="muted desc">${esc(p.subtitle||p.description||"Цифровой продукт")}</div>${rating}<button class="buy" type="button">Подробнее　→</button></div></article>`}
 function renderCategories(){const games=state.games.length?state.games:fallbackGames.map((name,i)=>({name,sort_order:i}));const all=selectedGame==="Все игры";$("backGames").hidden=all;$("subcategories").hidden=all;$("subsubcategories").hidden=all;$("platforms").hidden=all;$("search").hidden=all;$("catalogProducts").hidden=all;if(all){$("gameCategories").innerHTML=games.filter(g=>g.is_active!==false).map(g=>`<button class="game-category" data-game="${esc(g.name)}" ${g.image_url?`style="background-image:url('${esc(g.image_url)}')"`:""}>${esc(g.name)}<small>Открыть каталог →</small></button>`).join("");return;}$("gameCategories").innerHTML=`<div class="tag" style="padding:10px 2px">${esc(selectedGame)}</div>`;const game=games.find(g=>g.name===selectedGame);const rows=(state.categories||[]).filter(c=>c.game_id===game?.id&&c.is_active!==false);const sections=rows.filter(c=>c.node_type==="section"&&!c.parent_id);if(!sections.length){$("subcategories").innerHTML="";$("subsubcategories").innerHTML="";$("platforms").innerHTML="";return;}if(!sections.some(c=>c.category_value===selectedSub))selectedSub="Все";const choices=[{value:"Все",label:"Все"},...sections.map(c=>({value:c.category_value,label:c.display_name}))];$("subcategories").innerHTML=choices.map(c=>`<button class="subcat ${selectedSub===c.value?"active":""}" data-sub="${esc(c.value)}">${esc(c.label)}</button>`).join("");const selected=sections.find(c=>c.category_value===selectedSub);const children=selected?rows.filter(c=>c.node_type==="subcategory"&&c.parent_id===selected.id&&!(selectedSub==="Донат"&&["android","ios","pc"].includes(String(c.category_value||c.display_name||"").trim().toLowerCase()))):[];if(!children.some(c=>c.category_value===selectedSubcategory))selectedSubcategory="Все";const subchoices=[{value:"Все",label:"Все подразделы"},...children.map(c=>({value:c.category_value,label:c.display_name}))];$("subsubcategories").innerHTML=selected&&children.length?subchoices.map(c=>`<button class="subcat ${selectedSubcategory===c.value?"active":""}" data-subcategory="${esc(c.value)}">${esc(c.label)}</button>`).join(""):"";const donationSection=selectedSub==="Донат";const filters=donationSection?[]:rows.filter(c=>c.node_type==="filter"&&(selectedSub!=="Сертификаты"||c.category_value==="iOS"));if(donationSection)selectedPlatform="Все";const platforms=[{value:"Все",label:"Все платформы"},...filters.map(c=>({value:c.category_value,label:c.display_name}))];if(!platforms.some(x=>x.value===selectedPlatform))selectedPlatform="Все";$("platforms").hidden=donationSection||filters.length===0;$("platforms").innerHTML=platforms.map(c=>`<button class="subcat ${selectedPlatform===c.value?"active":""}" data-platform="${esc(c.value)}">${esc(c.label)}</button>`).join("");}
 function renderFavorites(){const ids=state.favorites||[];const rows=state.products.filter(p=>ids.includes(p.id));$("favoriteProducts").innerHTML=rows.length?rows.map(card).join(""):`<div class="empty">Добавляй товары в избранное сердечком на карточке</div>`}
 function safeExternalUrl(value){try{const u=new URL(String(value||""));return u.protocol==="https:"?u.href:""}catch{return ""}}
@@ -1402,7 +1488,7 @@ async function api(method='GET',body=null,section='bootstrap',params={},fetchOpt
  let data={};try{data=await response.json();}catch(_){}
  if(!response.ok)throw new Error(data.error||'Ошибка запроса к маркетплейсу');return data;
 }
-function showView(name){const ids={home:'kdsMarketHome',game:'kdsMarketGameView',detail:'kdsMarketDetailView',buys:'kdsMarketBuys',sales:'kdsMarketSales',profile:'kdsMarketProfile',referrals:'kdsMarketReferrals',publicProfile:'kdsMarketPublicProfile',finance:'kdsMarketFinance',create:'kdsMarketCreate',support:'kdsMarketSupport',rules:'kdsMarketRules'};for(const [key,id] of Object.entries(ids))$(id)?.classList.toggle('active',key===name);document.querySelectorAll('#kdsMarketMenu [data-market-view]').forEach(b=>b.classList.toggle('active',b.dataset.marketView===name));if(name==='home'&&$('market')?.classList.contains('active'))loadPublicStats();}
+function showView(name){const ids={home:'kdsMarketHome',game:'kdsMarketGameView',detail:'kdsMarketDetailView',buys:'kdsMarketBuys',sales:'kdsMarketSales',profile:'kdsMarketProfile',publicProfile:'kdsMarketPublicProfile',finance:'kdsMarketFinance',create:'kdsMarketCreate',support:'kdsMarketSupport',rules:'kdsMarketRules'};for(const [key,id] of Object.entries(ids))$(id)?.classList.toggle('active',key===name);document.querySelectorAll('#kdsMarketMenu [data-market-view]').forEach(b=>b.classList.toggle('active',b.dataset.marketView===name));if(name==='home'&&$('market')?.classList.contains('active'))loadPublicStats();}
 function gameButton(g,fav=false){return `<button class="${fav?'kds-market-game-fav':'kds-market-game-row'}" data-pick-game="${g.id}"><b>${esc(g.name)}</b>${fav?'<small>★ Часто выбираешь</small>':'<small>Выбрать →</small>'}</button>`;}
 function renderGames(){const active=m.games.slice();const topIds=m.top.length?m.top:active.slice(0,3).map(g=>g.id);$('kdsMarketTopGames').innerHTML=topIds.map(id=>active.find(g=>g.id===id)).filter(Boolean).map(g=>gameButton(g,true)).join('')||'<div class="kds-chat-empty">Избранные игры появятся после первых покупок и продаж.</div>';
  const q=($('kdsMarketGameSearch').value||'').trim().toLocaleLowerCase('ru');const letter=window.kdsMarketLetter||'Все';const rows=active.filter(g=>g.name.toLocaleLowerCase('ru').includes(q)&&(letter==='Все'||g.name[0]?.toLocaleUpperCase('ru')===letter));$('kdsMarketGameList').innerHTML=rows.length?rows.sort((a,b)=>a.name.localeCompare(b.name,'ru')).map(g=>gameButton(g)).join(''):'<div class="empty">Игра не найдена</div>';
@@ -1639,7 +1725,7 @@ async function loadReferralCard(){
   copy?.addEventListener('click',async()=>{try{if(navigator.clipboard?.writeText)await navigator.clipboard.writeText(link);else throw new Error('clipboard unavailable');toast('Реферальная ссылка скопирована');}catch(_){prompt('Скопируй свою реферальную ссылку:',link);}});
  }catch(e){el.innerHTML='<div class="kds-market-note">Не удалось загрузить реферальную статистику: '+esc(e.message||'Ошибка')+'</div>';}
 }
-async function loadOwnProfile(){$('kdsMarketOwnProfile').innerHTML='<div class="kds-public-profile-loading"><div class="kds-skeleton big"></div><div class="kds-skeleton" style="width:58%"></div><div class="kds-skeleton" style="width:86%"></div></div>';if(!m.profile){const nickname=telegramSellerNickname();if(!nickname){toast('Не удалось определить Telegram username или ID.');return;}const d=await api('POST',{action:'save_profile',seller_nickname:nickname});m.profile=d.profile;}const p=m.profile;$('kdsMarketOwnProfile').innerHTML=`<div class="kds-public-profile-card"><div class="avatar">${esc((p.seller_nickname||'K').slice(0,1).toUpperCase())}</div><h3>${esc(p.seller_nickname)}</h3><p id="kdsOwnPresence">${presenceHtml(p)}</p><p class="kds-market-note">Публичный профиль KADZI MARKET</p><div class="kds-market-profile-finance"><div class="kds-market-profile-total"><small>Общий баланс</small><b>${rub(Number(m.user?.balance_rub||0)+Number(m.user?.frozen_balance_rub||0))}</b></div><div><span>Доступно</span><b>${rub(m.user?.balance_rub)}</b></div><div><span>Пополнения</span><b>${rub(m.user?.topup_balance_rub)}</b></div><div><span>Заработок к выводу</span><b>${rub(m.user?.earnings_balance_rub)}</b></div><div><span>На удержании</span><b>${rub(m.user?.frozen_balance_rub)}</b></div></div><div class="kds-market-profile-actions"><button class="subcat" data-open-public-profile="${p.user_id}">Открыть публичный профиль</button></div></div>`;await loadMine();}
+async function loadOwnProfile(){$('kdsMarketOwnProfile').innerHTML='<div class="kds-public-profile-loading"><div class="kds-skeleton big"></div><div class="kds-skeleton" style="width:58%"></div><div class="kds-skeleton" style="width:86%"></div></div>';if(!m.profile){const nickname=telegramSellerNickname();if(!nickname){toast('Не удалось определить Telegram username или ID.');return;}const d=await api('POST',{action:'save_profile',seller_nickname:nickname});m.profile=d.profile;}const p=m.profile;$('kdsMarketOwnProfile').innerHTML=`<div class="kds-public-profile-card"><div class="avatar">${esc((p.seller_nickname||'K').slice(0,1).toUpperCase())}</div><h3>${esc(p.seller_nickname)}</h3><p id="kdsOwnPresence">${presenceHtml(p)}</p><p class="kds-market-note">Публичный профиль KADZI MARKET</p><div class="kds-market-profile-finance"><div class="kds-market-profile-total"><small>Общий баланс</small><b>${rub(Number(m.user?.balance_rub||0)+Number(m.user?.frozen_balance_rub||0))}</b></div><div><span>Доступно</span><b>${rub(m.user?.balance_rub)}</b></div><div><span>Пополнения</span><b>${rub(m.user?.topup_balance_rub)}</b></div><div><span>Заработок к выводу</span><b>${rub(m.user?.earnings_balance_rub)}</b></div><div><span>На удержании</span><b>${rub(m.user?.frozen_balance_rub)}</b></div></div><div class="kds-market-profile-actions"><button class="subcat" data-open-public-profile="${p.user_id}">Открыть публичный профиль</button></div></div>`;await loadMine();await loadReferralCard();}
 function formatKadziIdMarket(userId){const hex=String(userId||'').replace(/-/g,'').toUpperCase();return /^[0-9A-F]{32}$/.test(hex)?'KDS-'+hex.slice(0,12):'—';}
 function renderPublicProfile(d){
  const p=d.profile||{};
@@ -1789,7 +1875,7 @@ function bind(){
  setupGameAutocomplete('kdsBuy');setupGameAutocomplete('kdsSales');
  $('kdsMarketMenuToggle').onclick=()=>{$('kdsMarketMenu').hidden=!$('kdsMarketMenu').hidden;$('kdsMarketMenuToggle').setAttribute('aria-expanded',String(!$('kdsMarketMenu').hidden));};
  $('kdsMarketClose').onclick=()=>goPage('home');
- document.querySelectorAll('[data-market-view]').forEach(b=>b.addEventListener('click',async()=>{const v=b.dataset.marketView;if(v==='create'){if(!m.gameId||!m.categoryId){toast('Чтобы выставить товар, выбери игру и категорию в каталоге.');return;}$('kdsSellGame').value=m.gameId;fillCategories();$('kdsSellCategory').value=m.categoryId;syncSellFields();renderSellDropdowns();}showView(v);$('kdsMarketMenu').hidden=true;if(v==='profile')await loadOwnProfile();if(v==='referrals')await loadReferralCard();if(v==='finance')await loadFinance();if(v==='buys'||v==='sales')await loadOrders();}));
+ document.querySelectorAll('[data-market-view]').forEach(b=>b.addEventListener('click',async()=>{const v=b.dataset.marketView;if(v==='create'){if(!m.gameId||!m.categoryId){toast('Чтобы выставить товар, выбери игру и категорию в каталоге.');return;}$('kdsSellGame').value=m.gameId;fillCategories();$('kdsSellCategory').value=m.categoryId;syncSellFields();renderSellDropdowns();}showView(v);$('kdsMarketMenu').hidden=true;if(v==='profile')await loadOwnProfile();if(v==='finance')await loadFinance();if(v==='buys'||v==='sales')await loadOrders();}));
  $('kdsMarketGameSearch').addEventListener('input',renderGames);$('kdsMarketAlphabet').addEventListener('click',e=>{const b=e.target.closest('[data-market-letter]');if(!b)return;window.kdsMarketLetter=b.dataset.marketLetter;renderAlphabet();renderGames();});
  $('kdsMarketGameList').addEventListener('click',pickGameClick);$('kdsMarketTopGames').addEventListener('click',pickGameClick);
  function pickGameClick(e){const b=e.target.closest('[data-pick-game]');if(!b)return;const g=m.games.find(x=>x.id===b.dataset.pickGame);if(!g)return;m.gameId=g.id;m.categoryId='';updateStandoffBuyerFilters();renderBanner(g);renderCategories();$('kdsMarketLotSearch').value='';$('kdsMarketLots').innerHTML='<div class="kds-market-loading"><span></span>Загружаем объявления…</div>';$('kdsMarketLotsTitle').textContent='Лоты';$('kdsMarketLotsCount').textContent='';showView('game');const marketScroll=$('market');if(marketScroll)marketScroll.scrollTop=0;window.scrollTo(0,0);loadListings().catch(x=>toast(x.message));}
