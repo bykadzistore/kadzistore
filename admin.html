@@ -75,7 +75,7 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
 <body>
 <header><div><div class="logo"><b>KD</b>S ADMIN</div><div class="tag">Панель управления магазином</div></div><div class="actions" style="margin:0"><button id="backToStore">← В магазин</button><button id="reload">↻ Обновить</button></div></header>
 <main>
-<div class="tabs"><button id="ordersTab" class="primary">Заказы</button><button id="productsTab">Товары</button><button id="inventoryTab">Склад</button><button id="announcementsTab">Объявления</button><button id="gamesTab">Игры</button><button id="analyticsTab">Аналитика</button><button id="auditTab">Журнал</button><button id="marketplaceTab">Маркетплейс</button><button id="amlTab">AML</button><button id="withdrawalsTab">Выводы</button><button id="sanctionsTab">Наказания</button><button id="supplierTab">Braisbot</button><button id="braisoxideTab">Braisoxide</button></div>
+<div class="tabs"><button id="ordersTab" class="primary">Заказы</button><button id="productsTab">Товары</button><button id="inventoryTab">Склад</button><button id="announcementsTab">Объявления</button><button id="gamesTab">Игры</button><button id="analyticsTab">Аналитика</button><button id="auditTab">Журнал</button><button id="marketplaceTab">Маркетплейс</button><button id="referralsTab">Рефералы</button><button id="amlTab">AML</button><button id="withdrawalsTab">Выводы</button><button id="sanctionsTab">Наказания</button><button id="supplierTab">Braisbot</button><button id="braisoxideTab">Braisoxide</button></div>
 <section id="ordersSection">
 <div class="stats"><div class="stat"><small>Новые</small><strong id="sNew">—</strong></div><div class="stat"><small>В работе</small><strong id="sWork">—</strong></div><div class="stat"><small>Выполнено</small><strong id="sDone">—</strong></div></div>
 <section class="panel" id="orderSearchPanel"><div class="number">Поиск заказов</div><div class="muted">Номер заказа, Telegram ID, username или название товара.</div><div class="actions" style="align-items:center"><input id="orderSearch" placeholder="Например, 1042 или @username" style="flex:1;min-width:180px"><button class="primary" id="orderSearchBtn">Найти</button><button id="orderSearchClear">Сбросить</button></div><div id="orderSearchResult" class="muted"></div></section>
@@ -102,6 +102,19 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
 <button data-filter="all" class="primary">Все</button><button data-filter="awaiting_fulfillment">Оплачено</button><button data-filter="processing">В обработке</button><button data-filter="in_delivery">В доставке</button><button data-filter="fulfilled">Выполнены</button><button data-filter="refunded">Возвраты</button>
 </div>
 <div class="refresh" id="updated">Загрузка заказов…</div><div id="orders"></div>
+</section>
+<section id="referralsSection" class="hide">
+ <div class="panel">
+  <div class="number">Реферальная система KADZI MARKET</div>
+  <div class="muted">Учитываются только новые регистрации по первой реферальной ссылке. Успешный реферал — пользователь, который впервые опубликовал активный товар.</div>
+  <div id="referralGlobalStats" class="stats" style="margin-top:12px"><div class="stat"><small>Регистрации по ссылкам</small><strong>—</strong></div><div class="stat"><small>Стали продавцами</small><strong>—</strong></div><div class="stat"><small>Ожидают публикации</small><strong>—</strong></div><div class="stat"><small>Конверсия</small><strong>—</strong></div></div>
+ </div>
+ <div class="panel">
+  <div class="number">Поиск рефералов пользователя</div>
+  <div class="muted">Введи постоянный Telegram ID приглашающего, чтобы увидеть его личную статистику и всю цепочку приглашений.</div>
+  <div class="actions" style="align-items:center"><input id="referralAdminSearch" inputmode="numeric" placeholder="Telegram ID пользователя" style="flex:1;min-width:180px"><button class="primary" id="referralAdminFind">Найти</button></div>
+  <div id="referralAdminResult" style="margin-top:12px"></div>
+ </div>
 </section>
 <section id="productsSection" class="hide">
  <div class="panel">
@@ -622,8 +635,46 @@ async function loadBraisoxide(){
 document.getElementById("braisoxideReload").onclick=loadBraisoxide;
 document.getElementById("braisoxideSave").onclick=async()=>{const plan_id=document.getElementById("braisoxidePlan").value,supplier_product_id=Number(document.getElementById("braisoxideProduct").value),msg=document.getElementById("braisoxideMsg"),btn=document.getElementById("braisoxideSave");if(!plan_id||!Number.isSafeInteger(supplier_product_id)||supplier_product_id<=0){msg.textContent="Выбери тариф и товар поставщика.";return;}btn.disabled=true;msg.textContent="Проверяю товар и сохраняю привязку…";try{await api("POST",{action:"save_braisoxide_mapping",plan_id,supplier_product_id});msg.textContent="Привязка сохранена.";await loadBraisoxide();}catch(e){msg.textContent="Ошибка: "+e.message;}finally{btn.disabled=false;}};
 document.getElementById("braisoxideMappings").addEventListener("click",async e=>{const b=e.target.closest("[data-braisoxide-delete]");if(!b)return;if(!confirm("Удалить привязку Braisoxide?"))return;b.disabled=true;try{await api("POST",{action:"delete_braisoxide_mapping",plan_id:b.dataset.braisoxideDelete});await loadBraisoxide();}catch(e){alert(e.message);b.disabled=false;}});
-function showAdminSection(which){for(const id of ["ordersSection","productsSection","inventorySection","announcementsSection","gamesSection","analyticsSection","auditSection","marketplaceSection","amlSection","withdrawalsSection","sanctionsSection","supplierSection","braisoxideSection"])document.getElementById(id).classList.toggle("hide",id!==which);for(const id of ["ordersTab","productsTab","inventoryTab","announcementsTab","gamesTab","analyticsTab","auditTab","marketplaceTab","amlTab","withdrawalsTab","sanctionsTab","supplierTab","braisoxideTab"])document.getElementById(id).classList.toggle("primary",id===(which+"Tab").replace("Section",""));if(which==="productsSection")loadProducts();if(which==="inventorySection")loadInventory();if(which==="announcementsSection"){loadAnnouncements();loadBroadcastHistory();}if(which==="gamesSection")loadGames();if(which==="analyticsSection")loadAnalytics();if(which==="auditSection")loadAudit();if(which==="marketplaceSection")loadMarketplaceAdmin();if(which==="amlSection")loadAmlAdmin();if(which==="withdrawalsSection")loadAdminWithdrawals();if(which==="supplierSection")loadBraisbot();if(which==="braisoxideSection")loadBraisoxide();}
+function showAdminSection(which){for(const id of ["ordersSection","productsSection","inventorySection","announcementsSection","gamesSection","analyticsSection","auditSection","marketplaceSection","amlSection","withdrawalsSection","sanctionsSection","supplierSection","braisoxideSection","referralsSection"])document.getElementById(id).classList.toggle("hide",id!==which);for(const id of ["ordersTab","productsTab","inventoryTab","announcementsTab","gamesTab","analyticsTab","auditTab","marketplaceTab","amlTab","withdrawalsTab","sanctionsTab","supplierTab","braisoxideTab","referralsTab"])document.getElementById(id).classList.toggle("primary",id===(which+"Tab").replace("Section",""));if(which==="productsSection")loadProducts();if(which==="inventorySection")loadInventory();if(which==="announcementsSection"){loadAnnouncements();loadBroadcastHistory();}if(which==="gamesSection")loadGames();if(which==="analyticsSection")loadAnalytics();if(which==="auditSection")loadAudit();if(which==="marketplaceSection")loadMarketplaceAdmin();if(which==="amlSection")loadAmlAdmin();if(which==="withdrawalsSection")loadAdminWithdrawals();if(which==="supplierSection")loadBraisbot();if(which==="braisoxideSection")loadBraisoxide();if(which==="referralsSection")loadReferralAdmin();}
 
+function referralAdminStat(label,value){return '<div class="stat"><small>'+esc(label)+'</small><strong>'+esc(value)+'</strong></div>';}
+function renderReferralAdmin(data){
+ const global=data.global||{};
+ document.getElementById('referralGlobalStats').innerHTML=[
+  referralAdminStat('Регистрации по ссылкам',global.registrations??'—'),
+  referralAdminStat('Стали продавцами',global.sellers??'—'),
+  referralAdminStat('Ожидают публикации',global.waiting??'—'),
+  referralAdminStat('Конверсия',(global.conversion_percent??0)+'%')
+ ].join('');
+ const out=document.getElementById('referralAdminResult');
+ if(!data.target){out.innerHTML='<div class="notice">Введи Telegram ID приглашающего, чтобы открыть подробную статистику.</div>';return;}
+ const t=data.target,st=data.stats||{},rows=data.referrals||[];
+ const userTitle=(u)=>esc(u.first_name||'Пользователь')+(u.username?' · @'+esc(u.username):'');
+ const cards=[
+  referralAdminStat('Прямые регистрации',st.direct_registrations??0),
+  referralAdminStat('Стали продавцами',st.direct_sellers??0),
+  referralAdminStat('Ожидают публикации',st.direct_waiting??0),
+  referralAdminStat('Конверсия',String(st.direct_conversion_percent??0)+'%'),
+  referralAdminStat('Вся цепочка приглашений',st.total_descendants??0),
+  referralAdminStat('Продавцы во всей цепочке',st.total_sellers??0),
+  referralAdminStat('Всего объявлений',st.total_listings??0),
+  referralAdminStat('Активных объявлений',st.active_listings??0)
+ ].join('');
+ const list=rows.length?rows.map(u=>{
+  const ls=u.listing_stats||{};
+  const status=u.referral_first_listing_at?'<span class="status fulfilled">Продавец</span>':'<span class="status">Ожидает товар</span>';
+  return '<article class="market-admin-card" style="margin-top:9px"><div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start"><div><b>'+userTitle(u)+'</b><div class="muted">Telegram ID: '+esc(u.telegram_user_id)+' · Уровень: '+esc(u.depth)+' · Регистрация: '+(u.created_at?new Date(u.created_at).toLocaleString('ru-RU'):'—')+'</div><div class="muted">Объявлений: '+esc(ls.total??0)+' · Активных: '+esc(ls.active??0)+' · Продано: '+esc(ls.sold??0)+' · Снято: '+esc(ls.removed??0)+'</div><div class="muted">Первая публикация: '+(u.referral_first_listing_at?new Date(u.referral_first_listing_at).toLocaleString('ru-RU'):'ещё не было')+'</div></div>'+status+'</div><div class="actions"><button data-admin-openuser="'+esc(u.telegram_user_id)+'">Открыть пользователя</button></div></article>';
+ }).join(''):'<div class="notice">Пока никто не зарегистрировался по этой реферальной ссылке.</div>';
+ out.innerHTML='<div class="market-admin-card"><h3>'+userTitle(t)+'</h3><p>Telegram ID: '+esc(t.telegram_user_id)+'</p><p>Регистрация: '+(t.created_at?new Date(t.created_at).toLocaleString('ru-RU'):'—')+'</p><p>Постоянный код: '+esc(t.referral_code||'—')+'</p><p>Ссылка: https://t.me/kadzistore_bot?startapp='+encodeURIComponent(t.referral_code||'')+'</p></div><div class="stats" style="margin-top:10px">'+cards+'</div><div class="number" style="margin-top:18px">Все приглашённые и их цепочка</div>'+list;
+}
+async function loadReferralAdmin(telegramUserId=''){
+ const out=document.getElementById('referralAdminResult');if(!out)return;
+ out.innerHTML='<div class="notice">Загружаю реферальную статистику…</div>';
+ try{const data=await api('POST',{action:'referral_admin_lookup',telegram_user_id:telegramUserId});renderReferralAdmin(data);}
+ catch(e){out.innerHTML='<div class="notice error">'+esc(e.message||'Не удалось загрузить рефералов')+'</div>';}
+}
+document.getElementById('referralAdminFind').onclick=()=>loadReferralAdmin(document.getElementById('referralAdminSearch').value.trim());
+document.getElementById('referralAdminSearch').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('referralAdminFind').click();});
 document.getElementById("ordersTab").onclick=()=>showAdminSection("ordersSection");
 document.getElementById("productsTab").onclick=()=>showAdminSection("productsSection");
 document.getElementById("inventoryTab").onclick=()=>showAdminSection("inventorySection");
@@ -786,7 +837,7 @@ async function sendMarketplaceSupportReply(){
  if(!marketAdminCurrentDispute)return;const o=marketAdminCurrentDispute.kds_marketplace_orders||{};const message=prompt("Сообщение покупателю и продавцу в общий чат");if(!message)return;
  try{await marketAdminApi("POST",{action:"send_message",order_id:o.id||marketAdminCurrentDispute.order_id,message_text:message,client_message_id:marketClientMessageId()});await openMarketplaceSupport(o.id||marketAdminCurrentDispute.order_id);}catch(e){alert(e.message);}
 }
-document.getElementById("marketplaceTab").onclick=()=>showAdminSection("marketplaceSection");
+document.getElementById("marketplaceTab").onclick=()=>showAdminSection("marketplaceSection");document.getElementById("referralsTab").onclick=()=>showAdminSection("referralsSection");
 document.getElementById("reloadMarketplace").onclick=loadMarketplaceAdmin;
 document.getElementById("marketplaceDisputes").addEventListener("click",async e=>{
  const chat=e.target.closest("[data-market-chat]");if(chat){try{await openMarketplaceSupport(chat.dataset.marketChat);}catch(x){alert(x.message);}return;}
