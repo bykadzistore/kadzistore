@@ -1259,21 +1259,24 @@ async function buyPlan(planId,button){
   const details=`${p.name} · ${plan.duration_label}`+
    (certificatePlan?`\nОбщий iOS-сертификат: ${certificatePlan.duration_label}`:"")+ 
    (needsGameId?`\nИгровой ID: ${gameId}`:"");
-  const checkSupplierPlan=async(supplierPlanId,label,required)=>{
+  const checkSupplierPlan=async(supplierPlanId,label)=>{
+   // Try KDSbot first. KDSoxide-only products are expected to be unlinked here.
    try{
     const quote=await api("POST",{action:"supplier_precheck",plan_id:supplierPlanId});
-    supplierQuoteIds.push(quote.quote_id);
-    supplierQuotes.push({planId:supplierPlanId,label,price:Number(quote.supplier_price_usd),stock:Number(quote.supplier_stock)});
+    if(quote?.quote_id){supplierQuoteIds.push(quote.quote_id);supplierQuotes.push({planId:supplierPlanId,label,provider:"KDSbot",quoteId:quote.quote_id,price:Number(quote.supplier_price_usd),stock:Number(quote.supplier_stock)});return true;}
    }catch(err){
-    if(!required&&err.message==="SUPPLIER_PRODUCT_NOT_LINKED")return;
-    throw err;
+    if(!["SUPPLIER_PRODUCT_NOT_LINKED","KDSBOT_KEYS_CERTIFICATES_ONLY"].includes(String(err.message)))throw err;
    }
+   // If KDSbot has no mapping, check the KDSoxide mapping and quote.
+   const oxide=await api("POST",{action:"kdsoxide_precheck",plan_id:supplierPlanId});
+   if(oxide?.mapped&&oxide?.quote_id){supplierQuoteIds.push(oxide.quote_id);supplierQuotes.push({planId:supplierPlanId,label,provider:"KDSoxide",quoteId:oxide.quote_id,price:Number(oxide.supplier_price_usd),stock:Number(oxide.supplier_stock)});return true;}
+   throw new Error("SUPPLIER_PRODUCT_NOT_LINKED");
   };
   kdsPurchaseState("loading","Проверяем покупку","Проверяем наличие товара и ваш баланс. Деньги пока не списываются…");
   await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
   if(shouldCheckSupplier){
-   if(isKeyOrCertificate)await checkSupplierPlan(plan.id,p.name,true);
-   if(needsCertificate&&certificatePlan)await checkSupplierPlan(certificatePlan.id,"Общий iOS-сертификат",true);
+   if(isKeyOrCertificate)await checkSupplierPlan(plan.id,p.name);
+   if(needsCertificate&&certificatePlan)await checkSupplierPlan(certificatePlan.id,"Общий iOS-сертификат");
   }
   kdsHidePurchaseState();
   if(!confirm(`Подтверди покупку.\n${details}\n\nИтоговая цена KADZI STORE: ${money(retailTotal)}.\nСредства спишутся с баланса только после подтверждения.`))return;
@@ -1283,7 +1286,10 @@ async function buyPlan(planId,button){
    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
   }
   const payload={action:"create_order",plan_id:plan.id};
-  if(supplierQuoteIds.length)payload.supplier_quote_ids=supplierQuoteIds;
+  const oxideQuote=supplierQuotes.find(q=>q.provider==="KDSoxide");
+  const botQuotes=supplierQuotes.filter(q=>q.provider==="KDSbot");
+  if(botQuotes.length)payload.supplier_quote_ids=botQuotes.map(q=>q.quoteId);
+  if(oxideQuote)payload.kdsoxide_quote_id=oxideQuote.quoteId;
   if(needsGameId)payload.game_id=gameId;
   if(needsCertificate){payload.ios_certificate_bundle=true;payload.certificate_plan_id=certificatePlanId;}
   const d=await api("POST",payload);
