@@ -1277,7 +1277,8 @@ async function buyPlan(planId,button){
   }
   kdsHidePurchaseState();
   if(!confirm(`Подтверди покупку.\n${details}\n\nИтоговая цена KADZI STORE: ${money(retailTotal)}.\nСредства спишутся с баланса только после подтверждения.`))return;
-  if(supplierQuotes.length){
+  // V15.12.53: show the order-stage overlay for every key/certificate flow, not only when quote array is populated.
+  if(shouldCheckSupplier){
    kdsPurchaseState("loading","Оформляем покупку","Повторно проверяем цену и наличие товара…");
    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
   }
