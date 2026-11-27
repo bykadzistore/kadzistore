@@ -75,7 +75,7 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
 <body>
 <header><div><div class="logo"><b>KD</b>S ADMIN</div><div class="tag">Панель управления магазином</div></div><div class="actions" style="margin:0"><button id="backToStore">← В магазин</button><button id="reload">↻ Обновить</button></div></header>
 <main>
-<div class="tabs"><button id="ordersTab" class="primary">Заказы</button><button id="productsTab">Товары</button><button id="inventoryTab">Склад</button><button id="announcementsTab">Объявления</button><button id="gamesTab">Игры</button><button id="analyticsTab">Аналитика</button><button id="auditTab">Журнал</button><button id="marketplaceTab">Маркетплейс</button><button id="referralsTab">Рефералы</button><button id="amlTab">AML</button><button id="withdrawalsTab">Выводы</button><button id="sanctionsTab">Наказания</button><button id="supplierTab">KDSbot</button><button id="KDSoxideTab">KDSoxide</button></div>
+<div class="tabs"><button id="ordersTab" class="primary">Заказы</button><button id="productsTab">Товары</button><button id="inventoryTab">Склад</button><button id="announcementsTab">Объявления</button><button id="gamesTab">Игры</button><button id="analyticsTab">Аналитика</button><button id="auditTab">Журнал</button><button id="marketplaceTab">Маркетплейс</button><button id="mediaPartnersTab">Медиа-партнёрство</button><button id="amlTab">AML</button><button id="withdrawalsTab">Выводы</button><button id="sanctionsTab">Наказания</button><button id="supplierTab">KDSbot</button><button id="KDSoxideTab">KDSoxide</button></div>
 <section id="ordersSection">
 <div class="stats"><div class="stat"><small>Новые</small><strong id="sNew">—</strong></div><div class="stat"><small>В работе</small><strong id="sWork">—</strong></div><div class="stat"><small>Выполнено</small><strong id="sDone">—</strong></div></div>
 <section class="panel" id="orderSearchPanel"><div class="number">Поиск заказов</div><div class="muted">Номер заказа, Telegram ID, username или название товара.</div><div class="actions" style="align-items:center"><input id="orderSearch" placeholder="Например, 1042 или @username" style="flex:1;min-width:180px"><button class="primary" id="orderSearchBtn">Найти</button><button id="orderSearchClear">Сбросить</button></div><div id="orderSearchResult" class="muted"></div></section>
@@ -103,25 +103,12 @@ input,textarea,select{background:#0c0911!important;border:1px solid #ffffff2b!im
 </div>
 <div class="refresh" id="updated">Загрузка заказов…</div><div id="orders"></div>
 </section>
-<section id="referralsSection" class="hide">
- <div class="panel">
-  <div class="number">Реферальная система KADZI MARKET</div>
-  <div class="muted">Учитываются только новые регистрации по первой реферальной ссылке. Успешный реферал — пользователь, который впервые опубликовал активный товар.</div>
-  <div id="referralGlobalStats" class="stats" style="margin-top:12px"><div class="stat"><small>Регистрации по ссылкам</small><strong>—</strong></div><div class="stat"><small>Стали продавцами</small><strong>—</strong></div><div class="stat"><small>Ожидают публикации</small><strong>—</strong></div><div class="stat"><small>Конверсия</small><strong>—</strong></div></div>
- </div>
- <div class="panel">
-  <div class="number">Топ-10 приглашающих</div>
-  <div class="muted">Рейтинг по количеству успешных рефералов — приглашённых пользователей, впервые выставивших товар. В таблице также показано общее число регистраций.</div>
-  <div id="referralLeaderboard7d" style="margin-top:12px"><div class="notice">Загрузка рейтинга…</div></div>
-  <div id="referralLeaderboard30d" style="margin-top:14px"><div class="notice">Загрузка рейтинга…</div></div>
-  <div id="referralLeaderboardAll" style="margin-top:14px"><div class="notice">Загрузка рейтинга…</div></div>
- </div>
- <div class="panel">
-  <div class="number">Поиск рефералов пользователя</div>
-  <div class="muted">Введи постоянный Telegram ID приглашающего, чтобы увидеть его личную статистику и всю цепочку приглашений.</div>
-  <div class="actions" style="align-items:center"><input id="referralAdminSearch" inputmode="numeric" placeholder="Telegram ID пользователя" style="flex:1;min-width:180px"><button class="primary" id="referralAdminFind">Найти</button></div>
-  <div id="referralAdminResult" style="margin-top:12px"></div>
- </div>
+<section id="mediaPartnersSection" class="hide">
+ <div class="panel"><div class="number">Медиа-партнёрство KADZI</div><div class="muted">Управление партнёрами, проверка охватов, статусы, уровни и финансовые показатели. Партнёры оформляют выводы самостоятельно через Финансы.</div>
+ <div id="mediaAdminStats" class="stats" style="margin-top:12px"><div class="stat"><small>Партнёры</small><strong>—</strong></div><div class="stat"><small>Начислено</small><strong>—</strong></div><div class="stat"><small>Удерживается</small><strong>—</strong></div><div class="stat"><small>Выплачено</small><strong>—</strong></div></div>
+ <div class="actions"><button class="primary" id="mediaAdminReload">↻ Обновить</button><button id="mediaAdminExport">Экспорт CSV</button></div></div>
+ <div class="panel"><div class="number">Добавить / изменить партнёра</div><div class="actions"><input id="mediaAdminUser" placeholder="Telegram ID или @username" style="flex:1;min-width:180px"><select id="mediaAdminTier"><option value="START">START · 10%</option><option value="PRO">PRO · 20%</option><option value="VIP">VIP · 30%</option></select><input id="mediaAdminViews" type="number" min="0" placeholder="Просмотры за 30 дней" style="flex:1;min-width:150px"><input id="mediaAdminAccount" placeholder="Ссылка на медиа аккаунт" style="flex:1;min-width:180px"><button class="primary" id="mediaAdminAdd">Добавить / сохранить</button></div><div id="mediaAdminMsg" class="muted" style="margin-top:8px"></div></div>
+ <div class="panel"><div class="number">Партнёры</div><div class="actions"><input id="mediaAdminSearch" placeholder="Поиск ID, username, аккаунт" style="flex:1;min-width:180px"><select id="mediaAdminFilter"><option value="all">Все статусы</option><option value="active">Активные</option><option value="paused">Приостановлены</option><option value="pending">На проверке</option></select></div><div id="mediaAdminPartners" style="margin-top:12px"><div class="notice">Загружаю…</div></div></div>
 </section>
 <section id="productsSection" class="hide">
  <div class="panel">
@@ -642,56 +629,21 @@ async function loadKDSoxide(){
 document.getElementById("KDSoxideReload").onclick=loadKDSoxide;
 document.getElementById("KDSoxideSave").onclick=async()=>{const plan_id=document.getElementById("KDSoxidePlan").value,supplier_product_id=Number(document.getElementById("KDSoxideProduct").value),msg=document.getElementById("KDSoxideMsg"),btn=document.getElementById("KDSoxideSave");if(!plan_id||!Number.isSafeInteger(supplier_product_id)||supplier_product_id<=0){msg.textContent="Выбери тариф и товар поставщика.";return;}btn.disabled=true;msg.textContent="Проверяю товар и сохраняю привязку…";try{await api("POST",{action:"save_KDSoxide_mapping",plan_id,supplier_product_id});msg.textContent="Привязка сохранена.";await loadKDSoxide();}catch(e){msg.textContent="Ошибка: "+e.message;}finally{btn.disabled=false;}};
 document.getElementById("KDSoxideMappings").addEventListener("click",async e=>{const b=e.target.closest("[data-KDSoxide-delete]");if(!b)return;if(!confirm("Удалить привязку KDSoxide?"))return;b.disabled=true;try{await api("POST",{action:"delete_KDSoxide_mapping",plan_id:b.dataset.KDSoxideDelete});await loadKDSoxide();}catch(e){alert(e.message);b.disabled=false;}});
-function showAdminSection(which){for(const id of ["ordersSection","productsSection","inventorySection","announcementsSection","gamesSection","analyticsSection","auditSection","marketplaceSection","amlSection","withdrawalsSection","sanctionsSection","supplierSection","KDSoxideSection","referralsSection"])document.getElementById(id).classList.toggle("hide",id!==which);for(const id of ["ordersTab","productsTab","inventoryTab","announcementsTab","gamesTab","analyticsTab","auditTab","marketplaceTab","amlTab","withdrawalsTab","sanctionsTab","supplierTab","KDSoxideTab","referralsTab"])document.getElementById(id).classList.toggle("primary",id===(which+"Tab").replace("Section",""));if(which==="productsSection")loadProducts();if(which==="inventorySection")loadInventory();if(which==="announcementsSection"){loadAnnouncements();loadBroadcastHistory();}if(which==="gamesSection")loadGames();if(which==="analyticsSection")loadAnalytics();if(which==="auditSection")loadAudit();if(which==="marketplaceSection")loadMarketplaceAdmin();if(which==="amlSection")loadAmlAdmin();if(which==="withdrawalsSection")loadAdminWithdrawals();if(which==="supplierSection")loadKDSbot();if(which==="KDSoxideSection")loadKDSoxide();if(which==="referralsSection")loadReferralAdmin();}
+function showAdminSection(which){const sections=["ordersSection","productsSection","inventorySection","announcementsSection","gamesSection","analyticsSection","auditSection","marketplaceSection","amlSection","withdrawalsSection","sanctionsSection","supplierSection","KDSoxideSection","mediaPartnersSection"];const tabs=["ordersTab","productsTab","inventoryTab","announcementsTab","gamesTab","analyticsTab","auditTab","marketplaceTab","amlTab","withdrawalsTab","sanctionsTab","supplierTab","KDSoxideTab","mediaPartnersTab"];for(const id of sections){const el=document.getElementById(id);if(el)el.classList.toggle("hide",id!==which);}for(const id of tabs){const el=document.getElementById(id);if(el)el.classList.toggle("primary",id===(which+"Tab").replace("Section",""));}if(which==="productsSection")loadProducts();if(which==="inventorySection")loadInventory();if(which==="announcementsSection"){loadAnnouncements();loadBroadcastHistory();}if(which==="gamesSection")loadGames();if(which==="analyticsSection")loadAnalytics();if(which==="auditSection")loadAudit();if(which==="marketplaceSection")loadMarketplaceAdmin();if(which==="amlSection")loadAmlAdmin();if(which==="withdrawalsSection")loadAdminWithdrawals();if(which==="supplierSection")loadKDSbot();if(which==="KDSoxideSection")loadKDSoxide();if(which==="mediaPartnersSection")loadMediaAdmin();}
 
-function referralAdminStat(label,value){return '<div class="stat"><small>'+esc(label)+'</small><strong>'+esc(value)+'</strong></div>';}
-function renderReferralLeaderboard(targetId,title,rows){
- const el=document.getElementById(targetId);if(!el)return;
- const list=Array.isArray(rows)?rows:[];
- const body=list.length?list.map((u,i)=>'<tr><td style="padding:8px 6px">'+(i+1)+'</td><td style="padding:8px 6px"><b>'+esc(u.first_name||'Пользователь')+'</b>'+(u.username?' <span class="muted">@'+esc(u.username)+'</span>':'')+'<div class="muted">ID: '+esc(u.telegram_user_id||'—')+'</div></td><td style="padding:8px 6px;text-align:center">'+esc(u.registrations??0)+'</td><td style="padding:8px 6px;text-align:center"><b>'+esc(u.sellers??0)+'</b></td></tr>').join(''):'<tr><td colspan="4" class="muted" style="padding:14px;text-align:center">Пока нет данных за этот период</td></tr>';
- el.innerHTML='<div class="number">'+title+'</div><div style="overflow-x:auto;margin-top:8px"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="color:var(--muted);text-align:left;border-bottom:1px solid var(--line)"><th style="padding:7px 6px">№</th><th style="padding:7px 6px">Пользователь</th><th style="padding:7px 6px;text-align:center">Регистрации</th><th style="padding:7px 6px;text-align:center">Продавцы</th></tr></thead><tbody>'+body+'</tbody></table></div>';
-}
-function renderReferralAdmin(data){
- const global=data.global||{};
- document.getElementById('referralGlobalStats').innerHTML=[
-  referralAdminStat('Регистрации по ссылкам',global.registrations??'—'),
-  referralAdminStat('Стали продавцами',global.sellers??'—'),
-  referralAdminStat('Ожидают публикации',global.waiting??'—'),
-  referralAdminStat('Конверсия',(global.conversion_percent??0)+'%')
- ].join('');
- const leaders=data.leaderboards||{};
- renderReferralLeaderboard('referralLeaderboard7d','Топ-10 за 7 дней',leaders.days7||[]);
- renderReferralLeaderboard('referralLeaderboard30d','Топ-10 за 30 дней',leaders.days30||[]);
- renderReferralLeaderboard('referralLeaderboardAll','Топ-10 за всё время',leaders.allTime||[]);
- const out=document.getElementById('referralAdminResult');
- if(!data.target){out.innerHTML='<div class="notice">Введи Telegram ID приглашающего, чтобы открыть подробную статистику.</div>';return;}
- const t=data.target,st=data.stats||{},rows=data.referrals||[];
- const userTitle=(u)=>esc(u.first_name||'Пользователь')+(u.username?' · @'+esc(u.username):'');
- const cards=[
-  referralAdminStat('Прямые регистрации',st.direct_registrations??0),
-  referralAdminStat('Стали продавцами',st.direct_sellers??0),
-  referralAdminStat('Ожидают публикации',st.direct_waiting??0),
-  referralAdminStat('Конверсия',String(st.direct_conversion_percent??0)+'%'),
-  referralAdminStat('Вся цепочка приглашений',st.total_descendants??0),
-  referralAdminStat('Продавцы во всей цепочке',st.total_sellers??0),
-  referralAdminStat('Всего объявлений',st.total_listings??0),
-  referralAdminStat('Активных объявлений',st.active_listings??0)
- ].join('');
- const list=rows.length?rows.map(u=>{
-  const ls=u.listing_stats||{};
-  const status=u.referral_first_listing_at?'<span class="status fulfilled">Продавец</span>':'<span class="status">Ожидает товар</span>';
-  return '<article class="market-admin-card" style="margin-top:9px"><div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start"><div><b>'+userTitle(u)+'</b><div class="muted">Telegram ID: '+esc(u.telegram_user_id)+' · Уровень: '+esc(u.depth)+' · Регистрация: '+(u.created_at?new Date(u.created_at).toLocaleString('ru-RU'):'—')+'</div><div class="muted">Объявлений: '+esc(ls.total??0)+' · Активных: '+esc(ls.active??0)+' · Продано: '+esc(ls.sold??0)+' · Снято: '+esc(ls.removed??0)+'</div><div class="muted">Первая публикация: '+(u.referral_first_listing_at?new Date(u.referral_first_listing_at).toLocaleString('ru-RU'):'ещё не было')+'</div></div>'+status+'</div><div class="actions"><button data-admin-openuser="'+esc(u.telegram_user_id)+'">Открыть пользователя</button></div></article>';
- }).join(''):'<div class="notice">Пока никто не зарегистрировался по этой реферальной ссылке.</div>';
- out.innerHTML='<div class="market-admin-card"><h3>'+userTitle(t)+'</h3><p>Telegram ID: '+esc(t.telegram_user_id)+'</p><p>Регистрация: '+(t.created_at?new Date(t.created_at).toLocaleString('ru-RU'):'—')+'</p><p>Постоянный код: '+esc(t.referral_code||'—')+'</p><p>Ссылка: https://t.me/kadzistore_bot?startapp='+encodeURIComponent(t.referral_code||'')+'</p></div><div class="stats" style="margin-top:10px">'+cards+'</div><div class="number" style="margin-top:18px">Все приглашённые и их цепочка</div>'+list;
-}
-async function loadReferralAdmin(telegramUserId=''){
- const out=document.getElementById('referralAdminResult');if(!out)return;
- out.innerHTML='<div class="notice">Загружаю реферальную статистику…</div>';
- try{const data=await api('POST',{action:'referral_admin_lookup',telegram_user_id:telegramUserId});renderReferralAdmin(data);}
- catch(e){out.innerHTML='<div class="notice error">'+esc(e.message||'Не удалось загрузить рефералов')+'</div>';}
-}
-document.getElementById('referralAdminFind').onclick=()=>loadReferralAdmin(document.getElementById('referralAdminSearch').value.trim());
-document.getElementById('referralAdminSearch').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('referralAdminFind').click();});
+let mediaAdminRows=[];
+function mediaAdminMoney(v){return Number(v||0).toLocaleString('ru-RU',{maximumFractionDigits:2})+' ₽';}
+function renderMediaAdmin(data){const stats=data.stats||data.summary||{};const partners=data.partners||data.rows||[];mediaAdminRows=partners;
+ const stat=(label,val)=>'<div class="stat"><small>'+esc(label)+'</small><strong>'+esc(val)+'</strong></div>';
+ document.getElementById('mediaAdminStats').innerHTML=[stat('Партнёры',stats.partners_count??partners.length),stat('Начислено',mediaAdminMoney(stats.accrued??stats.total_accrued)),stat('Удерживается',mediaAdminMoney(stats.held??stats.hold_48h)),stat('Выплачено',mediaAdminMoney(stats.paid??stats.total_paid))].join('');
+ renderMediaAdminRows();}
+function renderMediaAdminRows(){const q=(document.getElementById('mediaAdminSearch').value||'').trim().toLowerCase(),filter=document.getElementById('mediaAdminFilter').value;const rows=mediaAdminRows.filter(p=>{const st=String(p.status||'pending').toLowerCase();return (filter==='all'||st===filter)&&(!q||[p.telegram_user_id,p.username,p.first_name,p.media_account_url,p.account_url].some(x=>String(x||'').toLowerCase().includes(q)));});const out=document.getElementById('mediaAdminPartners');out.innerHTML=rows.length?rows.map(p=>{const id=p.id||p.partner_id||p.user_id||p.telegram_user_id,views=p.views_30d??p.verified_views_30d??p.verified_views??p.views??0,tier=p.tier||'—';const title=(p.first_name||'Партнёр')+(p.username?' · @'+p.username:'');return '<article class="market-admin-card" style="margin:9px 0"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><div><b>'+esc(title)+'</b><div class="muted">Telegram ID: '+esc(p.telegram_user_id||'—')+' · '+esc(p.media_account_url||p.media_url||p.account_url||'—')+'</div><div class="muted">Уровень: '+esc(tier)+' · Просмотры: '+esc(Number(views).toLocaleString('ru-RU'))+' · Статус: '+esc(p.status||'pending')+'</div><div class="muted">Начислено '+mediaAdminMoney(p.accrued)+' · Удерживается '+mediaAdminMoney(p.held)+' · Выплачено '+mediaAdminMoney(p.paid)+'</div></div></div><div class="actions" style="margin-top:9px"><button data-media-status="active" data-media-id="'+esc(id)+'">Активировать</button><button data-media-status="paused" data-media-id="'+esc(id)+'">Приостановить</button><button data-media-verify="'+esc(id)+'">Проверить просмотры</button><button data-media-edit="'+esc(id)+'" data-media-views="'+esc(views)+'" data-media-tier="'+esc(tier)+'" data-media-account="'+esc(p.media_account_url||p.media_url||p.account_url||'')+'">Изменить</button></div></article>';}).join(''):'<div class="notice">Нет партнёров по выбранному фильтру.</div>';}
+async function loadMediaAdmin(){const out=document.getElementById('mediaAdminPartners');out.innerHTML='<div class="notice">Загрузка медиапартнёров…</div>';try{const data=await marketAdminApi('GET',null,'media_admin_overview');renderMediaAdmin(data);}catch(e){out.innerHTML='<div class="notice error">Не удалось загрузить медиа-партнёрство: '+esc(e.message)+'</div>';}}
+document.getElementById('mediaAdminReload').onclick=loadMediaAdmin;document.getElementById('mediaAdminSearch').addEventListener('input',renderMediaAdminRows);document.getElementById('mediaAdminFilter').onchange=renderMediaAdminRows;
+document.getElementById('mediaAdminAdd').onclick=async()=>{const msg=document.getElementById('mediaAdminMsg'),telegram_user_id=document.getElementById('mediaAdminUser').value.trim(),tier=document.getElementById('mediaAdminTier').value,views=Number(document.getElementById('mediaAdminViews').value||0),media_account_url=document.getElementById('mediaAdminAccount').value.trim();if(!telegram_user_id){msg.textContent='Укажи Telegram ID или username.';return;}msg.textContent='Сохраняю…';try{await marketAdminApi('POST',{action:'media_admin_add',telegram_user_id,user_id:telegram_user_id,tier,views_30d:views,verified_views_30d:views,media_account_url,media_url:media_account_url},'media_admin_overview');msg.textContent='Партнёр добавлен/обновлён.';await loadMediaAdmin();}catch(e){msg.textContent='Ошибка: '+e.message;}};
+document.getElementById('mediaAdminPartners').addEventListener('click',async e=>{const status=e.target.closest('[data-media-status]'),verify=e.target.closest('[data-media-verify]'),edit=e.target.closest('[data-media-edit]');try{if(status){await marketAdminApi('POST',{action:'media_admin_set_status',partner_id:status.dataset.mediaId,user_id:status.dataset.mediaId,telegram_user_id:status.dataset.mediaId,status:status.dataset.mediaStatus},'media_admin_overview');await loadMediaAdmin();}else if(verify){const views=prompt('Подтверждённые просмотры за последние 30 дней:');if(views===null)return;const n=Number(views);if(!Number.isFinite(n)||n<0){alert('Некорректное число просмотров');return;}await marketAdminApi('POST',{action:'media_admin_verify_views',partner_id:verify.dataset.mediaVerify,user_id:verify.dataset.mediaVerify,views_30d:n,verified_views_30d:n},'media_admin_overview');await loadMediaAdmin();}else if(edit){document.getElementById('mediaAdminViews').value=edit.dataset.mediaViews;document.getElementById('mediaAdminTier').value=edit.dataset.mediaTier;document.getElementById('mediaAdminAccount').value=edit.dataset.mediaAccount;document.getElementById('mediaAdminUser').value=edit.dataset.mediaId;document.getElementById('mediaAdminMsg').textContent='Поля заполнены. Сохрани изменения.';}}catch(x){alert('Ошибка медиа-операции: '+x.message);}});
+document.getElementById('mediaAdminExport').onclick=()=>{const rows=[['telegram_user_id','username','tier','status','views_30d','accrued','held','paid'],...mediaAdminRows.map(p=>[p.telegram_user_id,p.username,p.tier,p.status,p.views_30d??p.verified_views_30d??p.verified_views??p.views,p.accrued,p.held,p.paid])];const csv=rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));a.download='kadzi_media_partners.csv';a.click();URL.revokeObjectURL(a.href);};
+
 document.getElementById("ordersTab").onclick=()=>showAdminSection("ordersSection");
 document.getElementById("productsTab").onclick=()=>showAdminSection("productsSection");
 document.getElementById("inventoryTab").onclick=()=>showAdminSection("inventorySection");
@@ -854,7 +806,7 @@ async function sendMarketplaceSupportReply(){
  if(!marketAdminCurrentDispute)return;const o=marketAdminCurrentDispute.kds_marketplace_orders||{};const message=prompt("Сообщение покупателю и продавцу в общий чат");if(!message)return;
  try{await marketAdminApi("POST",{action:"send_message",order_id:o.id||marketAdminCurrentDispute.order_id,message_text:message,client_message_id:marketClientMessageId()});await openMarketplaceSupport(o.id||marketAdminCurrentDispute.order_id);}catch(e){alert(e.message);}
 }
-document.getElementById("marketplaceTab").onclick=()=>showAdminSection("marketplaceSection");document.getElementById("referralsTab").onclick=()=>showAdminSection("referralsSection");
+document.getElementById("marketplaceTab").onclick=()=>showAdminSection("marketplaceSection");document.getElementById("mediaPartnersTab").onclick=()=>showAdminSection("mediaPartnersSection");
 document.getElementById("reloadMarketplace").onclick=loadMarketplaceAdmin;
 document.getElementById("marketplaceDisputes").addEventListener("click",async e=>{
  const chat=e.target.closest("[data-market-chat]");if(chat){try{await openMarketplaceSupport(chat.dataset.marketChat);}catch(x){alert(x.message);}return;}
